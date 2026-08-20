@@ -1,0 +1,238 @@
+=== shard_000 ===
+WARNING: While bind mounting '/bigdata:/bigdata': destination is already in the mount point list
+Aug 20, 2026 5:02:27 AM org.apache.commons.beanutils.FluentPropertyBeanIntrospector introspect
+INFO: Error when creating PropertyDescriptor for public final void org.apache.commons.configuration2.AbstractConfiguration.setProperty(java.lang.String,java.lang.Object)! Ignoring this property.
+INFO    05:02:27 - Sirius Workspace Successfully initialized at: /rhome/jstajich/.sirius-6.3
+INFO    05:02:27 - You run SIRIUS 6.3.12 on linux_amd64
+INFO    05:02:27 - You run SIRIUS in 'CLI' mode.
+INFO    05:02:27 - Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1
+INFO    05:02:27 - Treebuilder priorities loaded from 'sirius.properties' are: [CLP, GUROBI, CPLEX]
+INFO    05:02:27 - CPU check done. 2 cores that handle 4 threads were found.
+INFO    05:02:27 - Job manager successful initialized with 3 CPU thread(s) and 3 IO thread(s).
+INFO    05:02:27 - Starting http Client with MaxPerRoute=3 / maxTotal=5 (CPU-Threads=3).
+INFO    05:02:31 - Custom databases loaded.
+INFO    05:02:31 - Web API initialized in 00:00:03.918. Started loading active subscription in background...
+FINE    05:02:31 - <0>[JJob-0] Running post processing
+FINE    05:02:31 - <0>[JJob-0] Running cleanup
+INFO    05:02:31 - Running with following arguments: [--cores, 4, --input, /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS/analysis/sirius_annotation/shards_native/shard_000.mgf, --output, /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS/analysis/sirius_annotation/sirius_native_results/shard_000, formula, --ppm-max, 15, --ppm-max-ms2, 15, --candidates, 10, fingerprint, canopus, structures, write-summaries]
+INFO    05:02:31 - Shutting down JobManager
+INFO    05:02:31 - Awaiting termination of JobManager
+INFO    05:02:31 - JobManager is shut down
+INFO    05:02:31 - Adjusted JobManager CPU threads to '4' by command line.
+FINE    05:02:31 - <1>[InputExpanderJJob-1] Running post processing
+FINE    05:02:31 - <1>[InputExpanderJJob-1] Running cleanup
+INFO    05:02:31 - <2>[InputExpanderJJob-2] Expanding Input Files: '/bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS/analysis/sirius_annotation/shards_native/shard_000.mgf'...
+INFO    05:02:31 - <2>[InputExpanderJJob-2] ...Input Files successfully expanded!
+FINE    05:02:31 - <2>[InputExpanderJJob-2] Running post processing
+FINE    05:02:31 - <2>[InputExpanderJJob-2] Running cleanup
+WARNING 05:02:32 - Given project file 'shard_000' does not contain the `.sirius` file extension. Renamed file to 'shard_000.sirius'.
+INFO    05:02:32 - (Re)building index: [key]
+INFO    05:02:32 - (Re)building index: [type, charge]
+INFO    05:02:32 - (Re)building index: [ionPairId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId1]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId2]
+INFO    05:02:32 - (Re)building index: [type]
+INFO    05:02:32 - (Re)building index: [formulaId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId, formulaRank]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [sourceTraceId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId, formulaId, candidateInChiKey]
+INFO    05:02:32 - (Re)building index: [id]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId, structureRank]
+INFO    05:02:32 - (Re)building index: [runId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [id]
+INFO    05:02:32 - (Re)building index: [compoundId]
+INFO    05:02:32 - (Re)building index: [formulaId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [formulaId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [networkId]
+INFO    05:02:32 - (Re)building index: [alignedIsotopeFeatureId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [featureId]
+INFO    05:02:32 - (Re)building index: [scanId]
+INFO    05:02:32 - (Re)building index: [runId, scanTime]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId, type]
+INFO    05:02:32 - (Re)building index: [parametersId]
+INFO    05:02:32 - (Re)building index: [name]
+INFO    05:02:32 - (Re)building index: [runId]
+INFO    05:02:32 - (Re)building index: [retentionTime.middle]
+INFO    05:02:32 - (Re)building index: [averageMass]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [compoundId]
+INFO    05:02:32 - (Re)building index: [traceRef.traceId]
+INFO    05:02:32 - (Re)building index: [tagId]
+INFO    05:02:32 - (Re)building index: [taggedObjectClass, tagName]
+INFO    05:02:32 - (Re)building index: [taggedObjectClass, taggedObjectId, tagName]
+INFO    05:02:32 - (Re)building index: [tagName]
+INFO    05:02:32 - (Re)building index: [inchikey]
+INFO    05:02:32 - (Re)building index: [formulaId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId, formulaId, candidateInChiKey]
+INFO    05:02:32 - (Re)building index: [id]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId, structureRank]
+INFO    05:02:32 - (Re)building index: [mergedTraceId]
+INFO    05:02:32 - (Re)building index: [name]
+INFO    05:02:32 - (Re)building index: [runId]
+INFO    05:02:32 - (Re)building index: [rt.middle]
+INFO    05:02:32 - (Re)building index: [name]
+INFO    05:02:32 - (Re)building index: [neutralMass]
+INFO    05:02:32 - (Re)building index: [compoundId]
+INFO    05:02:32 - (Re)building index: [scanId]
+INFO    05:02:32 - (Re)building index: [runId, scanTime]
+INFO    05:02:32 - (Re)building index: [precursorScanId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId, searchResult.rank]
+INFO    05:02:32 - (Re)building index: [specMatchId]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId, searchResult.candidateInChiKey, searchResult.rank]
+INFO    05:02:32 - (Re)building index: [tagDefId]
+INFO    05:02:32 - (Re)building index: [tagType]
+INFO    05:02:32 - (Re)building index: [tagName]
+INFO    05:02:32 - (Re)building index: [groupName]
+INFO    05:02:32 - (Re)building index: [groupType]
+INFO    05:02:32 - (Re)building index: [id]
+INFO    05:02:32 - (Re)building index: [alignedFeatureId]
+INFO    05:02:32 - (Re)building index: [id]
+INFO    05:02:32 - Updating project type information...
+INFO    05:02:32 - Updating project type information done in 00:00:00.022.
+INFO    05:02:32 - Updating project source information...
+INFO    05:02:32 - Updating project source information done in 00:00:00.001.
+WARNING 05:02:34 - Ion mass specified in input deviates from ion mass found in MS2. Correct ion mass from 303.309 to 303.3085
+INFO    05:02:34 - Creating Toolchain InstanceBuffer of size 20
+INFO    05:02:37 - Loading CBC libs for detected architecture `linux-amd64` from prefix '/linux-x86-64/' with '11' jar and '11' path dependencies.
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by cz.adamh.utils.NativeUtils in an unnamed module (file:/opt/sirius/lib/app/lib/native-utils-1.3.1.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+WARNING 05:07:36 - <57>[FingerprintSubToolJob-57 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-56 | SCAN=17820 (878141943444630644)' finished with unexpected state 'CANCELED'.
+WARNING 05:07:36 - <58>[CanopusSubToolJob-58 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-57 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:07:36 - <59>[FingerblastSubToolJob-59 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-58 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:07:36 - <57>[FingerprintSubToolJob-57 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-57 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:07:36 - <58>[CanopusSubToolJob-58 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-58 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:07:36 - <59>[FingerblastSubToolJob-59 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-59 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:07:36 - <56>[SiriusSubToolJob-56 | SCAN=17820 (878141943444630644)] ToolChain Job canceled due to: de.unijena.bioinf.jjobs.exceptions.TimeoutException: Timeout reached!
+INFO    05:07:38 - Starting http Client with MaxPerRoute=2 / maxTotal=3 (CPU-Threads=4).
+INFO    05:07:39 - Starting http Client with MaxPerRoute=2 / maxTotal=3 (CPU-Threads=4).
+WARNING 05:07:39 - <33>[FingerprintSubToolJob-33 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-32 | SCAN=20963 (878141943725649020)' finished with unexpected state 'CANCELED'.
+WARNING 05:07:39 - <34>[CanopusSubToolJob-34 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-33 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:07:39 - <35>[FingerblastSubToolJob-35 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-34 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:07:39 - <33>[FingerprintSubToolJob-33 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-33 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:07:39 - <34>[CanopusSubToolJob-34 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-34 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:07:39 - <32>[SiriusSubToolJob-32 | SCAN=20963 (878141943725649020)] ToolChain Job canceled due to: de.unijena.bioinf.jjobs.exceptions.TimeoutException: Timeout reached!
+WARNING 05:07:39 - <35>[FingerblastSubToolJob-35 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-35 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:11:15 - <15>[FingerprintSubToolJob-15 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-14 | SCAN=304 (878141940613475352)' finished with unexpected state 'CANCELED'.
+WARNING 05:11:15 - <16>[CanopusSubToolJob-16 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-15 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:11:15 - <17>[FingerblastSubToolJob-17 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-16 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:11:16 - <14>[SiriusSubToolJob-14 | SCAN=304 (878141940613475352)] ToolChain Job canceled due to: de.unijena.bioinf.jjobs.exceptions.TimeoutException: Timeout reached!
+WARNING 05:11:16 - <15>[FingerprintSubToolJob-15 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-15 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:11:16 - <17>[FingerblastSubToolJob-17 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-17 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:11:16 - <16>[CanopusSubToolJob-16 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-16 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:11:16 - Ion mass specified in input deviates from ion mass found in MS2. Correct ion mass from 303.309 to 303.3085
+WARNING 05:12:03 - <51>[FingerprintSubToolJob-51 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-50 | SCAN=3580 (878141941506862124)' finished with unexpected state 'CANCELED'.
+WARNING 05:12:03 - <52>[CanopusSubToolJob-52 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-51 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:12:03 - <53>[FingerblastSubToolJob-53 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-52 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:12:03 - <51>[FingerprintSubToolJob-51 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-51 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:03 - <52>[CanopusSubToolJob-52 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-52 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:03 - <53>[FingerblastSubToolJob-53 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-53 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:03 - <50>[SiriusSubToolJob-50 | SCAN=3580 (878141941506862124)] ToolChain Job canceled due to: de.unijena.bioinf.jjobs.exceptions.TimeoutException: Timeout reached!
+WARNING 05:12:37 - <69>[FingerprintSubToolJob-69 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-68 | SCAN=722 (878141940898688028)' finished with unexpected state 'CANCELED'.
+WARNING 05:12:37 - <70>[CanopusSubToolJob-70 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-69 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:12:37 - <71>[FingerblastSubToolJob-71 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-70 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:12:37 - <71>[FingerblastSubToolJob-71 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-71 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:37 - <68>[SiriusSubToolJob-68 | SCAN=722 (878141940898688028)] ToolChain Job canceled due to: de.unijena.bioinf.jjobs.exceptions.TimeoutException: Timeout reached!
+WARNING 05:12:37 - <70>[CanopusSubToolJob-70 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-70 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:37 - <69>[FingerprintSubToolJob-69 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-69 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:40 - <75>[FingerprintSubToolJob-75 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-74 | SCAN=6287 (878141941834017848)' finished with unexpected state 'CANCELED'.
+WARNING 05:12:40 - <76>[CanopusSubToolJob-76 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-75 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:12:40 - <77>[FingerblastSubToolJob-77 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-76 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:12:40 - <77>[FingerblastSubToolJob-77 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-77 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:40 - <76>[CanopusSubToolJob-76 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-76 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:40 - <74>[SiriusSubToolJob-74 | SCAN=6287 (878141941834017848)] ToolChain Job canceled due to: de.unijena.bioinf.jjobs.exceptions.TimeoutException: Timeout reached!
+WARNING 05:12:40 - <75>[FingerprintSubToolJob-75 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-75 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:12:56 - <732>[FingerprintPreprocessingJJob-732 | SCAN=4898@348.6697m/z] Ignore fragmentation tree for As2S5 because it contains less than 2 fragments.
+WARNING 05:12:56 - <732>[FingerprintPreprocessingJJob-732 | SCAN=4898@348.6697m/z] No suitable fragmentation tree left.
+WARNING 05:12:57 - Ion mass specified in input deviates from ion mass found in MS2. Correct ion mass from 303.309 to 303.3085
+WARNING 05:13:24 - <9088>[FingerblastJJob-9088 | SCAN=3029@457.7603m/z] No Confidence computed.
+WARNING 05:14:00 - <19295>[FingerblastJJob-19295 | SCAN=9921@679.9111m/z] No Confidence computed.
+########################################
+## Computed 30 instances in 00:13:17.773(2.26 instances/minute).
+########################################
+INFO    05:15:52 - Workflow has been finished in 00:13:20.235
+INFO    05:15:52 - Executing Postprocessing...
+INFO    05:15:52 - Summaries written in: 00:00:00.235
+INFO    05:15:52 - Nitrite database has been closed successfully.
+INFO    05:15:52 - CLI shut down hook: SIRIUS is cleaning up threads and shuts down...
+
+
+Please cite the following publications when using our tool:
+
+When using the SIRIUS Software please cite the following paper:
+
+Kai D?hrkop, Markus Fleischauer, Marcus Ludwig, Alexander A. Aksenov, Alexey V. Melnik, Marvin Meusel, Pieter C. Dorrestein, Juho Rousu and Sebastian B?cker
+SIRIUS4: a rapid tool for turning tandem mass spectra into metabolite structure information
+Nat Methods, 16, 2019.  https://doi.org/10.1038/s41592-019-0344-8
+
+
+Depending on the tools you have used please also cite:
+
+Wishart, David S and Tian, Siyang and Allen, Dana and Oler, Eponine and Peters, Harrison and Lui, Vicki W and Gautam, Vasuk and Djoumbou-Feunang, Yannick and Greiner, Russell and Metz, Thomas O
+BioTransformer 3.0?a web server for accurately predicting metabolic transformation products
+Nucleic Acids Res, 50, 2022.  https://doi.org/10.1093/nar/gkac313
+(Cite if you are using: Biotransformer for structure database generation)
+
+Xing, Shipei and Shen, Sam and Xu, Banghua and Li, Xiaoxiao and Huan, Tao
+BUDDY: molecular formula discovery via bottom-up MS/MS interrogation.
+Nat Methods, 2023.  https://doi.org/10.1038/s41592-023-01850-x
+(Cite if you are using: Bottom-up molecular formula generation)
+
+Kai D?hrkop, Louis-F?lix Nothias, Markus Fleischauer, Raphael Reher, Marcus Ludwig, Martin A. Hoffmann, Daniel Petras, William H. Gerwick, Juho Rousu, Pieter C. Dorrestein and Sebastian B?cker
+Systematic classification of unknown metabolites using high-resolution fragmentation mass spectra
+Nat Biotechnol, 39, 2021.  https://doi.org/10.1038/s41587-020-0740-8
+(Cite if you are using: CANOPUS)
+
+Yannick Djoumbou Feunang, Roman Eisner, Craig Knox, Leonid Chepelev, Janna Hastings, Gareth Owen, Eoin Fahy, Christoph Steinbeck, Shankar Subramanian, Evan Bolton, Russell Greiner, David S. Wishart
+ClassyFire: automated chemical classification with a comprehensive, computable taxonomy
+J Cheminf, 8, 2016.  https://doi.org/10.1186/s13321-016-0174-y
+(Cite if you are using: CANOPUS)
+
+Kim, Hyun Woo and Wang, Mingxun and Leber, Christopher A. and Nothias, Louis-F?lix and Reher, Raphael and Kang, Kyo Bin and van der Hooft, Justin J. J. and Dorrestein, Pieter C. and Gerwick, William H. and Cottrell, Garrison W.
+NPClassifier: A Deep Neural Network-Based Structural Classification Tool for Natural Products
+Journal of Natural Products, 84, 2021.  https://doi.org/10.1021/acs.jnatprod.1c00399
+(Cite if you are using: CANOPUS)
+
+Kai D?hrkop, Huibin Shen, Marvin Meusel, Juho Rousu and Sebastian B?cker
+Searching molecular structure databases with tandem mass spectra using CSI:FingerID
+Proc Natl Acad Sci U S A, 112, 2015.  https://doi.org/10.1073/pnas.1509788112
+(Cite if you are using: CSI:FingerID)
+
+Hoffmann, Martin A. and Nothias, Louis-F?lix and Ludwig, Marcus and Fleischauer, Markus and Gentry, Emily C. and Witting, Michael and Dorrestein, Pieter C. and D?hrkop, Kai and B?cker, Sebastian
+High-confidence structural annotation of metabolites absent from spectral libraries
+Nat Biotechnol, 40, 2022.  https://doi.org/10.1038/s41587-021-01045-9
+(Cite if you are using: CSI:FingerID, COSMIC)
+
+Sebastian B?cker and Kai D?hrkop
+Fragmentation trees reloaded
+J Cheminform, 8, 2016.  https://doi.org/10.1186/s13321-016-0116-8
+(Cite if you are using: Fragmentation Trees)
+
+Sebastian B?cker, Matthias Letzel, Zsuzsanna Lipt?k and Anton Pervukhin
+SIRIUS: Decomposing isotope patterns for metabolite identification
+Bioinformatics, 25, 2009.  https://doi.org/10.1093/bioinformatics/btn603
+(Cite if you are using: Isotope Pattern analysis)
+
+Stravs, Michael A. and D?hrkop, Kai and B?cker, Sebastian and Zamboni, Nicola
+MSNovelist: de novo structure generation from mass spectra
+Nat Methods, 19, 2022.  https://doi.org/10.1038/s41592-022-01486-3
+(Cite if you are using: MSNovelist)
+
+Ludwig, Marcus and Nothias, Louis-F?lix and D?hrkop, Kai and Koester, Irina and Fleischauer, Markus and Hoffmann, Martin A. and Petras, Daniel and Vargas, Fernando and Morsy, Mustafa and Aluwihare, Lihini and Dorrestein, Pieter C. and B?cker, Sebastian
+Database-independent molecular formula annotation using Gibbs sampling through ZODIAC
+Nat Mach Intell, 2, 2020.  https://doi.org/10.1038/s42256-020-00234-6
+(Cite if you are using: ZODIAC)
+
+
+shard_000 completed

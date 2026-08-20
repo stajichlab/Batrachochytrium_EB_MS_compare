@@ -1,0 +1,18 @@
+# Nested git repos (cloned skillpacks — huge, tracked upstream; do NOT embed here)
+skillpacks/
+
+# Runtime / local state
+.mycelium/
+.claude/last-session.md
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# pixi environment (regenerable via `pixi install`; pixi.lock IS tracked)
+.pixi/
+
+# GNPS2 bundle is immutable + canonical upstream lives in sibling ../MSV000090464 (+ ../Js_Bd
+# expanded tree) and MassIVE MSV000090464. Do not embed the 234M bundle here; data/raw is
+# regenerable/restorable from those sources. Curated metadata (small) is tracked.
+data/raw/

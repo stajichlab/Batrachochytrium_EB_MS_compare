@@ -1,0 +1,18 @@
+[workspace]
+name = "bd-massspec-bagel"
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64"]
+
+[dependencies]
+python = "3.12.*"
+pandas = ">=2.2"
+numpy = ">=1.26"
+scipy = ">=1.13"
+matplotlib = ">=3.8"
+seaborn = ">=0.13"
+scikit-learn = ">=1.4"
+
+[tasks]
+build-ordination-table = "python analysis/ordination/scripts/build_ordination_table.py"
+pcoa-ordination = "python analysis/ordination/scripts/pcoa_ordination.py"
+differential-features = "python analysis/differential_features/scripts/differential_features.py"

@@ -1,0 +1,23 @@
+---
+name: dataviz
+version: 0.1.0
+description: >
+  Reproducible, honest data-visualization conventions for metabolomics and
+  multi-omic analyses: ordination plots (PCA/PCoA/PLS-DA), volcano plots,
+  heatmaps, and time-series. Covers honest axis reporting (variance explained,
+  ellipse construction), color accessibility, figure outputs that embed
+  provenance/params, and file formats suited for publication.
+author: mycelium
+dependencies:
+  - robust-analysis
+  - bioinformatics
+tags:
+  - dataviz
+  - ordination
+  - pca
+  - visualization
+  - plotting
+  - r
+  - python
+  - reproducibility
+---
