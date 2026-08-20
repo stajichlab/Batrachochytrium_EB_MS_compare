@@ -52,7 +52,38 @@ Global tables:
   contrasts with SIRIUS annotation + secreted-candidate + bioactivity flags.
 - `significant_bioactive.tsv` — the bioactivity-flagged subset.
 
-Run: `pixi run differential-features-primary`
+### Feature-table HTML (investigation) — `pixi run feature-tables-primary`
+Port of the Rhodotorula `generate_compound_table_html.py` strategy
+(`analysis/differential_features_primary/scripts/generate_feature_tables.py`):
+self-contained, offline-viewable, sortable/filterable tables over the
+significant features. Data embedded as JSON; no CDN/no server needed.
+
+- `<comparison>/compound_summary.tsv` + `compound_summary.html` — one per
+  contrast, significant rows only (q < 0.05), SIRIUS columns joined.
+- `all_significant_features_summary.tsv` — rollup of every significant row
+  across all 8 contrasts with `comparison` + `species` columns.
+- `all_significant_features_summary_<species>.html` — rollup split into one
+  sortable/filterable view per species (`dendrobatidis` 48,867 rows / 59 MB;
+  `salamandrivorans` 54,770 rows / 66 MB). Chunked by species so each file
+  stays under GitHub's 100 MB per-file hard limit (a single combined rollup
+  would be ~125 MB and reject `git push`).
+- `feature_tables_index.html` — navigation hub linking all 9 tables.
+
+Design (Rhodotorula-informed): numeric columns sort numerically (not
+lexicographic — q-values in sci notation, negative log2FC); identity glyph
+(leftmost column, Okabe-Ito): `◇` SIRIUS structure, `○` SIRIUS formula only,
+`—` unidentified; ~10 main columns, the ~25 SIRIUS/CANOPUS/transfer-detail
+columns in a click-to-expand row panel; filters in priority order = click
+sort, q-value `<=` / `|log2FC| >=` numeric thresholds, identity-source chips,
+`bioact`/`secreted` checkboxes (the curated flags), free-text search.
+
+Caveat: the per-species rollups embed ~49k–55k rows (~59–66 MB HTML) and the
+two largest per-contrast tables ~25–28k rows; they open fine but render slower
+than Rhodotorula's ~6k-row tables — prefer filtering or a per-contrast table
+when browsing. Regenerate after re-running `differential-features-primary` (the
+HTMLs are stale otherwise).
+
+Run: `pixi run feature-tables-primary`
 
 ## Results (2026-08-20)
 8 contrasts, n = 25k-34k features tested each.

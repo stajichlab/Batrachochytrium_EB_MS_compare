@@ -75,3 +75,19 @@ Append-only log of gotchas, surprises, and insights.
 - **Why it matters**: Confirms the full native-annotation path (target select → MGF export → shard → SLURM array → merge → fold-in → downstream join) works end-to-end; the full run (~3,815 remaining SIRIUS-runnable features) can reuse the same validated path, and `annotation_origin` now distinguishes `transferred` vs `native` provenance in every downstream table.
 - **Resolution**: `analysis/sirius_annotation/sirius_native_results/merged/`, updated `SIRIUS_ANNOTATION.md` status, refreshed differential tables.
 - **Tags**: `sirius`, `annotation`, `native-merge`, `pilot`, `infrastructure`, `everything-bagel`
+
+## 2026-08-20 — Feature-table HTML ported from Rhodotorula, but this project's tables are ~17x bigger
+
+- **Category**: analytical-design
+- **What happened**: Ported the Rhodotorula `generate_compound_table_html.py` (self-contained sortable/filterable feature-table HTML, JSON-embedded data, plain-JS sort/filter, identity glyphs, expand-panel details) to the primary-tier significant tables. This project's rollup embeds 103,637 significant rows (~130 MB HTML) vs Rhodotorula's ~6,000-row rollup; even per-contrast tables reach ~28k rows.
+- **Why it matters**: The interactive table pattern carries over cleanly, but the document is heavy — browser rendering and the debounced search/sort are still fine but materially slower than the smaller Rhodotorula tables; filtering or opening a specific contrast first is the practical path. It also means the SIRIUS identity is browsable row-by-row (glyph, structure name, NPC class) for manual curation of the 1,106 bioactivity-flagged / 3,003 secreted-candidate hits.
+- **Resolution**: `analysis/differential_features_primary/scripts/generate_feature_tables.py` + `pixi run feature-tables-primary`; per-contrast `compound_summary.html`, per-species rollups `all_significant_features_summary_<species>.html` (dendrobatidis 59 MB / salamandrivorans 66 MB — the single combined rollup was ~125 MB and exceeded GitHub's 100 MB per-file hard limit, blocking `git push`), `feature_tables_index.html`.
+- **Tags**: `feature-tables`, `html`, `interactive`, `sirius`, `porting`, `everything-bagel`
+
+## 2026-08-20 — GitHub 100 MB per-file limit: chunk generated HTML rollups by species
+
+- **Category**: infra/repro
+- **What happened**: `all_significant_features_summary.html` (103,637 rows, ~125 MB, one JSON embed) exceeded GitHub's 100 MB per-file hard limit and rejected `git push` to the new `stajichlab/Batrachochytrium_EB_MS_compare` remote. The commit was rolled back (`git reset --soft HEAD~1`, safe because `main` had no upstream) and the rollup is now emitted per species: `all_significant_features_summary_dendrobatidis.html` (48,867 rows, 59 MB) + `all_significant_features_summary_salamandrivorans.html` (54,770 rows, 66 MB). Per-contrast tables (≤32 MB) and all TSVs (≤32 MB) were already under the limit. The generator script, index hub, and docs were updated; all 25 files re-staged.
+- **Why it matters**: GitHub rejects pushes containing any file over 100 MB (hard), and warns above 50 MB. Chunking derived HTML artifacts by an analysis dimension (here `species`) keeps interactive outputs in-repo and pushable without Git LFS or sacrificing the rollup view.
+- **Resolution**: edit `generate_feature_tables.py` (split rollup by `df["species"]`, per-species `write_index` links), regenerate via `pixi run feature-tables-primary`, delete the stale combined rollup, re-stage, update `DIFFERENTIAL_FEATURES_PRIMARY.md` / `ANALYSIS_MANIFEST.md`.
+- **Tags**: `github`, `git-push`, `file-size-limit`, `feature-tables`, `rollup`, `chunking`

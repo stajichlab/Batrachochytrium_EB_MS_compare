@@ -17,3 +17,4 @@ build-ordination-table = "python analysis/ordination/scripts/build_ordination_ta
 pcoa-ordination = "python analysis/ordination/scripts/pcoa_ordination.py"
 differential-features = "python analysis/differential_features/scripts/differential_features.py"
 differential-features-primary = "python analysis/differential_features_primary/scripts/differential_features_primary.py"
+feature-tables-primary = "python analysis/differential_features_primary/scripts/generate_feature_tables.py"
