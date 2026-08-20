@@ -12,11 +12,11 @@
 
 ## ordination
 
-- **Status**: complete (bagel feature table) — all-samples + per-species Bray-Curtis PCoA outputs present (`figures/pcoa_all.{pdf,png}`, `figures/pcoa_axes_all.csv`, `figures/by_species/pcoa_{dendrobatidis,salamandrivorans}.{png,pdf}`); replicates EB F-001 (matrix dominance: all axis1 62.9%, Bd 75.9%, Bsal 70.6% of positive-eigenvalue variance). Pipeline is fully reproducible via `pixi run pcoa-ordination`.
+- **Status**: complete (bagel feature table) — all-samples + per-species Bray-Curtis PCoA outputs present (`figures/pcoa_all.{pdf,png}`, `figures/pcoa_condition.{pdf,png}`, `figures/pcoa_stagegroup.{pdf,png}`, `figures/pcoa_axes_all.csv`, `figures/by_species/pcoa_{dendrobatidis,salamandrivorans}.{png,pdf}`); replicates EB F-001 (matrix dominance: all axis1 62.9%, Bd 75.9%, Bsal 70.6% of positive-eigenvalue variance). Pipeline is fully reproducible via `pixi run pcoa-ordination`. New figures color by the sampled condition (6-state `matrix_life_stage`) and by the collapsed life-stage `stage_group` (Zoospore vs Developed).
 - **Purpose**: Bray-Curtis PCoA of the feature table across species x matrix (liq/spore) x life_stage (Zoospore/Sporangium/Mature) (GOALS.md goal 3), the Everything-Bagel port of the EB/Rhodotorula pattern.
 - **Key inputs**: `data/raw/gnps2_e9838293_bagel/nf_output/feature_finding/feature_finding_results/aligned_features.csv`, `data/metdata/curated_gnps_metadata.tsv` → `analysis/ordination/linked_data/` (built by `scripts/build_ordination_table.py`).
-- **Key outputs**: `analysis/ordination/{linked_data/{sample_metadata.csv,feature_abundance.csv.gz},figures/{pcoa_axes_all.csv,pcoa_all.png,pcoa_all.pdf,by_species/*}}`.
-- **Readme**: (none yet — see `.living/findings/matrix-dominates-bagel-metabolome.md`)
+- **Key outputs**: `analysis/ordination/{linked_data/{sample_metadata.csv,feature_abundance.csv.gz},figures/{pcoa_axes_all.csv,pcoa_all.png,pcoa_all.pdf,pcoa_condition.png,pcoa_stagegroup.png,by_species/*}}`.
+- **Readme**: [ORDINATION.md](ordination/ORDINATION.md)
 
 ## differential_features
 
@@ -24,3 +24,11 @@
 - **Purpose**: Feature-level pairwise differential abundance between every (matrix, life_stage) state pair, within each species (GOALS.md goal 2), the Everything-Bagel port of the sibling projects' scripts.
 - **Key inputs**: `analysis/ordination/linked_data/` tables (built from the bagel `aligned_features.csv` + curated metadata), `analysis/sirius_annotation/sirius_annotations.tsv` (not yet joined).
 - **Key outputs**: `analysis/differential_features/{comparison_summary.csv,<species>_<condA>_vs_<condB>/{differential_features.csv.gz,volcano.png/.pdf,top_features.png/.pdf,top_features.tsv}}`. Repro: `pixi run differential-features`.
+
+## differential_features_primary
+
+- **Status**: complete — 8 primary contrasts with volcano/top_features + SIRIUS-annotated significant-features tables. 4 collapsed life-stage contrasts (Zoospore vs Developed, within species x matrix: liq n=10 vs 20, spore 5 vs 10 per species) + 4 secreted-vs-cellular contrasts (liq vs spore, within species x stage_group). SIRIUS annotation join applied; significant features flagged for liq-vs-spore enrichment (secreted candidates) and curated bioactivity keywords.
+- **Purpose**: Hypothesis tier on the collapsed life-stage vocabulary (F-002: matrix stratification is required; Sporangium+Mature collapse is power-motivated). Answers "zoospore vs the rest" (life stage) and "secreted fraction vs cell-associated" (matrix) questions behind GOALS.md goals 2-4.
+- **Key inputs**: `analysis/ordination/linked_data/` tables, `analysis/sirius_annotation/sirius_annotations.tsv`.
+- **Key outputs**: `analysis/differential_features_primary/{primary_comparison_summary.tsv,significant_annotated.tsv,significant_bioactive.tsv,<species>_<groupA>_vs_<groupB>/{differential_features.csv.gz,volcano.png/.pdf,top_features.png/.pdf,top_features.tsv}}`. Repro: `pixi run differential-features-primary`.
+- **Readme**: [DIFFERENTIAL_FEATURES_PRIMARY.md](differential_features_primary/DIFFERENTIAL_FEATURES_PRIMARY.md)

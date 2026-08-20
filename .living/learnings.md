@@ -51,3 +51,19 @@ Append-only log of gotchas, surprises, and insights.
 - **Why it matters**: The Everything-Bagel feature table is a different (much denser) feature universe, but the qualitative story — matrix dominates, life stage within liq is weak — is unchanged, giving confidence in the biological signal.
 - **Resolution**: Findings file `.living/findings/matrix-dominates-bagel-metabolome.md`; comparison_*_vs_* summaries under `analysis/differential_features/`.
 - **Tags**: `analytical-concordance`, `ordination`, `differential-abundance`, `everything-bagel`, `eb-comparison`
+
+## 2026-08-20 — Sporangium-vs-Mature within-matrix = 0 significant features justifies the collapse, but the life-stage signal concentrates in the spore fraction
+
+- **Category**: analytical-design
+- **What happened**: The user's hypothesis (sporangia and mature are very similar → collapse for power) is empirically supported: every within-matrix Sporangium-vs-Mature pairwise contrast in the 30-way scan was 0-significant. After collapsing to stage_group (Zoospore | Developed), the life-stage contrasts show a strong asymmetry: spore fraction has 5.6k (Bd) / 7.2k (Bsal) FDR-significant features, while the liquid fraction has only 536 / 54 — the developmental signal is cell-associated, not in the supernatant.
+- **Why it matters**: The main biological contrast (zoospore vs the rest) should be read in the spore fraction; in the liquid, life stage barely reshuffles the (media-dominated) chemistry, matching F-002's matrix dominance. The liq-vs-spore secreted_vs_cellular family is the correct place to hunt secreted/bioactive compounds, plus life-stage hits that are also liq-enriched.
+- **Resolution**: `analysis/differential_features_primary/` script + `DIFFERENTIAL_FEATURES_PRIMARY.md`; finding F-003.
+- **Tags**: `analytical-design`, `differential-abundance`, `life-stage`, `collapse`, `spore-fraction`, `secreted-compounds`, `everything-bagel`
+
+## 2026-08-20 — Condition vocabulary for the collapsed stage design: `stage_group`/`condition_group` columns on linked_data
+
+- **Category**: data-schema
+- **What happened**: The 6-state `condition` (matrix_life_stage, e.g. `liq_Mature`) is the raw sampled condition; to express the hypothesis design reproducibly, `build_ordination_table.py` now also writes `stage_group` (Zoospore | Developed) and `condition_group` (matrix_stage_group, e.g. `spore_Developed`). Sample counts verified: per species liq = 10/20 (Zoo/Dev), spore = 5/10.
+- **Why it matters**: Downstream scripts select groups by `condition_group` so the collapse is a first-class, documented schema decision rather than a string `.str.contains()` hack scattered across scripts; the raw 6-state condition is preserved for the exploratory tier.
+- **Resolution**: Columns on `analysis/ordination/linked_data/sample_metadata.csv`; consumed by `differential_features_primary.py` and the new PCoA `stagegroup`/`condition` figures.
+- **Tags**: `data-schema`, `life-stage`, `collapse`, `sample-metadata`, `everything-bagel`

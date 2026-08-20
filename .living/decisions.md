@@ -46,3 +46,31 @@ Append-only log of non-obvious decisions and their rationale.
 - **Rationale**: Charge is the only meaningful reducer here; per-shard independent output project spaces make failures re-submittable without touching other shards; the pilot validates merge/import before the ~3.9k-feature full run.
 - **Consequences**: Scripts `select_native_targets.py` / `export_native_mgf.py` / `run_sirius_native.sh`(+`.sbatch`) added; degenerate MGF blocks are dropped with a report. Cost is bounded and restartable.
 - **Tags**: `metabolomics`, `sirius`, `decision`, `native-run`, `sharding`
+
+## 2026-08-20 — Collapse Sporangium+Mature into a "Developed" stage_group for the primary analysis tier
+
+**Context**: The user's main question is Zoospore vs the later stages. The 30-way scan showed every within-matrix Sporangium-vs-Mature pairwise contrast to be 0-significant (F-002), and the user explicitly noted sporangia and mature look very similar — a collapse into two groups buys statistical power (liq 10 vs 20, spore 5 vs 10 per species) for the primary hypothesis tier.
+
+**Decision**: Add `stage_group` (Zoospore | Developed) and `condition_group` (matrix_stage_group) to `linked_data/sample_metadata.csv` in `build_ordination_table.py`; keep the raw 6-state `condition` untouched for the exploratory scan. Add a new `analysis/differential_features_primary/` tier with two contrast families, both stratified by species and matrix: `life_stage` (Zoospore vs Developed, 4 contrasts) and `secreted_vs_cellular` (liq vs spore within stage_group, 4 contrasts).
+
+**Alternatives considered**: Replace the 30-way scan with collapsed contrasts only (rejected — scan stays as exploratory background); collapse via `.str.contains()` hacks in each downstream script (rejected — non-reproducible, scattered).
+
+**Rationale**: Power, reproducibility, and F-002's mandate to stratify by matrix; keeps both the exploratory and hypothesis tiers available.
+
+**Consequences**: Life-stage signal is now read per-fraction: spore fraction carries 5.6k/7.2k FDR-significant features vs 54–536 in liq (F-003); secreted/bioactive targeting uses the liq-vs-spore family plus `is_secreted_candidate` flags on life-stage hits.
+
+**Tags**: `analytical-design`, `life-stage`, `collapse`, `differential-abundance`, `decision`, `power`
+
+## 2026-08-20 — Flag significant features with SIRIUS annotations + curated bioactivity keywords, kept as separate joined tables
+
+**Context**: Downstream goal is to find stage-distinguishing features suggesting secreted or high-bioactivity compounds. The scan tier did not apply the SIRIUS identity join yet (EB pattern).
+
+**Decision**: In the primary tier, join `sirius_annotations.tsv` onto all significant (q<fdr) features across all 8 contrasts into `significant_annotated.tsv`, and write a bioactivity-flagged subset `significant_bioactive.tsv`. Flagging uses a curated keyword regex over structure name + NPC pathway/class + ClassyFire class (antibiotic/antimicrobial/mycotoxin/siderophore/alkaloid/terpenoid/polyketide/...), plus an `is_secreted_candidate` hint = stage-confounded `liq_over_spore_log2fc >= +1`.
+
+**Alternatives considered**: Rely on annotating only volcano-top features (rejected — under-delivers for the goal); mark bioactivity by database lookups only (rejected — no project DB; heuristic regex is the practical interim filter).
+
+**Rationale**: Gives a joinable record of every significant feature with its annotation and context flags without hiding or deleting any rows; caveats document the heuristic as a filter for manual curation, not a claim.
+
+**Consequences**: 103,637 significant feature-rows (33,066 unique features); 6,688 NPC-annotated; 3,003 secreted candidates; 1,041 bioactivity-flagged. Users must treat `bioactive` as reviewing-prompt, and `liq_over_spore_log2fc` as a hint (stage-confounded), not a test.
+
+**Tags**: `metabolomics`, `sirius`, `bioactivity`, `secreted-compounds`, `decision`, `annotation-join`

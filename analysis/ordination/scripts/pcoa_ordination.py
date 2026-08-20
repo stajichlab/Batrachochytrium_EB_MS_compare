@@ -63,6 +63,19 @@ LIFESTAGE_COLORS = {
     "Mature": "#009E73",
 }
 MATRIX_MARKERS = {"liq": "o", "spore": "^"}
+# Okabe-Ito-derived: 6 sampled conditions (matrix_life_stage).
+CONDITION_COLORS = {
+    "liq_Zoospore": "#56B4E9",
+    "liq_Sporangium": "#E69F00",
+    "liq_Mature": "#009E73",
+    "spore_Zoospore": "#0072B2",
+    "spore_Sporangium": "#D55E00",
+    "spore_Mature": "#CC79A7",
+}
+STAGEGROUP_COLORS = {
+    "Zoospore": "#0072B2",
+    "Developed": "#D55E00",
+}
 
 
 def prep_matrix(feat: pd.DataFrame, sample_ids: list[str]):
@@ -160,6 +173,56 @@ def plot_by_species(axes, meta, prop, species, out_path):
     plt.close(fig)
 
 
+def plot_condition(axes, meta, prop, out_path):
+    """Color = sampled condition (matrix_life_stage), the primary state axis."""
+    df = axes.merge(meta[["sample_id", "condition", "stage_group", "matrix"]], on="sample_id")
+    fig, ax = plt.subplots(figsize=(7.5, 6.5))
+    for cond, color in CONDITION_COLORS.items():
+        sub = df[df["condition"] == cond]
+        if sub.empty:
+            continue
+        marker = MATRIX_MARKERS[cond.split("_")[0]]
+        ax.scatter(
+            sub["PCoA1"], sub["PCoA2"], marker=marker, s=36, color=color,
+            edgecolor="white", linewidth=0.4,
+            label=f"{cond} (n={len(sub)})",
+        )
+    ax.set_xlabel(f"PCoA1 ({prop[0]:.1%})")
+    ax.set_ylabel(f"PCoA2 ({prop[1]:.1%})")
+    ax.set_title("Bray-Curtis PCoA -- sampled condition (n=90)")
+    ax.legend(frameon=False, fontsize=8, loc="center left", bbox_to_anchor=(1.0, 0.5), ncol=1)
+    ax.set_aspect("equal", adjustable="datalim")
+    ax.spines[["top", "right"]].set_visible(False)
+    fig.tight_layout()
+    savefig_multi(fig, out_path)
+    plt.close(fig)
+
+
+def plot_stage_group(axes, meta, prop, out_path):
+    """Color = collapsed life-stage: Zoospore vs Developed (Sporangium+Mature)."""
+    df = axes.merge(meta[["sample_id", "stage_group", "matrix"]], on="sample_id")
+    fig, ax = plt.subplots(figsize=(7, 6))
+    for group, color in STAGEGROUP_COLORS.items():
+        for matrix, marker in MATRIX_MARKERS.items():
+            sub = df[(df["stage_group"] == group) & (df["matrix"] == matrix)]
+            if sub.empty:
+                continue
+            ax.scatter(
+                sub["PCoA1"], sub["PCoA2"], marker=marker, s=36, color=color,
+                edgecolor="white", linewidth=0.4,
+                label=f"{group} / {matrix} (n={len(sub)})",
+            )
+    ax.set_xlabel(f"PCoA1 ({prop[0]:.1%})")
+    ax.set_ylabel(f"PCoA2 ({prop[1]:.1%})")
+    ax.set_title("Bray-Curtis PCoA -- Zoospore vs Developed (n=90)")
+    ax.legend(frameon=False, fontsize=8, loc="center left", bbox_to_anchor=(1.0, 0.5))
+    ax.set_aspect("equal", adjustable="datalim")
+    ax.spines[["top", "right"]].set_visible(False)
+    fig.tight_layout()
+    savefig_multi(fig, out_path)
+    plt.close(fig)
+
+
 def main():
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     (FIG_DIR / "by_species").mkdir(parents=True, exist_ok=True)
@@ -171,6 +234,8 @@ def main():
     axes_all, prop_all, _ = run_ordination("all", all_ids, feat)
     axes_all.to_csv(FIG_DIR / "pcoa_axes_all.csv", index=False)
     plot_all(axes_all, meta, prop_all, FIG_DIR / "pcoa_all.png")
+    plot_condition(axes_all, meta, prop_all, FIG_DIR / "pcoa_condition.png")
+    plot_stage_group(axes_all, meta, prop_all, FIG_DIR / "pcoa_stagegroup.png")
 
     for species in sorted(meta["species"].unique()):
         ids = meta.loc[meta["species"] == species, "sample_id"].tolist()

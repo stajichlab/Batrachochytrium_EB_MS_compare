@@ -54,6 +54,10 @@ def main():
     meta = meta[meta["use_in_analysis"] == True].copy()  # noqa: E712
     meta["sample_id"] = meta["filename"].str.replace(".mzML", "", regex=False)
     meta["condition"] = meta["matrix"] + "_" + meta["life_stage"]
+    meta["stage_group"] = meta["life_stage"].map(
+        {"Zoospore": "Zoospore", "Sporangium": "Developed", "Mature": "Developed"}
+    )
+    meta["condition_group"] = meta["matrix"] + "_" + meta["stage_group"]
 
     quant = pd.read_csv(QUANT, low_memory=False)
     area_cols = {
@@ -82,7 +86,7 @@ def main():
     meta_cols = [
         "sample_id", "species", "matrix", "life_stage", "condition", "plate",
         "replicate", "is_C_companion", "has_C_companion", "companion_of",
-        "timepoint_hrs",
+        "timepoint_hrs", "stage_group", "condition_group",
     ]
     meta[meta_cols].to_csv(OUT_DIR / "sample_metadata.csv", index=False)
     feat.to_csv(OUT_DIR / "feature_abundance.csv.gz", index=False)
