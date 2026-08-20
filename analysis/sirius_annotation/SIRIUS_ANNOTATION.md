@@ -17,14 +17,22 @@ transfer works, what it produced, its caveats, and how to fold in the next
 
 ## Status
 
-**status**: transfer complete; **native run in progress (pilot)**
+**status**: transfer + native **pilot merged** (1,885 annotated features);
+**full native run not yet started**
 
 - Transfer executed with default thresholds → 2,182/2,860 (76.3%) of EB's
   SIRIUS-annotated features assigned to local features; 1,773 local features
   annotated.
-- A native SIRIUS run on the remaining un-annotated features is set up; the
-  pilot (149 usable spectra, 5 shards, job `27605104`) is running to benchmark
-  runtime and validate the shard/merge path.
+- Native SIRIUS pilot (150 targets → 149 usable spectra, 5 shards, job
+  `27605104`) **completed and merged**: 112 formula / 99 structure /
+  107 formula-CANOPUS / 99 structure-CANOPUS identifications folded in → 1,885
+  local features annotated (1,773 transferred + 112 native `native-EB97X`).
+  Merge introduced 0 new merge-conflicts. Runtime benchmark: all 5 shards
+  finished well within the `short`-queue limits (see Pilot section).
+- Remaining un-annotated (SIRIUS-runnable) features: ~3,815 (3,927 targets −
+  112 won by pilot). Full native run (`bash
+  analysis/sirius_annotation/scripts/run_sirius_native.sh 30 0 1`) is the
+  next step if full native coverage is desired.
 - See "Known caveats" below for the merge-collapse conflicts.
 
 ## Datasets
@@ -211,7 +219,15 @@ peaks) and reports them; e.g. the pilot dropped row ID `6813` (`CHARGE=0`,
 ### Pilot (job 27605104)
 
 150 targets (seed 1234) → 149 usable spectra → 5 shards of 30 (30/30/30/30/29).
-Merge + fold in:
+
+**Completed 2026-08-20** (status above updated). Per-shard
+`formula_identifications.tsv` rows: 24 / 11 / 24 / 24 / 29 → 112 merged
+formula rows; 99 structure, 107 CANOPUS-formula, 99 CANOPUS-structure. All 5
+array tasks finished comfortably within the `short`-queue limits (max walltime
+< 24 h, heap 12G), validating shard size 30 as safe for the full run. No
+denovo/spectral matches (0 rows) from the pilot's formula-first settings.
+
+Merge + fold in (executed 2026-08-20):
 
 ```bash
 python3 /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/EB/scripts/sirius_container_pipeline/merge_sirius_shards.py \
@@ -222,7 +238,8 @@ python3 analysis/sirius_annotation/scripts/import_sirius_transfer.py \
   --native-label native-EB97X
 ```
 
-(TODO: add pilot runtime result here when the array completes.)
+After fold-in: 1,885 assigned local features (1,773 transferred + 112 native),
+0 new merge-conflicts.
 
 ## Reproducibility
 

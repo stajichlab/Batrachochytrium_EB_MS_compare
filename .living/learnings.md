@@ -67,3 +67,11 @@ Append-only log of gotchas, surprises, and insights.
 - **Why it matters**: Downstream scripts select groups by `condition_group` so the collapse is a first-class, documented schema decision rather than a string `.str.contains()` hack scattered across scripts; the raw 6-state condition is preserved for the exploratory tier.
 - **Resolution**: Columns on `analysis/ordination/linked_data/sample_metadata.csv`; consumed by `differential_features_primary.py` and the new PCoA `stagegroup`/`condition` figures.
 - **Tags**: `data-schema`, `life-stage`, `collapse`, `sample-metadata`, `everything-bagel`
+
+## 2026-08-20 — Native SIRIUS pilot (job 27605104) merged through the documented `--native-merged` fold-in path
+
+- **Category**: infrastructure
+- **What happened**: The 149-spectra native SIRIUS pilot completed (5 shards of 30 = 24/11/24/24/29 formula rows). Merged with `merge_sirius_shards.py` (EB script) → 112 formula / 99 structure rows, folded into `sirius_annotations.tsv` via `import_sirius_transfer.py --native-merged --native-label native-EB97X`: 1,885 local features annotated (1,773 transferred + 112 native), 0 new merge-conflicts. Re-running the primary differential fold-in changed bioactivity-flagged rows 1,041 → 1,106 and added 367 native-origin significant rows.
+- **Why it matters**: Confirms the full native-annotation path (target select → MGF export → shard → SLURM array → merge → fold-in → downstream join) works end-to-end; the full run (~3,815 remaining SIRIUS-runnable features) can reuse the same validated path, and `annotation_origin` now distinguishes `transferred` vs `native` provenance in every downstream table.
+- **Resolution**: `analysis/sirius_annotation/sirius_native_results/merged/`, updated `SIRIUS_ANNOTATION.md` status, refreshed differential tables.
+- **Tags**: `sirius`, `annotation`, `native-merge`, `pilot`, `infrastructure`, `everything-bagel`

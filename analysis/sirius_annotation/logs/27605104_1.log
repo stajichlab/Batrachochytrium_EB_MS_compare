@@ -20095,3 +20095,1395 @@ WARNING 05:22:21 - <57>[FingerprintSubToolJob-57 | <Awaiting Instance>] ToolChai
 WARNING 05:22:21 - <58>[CanopusSubToolJob-58 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-58 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
 WARNING 05:22:21 - <59>[FingerblastSubToolJob-59 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-59 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
 SEVERE  05:22:21 - <56>[SiriusSubToolJob-56 | SCAN=327 (878145450528964686)] ToolChain Job failed due to: java.lang.NullPointerException: Cannot invoke "de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilder.computeTree()" because "finalBuilder" is null
+WARNING 05:24:28 - <81>[FingerprintSubToolJob-81 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-80 | SCAN=3058 (878145451208441950)' finished with unexpected state 'CANCELED'.
+WARNING 05:24:28 - <82>[CanopusSubToolJob-82 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-81 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:24:28 - <83>[FingerblastSubToolJob-83 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-82 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:24:28 - <80>[SiriusSubToolJob-80 | SCAN=3058 (878145451208441950)] ToolChain Job canceled due to: de.unijena.bioinf.jjobs.exceptions.TimeoutException: Timeout reached!
+WARNING 05:24:28 - <81>[FingerprintSubToolJob-81 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-81 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:24:28 - <83>[FingerblastSubToolJob-83 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-83 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:24:28 - <82>[CanopusSubToolJob-82 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-82 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - Error loading CBC!
+java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:302)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.RuntimeException: java.io.IOException: No space left on device [in thread "ForkJoinPool-3-worker-3"]
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI.<clinit>(CLPModel_JNI.java:66)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPSolver$1.checkSolver(CLPSolver.java:55)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:153)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:127)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilderFactory.getTreeBuilder(TreeBuilderFactory.java:166)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FragmentationPatternAnalysis.getTreeBuilder(FragmentationPatternAnalysis.java:1295)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:236)
+	... 20 more
+
+WARNING 05:24:32 - Could not load Solver 'CLP': java.lang.NoClassDefFoundError: Could not initialize class de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.ilp.CLPModel_JNI
+WARNING 05:24:32 - Could not load GrbSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: gurobi/GRBException
+WARNING 05:24:32 - Could not load CPLEXSolver! Sirius was compiled with the following ILP solvers: GLPK-v1.7.0 (included), Gurobi-v9.1.1, CPLEX-v12.7.1, COIN-OR-v2.10.12.1: ilog/concert/IloNumVar
+SEVERE  05:24:32 - Your system does not ship with any instantiatable ILP solver. Please install either CLP,  Gurobi or CPLEX to use SIRIUS.
+SEVERE  05:24:32 - <20242>[RecalibrationJob-20242] Failed!
+java.lang.NullPointerException: Cannot invoke "de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilder.computeTree()" because "finalBuilder" is null
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.recalibrate(FasterTreeComputationInstance.java:623)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance$RecalibrationJob.compute(FasterTreeComputationInstance.java:595)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance$RecalibrationJob.compute(FasterTreeComputationInstance.java:581)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.jjobs.JJob.takeResult(JJob.java:251)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:214)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1716)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:570)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:265)
+	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:723)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:309)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+SEVERE  05:24:32 - <19917>[FasterTreeComputationInstance-19917 | SCAN=13128@394.3065m/z] Failed!
+java.lang.NullPointerException: Cannot invoke "de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilder.computeTree()" because "finalBuilder" is null
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.recalibrate(FasterTreeComputationInstance.java:623)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance$RecalibrationJob.compute(FasterTreeComputationInstance.java:595)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance$RecalibrationJob.compute(FasterTreeComputationInstance.java:581)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.jjobs.JJob.takeResult(JJob.java:251)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:214)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1716)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:570)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:265)
+	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:723)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:309)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+SEVERE  05:24:32 - <6853>[SiriusIdentificationJob-6853] Failed!
+java.lang.NullPointerException: Cannot invoke "de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilder.computeTree()" because "finalBuilder" is null
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.recalibrate(FasterTreeComputationInstance.java:623)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance$RecalibrationJob.compute(FasterTreeComputationInstance.java:595)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance$RecalibrationJob.compute(FasterTreeComputationInstance.java:581)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.jjobs.JJob.takeResult(JJob.java:251)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:214)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1716)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:570)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:265)
+	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:723)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:309)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+WARNING 05:24:32 - <6850>[FingerprintSubToolJob-6850 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-6849 | SCAN=13128 (878145452739362966)' finished with unexpected state 'FAILED'.
+WARNING 05:24:32 - <6851>[CanopusSubToolJob-6851 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-6850 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:24:32 - <6852>[FingerblastSubToolJob-6852 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-6851 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+SEVERE  05:24:32 - <6849>[SiriusSubToolJob-6849 | SCAN=13128 (878145452739362966)] Failed!
+java.lang.NullPointerException: Cannot invoke "de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilder.computeTree()" because "finalBuilder" is null
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.recalibrate(FasterTreeComputationInstance.java:623)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance$RecalibrationJob.compute(FasterTreeComputationInstance.java:595)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance$RecalibrationJob.compute(FasterTreeComputationInstance.java:581)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.jjobs.JJob.takeResult(JJob.java:251)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:214)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1716)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:570)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:560)
+	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:265)
+	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:723)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.estimateTreeSizeAndRecalibration(FasterTreeComputationInstance.java:309)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:175)
+	at de.unijena.bioinf.FragmentationTreeConstruction.computation.FasterTreeComputationInstance.compute(FasterTreeComputationInstance.java:57)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at de.unijena.bioinf.jjobs.BasicMasterJJob$1.compute(BasicMasterJJob.java:96)
+	at java.base/java.util.concurrent.RecursiveTask.exec(RecursiveTask.java:110)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.tryRemoveAndExec(ForkJoinPool.java:1490)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:2248)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:499)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:666)
+	at de.unijena.bioinf.jjobs.BasicJJob.awaitResult(BasicJJob.java:221)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:642)
+	at de.unijena.bioinf.sirius.Sirius$SiriusIdentificationJob.compute(Sirius.java:625)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:124)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.compute(ForkJoinTask.java:1715)
+	at java.base/java.util.concurrent.ForkJoinTask$InterruptibleTask.exec(ForkJoinTask.java:1659)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:511)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1450)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:2019)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:187)
+
+WARNING 05:24:32 - <6851>[CanopusSubToolJob-6851 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-6851 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+SEVERE  05:24:32 - <6849>[SiriusSubToolJob-6849 | SCAN=13128 (878145452739362966)] ToolChain Job failed due to: java.lang.NullPointerException: Cannot invoke "de.unijena.bioinf.FragmentationTreeConstruction.computation.tree.TreeBuilder.computeTree()" because "finalBuilder" is null
+WARNING 05:24:32 - <6852>[FingerblastSubToolJob-6852 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-6852 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:24:32 - <6850>[FingerprintSubToolJob-6850 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-6850 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:25:16 - <19910>[FingerblastJJob-19910 | SCAN=20143@786.6234m/z] No Confidence computed.
+WARNING 05:25:51 - <999>[FingerprintSubToolJob-999 | <Awaiting Instance>] Required Job 'SiriusSubToolJob-998 | SCAN=3795 (878145451334271074)' finished with unexpected state 'CANCELED'.
+WARNING 05:25:51 - <1000>[CanopusSubToolJob-1000 | <Awaiting Instance>] Required Job 'FingerprintSubToolJob-999 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:25:51 - <1001>[FingerblastSubToolJob-1001 | <Awaiting Instance>] Required Job 'CanopusSubToolJob-1000 | <Awaiting Instance>' finished with unexpected state 'CANCELED'.
+WARNING 05:25:51 - <1001>[FingerblastSubToolJob-1001 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerblastSubToolJob-1001 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:25:51 - <998>[SiriusSubToolJob-998 | SCAN=3795 (878145451334271074)] ToolChain Job canceled due to: de.unijena.bioinf.jjobs.exceptions.TimeoutException: Timeout reached!
+WARNING 05:25:51 - <1000>[CanopusSubToolJob-1000 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'CanopusSubToolJob-1000 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+WARNING 05:25:51 - <999>[FingerprintSubToolJob-999 | <Awaiting Instance>] ToolChain Job canceled due to: java.util.concurrent.CancellationException: Job 'FingerprintSubToolJob-999 | <Awaiting Instance>' canceled before submission to executor, Most likely because of a failing required Job.
+########################################
+## Computed 30 instances in 00:11:01.868(2.72 instances/minute).
+########################################
+INFO    05:27:33 - Workflow has been finished in 00:11:04.077
+INFO    05:27:33 - Executing Postprocessing...
+INFO    05:27:33 - Summaries written in: 00:00:00.227
+INFO    05:27:33 - Nitrite database has been closed successfully.
+INFO    05:27:33 - CLI shut down hook: SIRIUS is cleaning up threads and shuts down...
+WARNING 05:27:33 - <10696>[WebJobWatcherJJob-10696] JobWatcher thread was interrupted unexpectedly. State should be clean. Try to recover!
+WARNING 05:27:33 - <10696>[WebJobWatcherJJob-10696] ====================> Close Job Watcher!
+INFO    05:27:33 - Try to delete leftover jobs on web server...
+WARNING 05:27:33 - <10695>[WebJobSubmitterJJob-10695] JobSubmitter thread was interrupted unexpectedly but state should be clean.  Try to recover!
+WARNING 05:27:33 - <10695>[WebJobSubmitterJJob-10695] =====================> Close Job Submitter!
+WARNING 05:27:33 - Watcher is already shut Down! Pls create a new Instance!
+INFO    05:27:33 - ...Job deletion Done!
+INFO    05:27:33 - Closing AuthService...
+INFO    05:27:33 - AuthService closed
+INFO    05:27:33 - Shutting down JobManager
+INFO    05:27:33 - Awaiting termination of JobManager
+java.io.InterruptedIOException
+	at okhttp3.internal.http2.Http2Stream.waitForIo$okhttp(Http2Stream.kt:716)
+	at okhttp3.internal.http2.Http2Stream.takeHeaders(Http2Stream.kt:156)
+	at okhttp3.internal.http2.Http2ExchangeCodec.readResponseHeaders(Http2ExchangeCodec.kt:101)
+	at okhttp3.internal.connection.Exchange.readResponseHeaders(Exchange.kt:114)
+	at okhttp3.internal.http.CallServerInterceptor.intercept(CallServerInterceptor.kt:98)
+	at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at okhttp3.internal.connection.ConnectInterceptor.intercept(ConnectInterceptor.kt:34)
+	at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at okhttp3.internal.cache.CacheInterceptor.intercept(CacheInterceptor.kt:101)
+	at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at okhttp3.internal.http.BridgeInterceptor.intercept(BridgeInterceptor.kt:85)
+	at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at okhttp3.internal.http.RetryAndFollowUpInterceptor.intercept(RetryAndFollowUpInterceptor.kt:74)
+	at okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at okhttp3.internal.connection.RealCall.getResponseWithInterceptorChain$okhttp(RealCall.kt:208)
+	at okhttp3.internal.connection.RealCall.execute(RealCall.kt:160)
+	at de.unijena.bioinf.ms.rest.client.AbstractClient.executeWithResponse(AbstractClient.java:138)
+	at de.unijena.bioinf.ms.rest.client.AbstractClient.execute(AbstractClient.java:145)
+	at de.unijena.bioinf.ms.rest.client.AbstractClient.execute(AbstractClient.java:160)
+	at de.unijena.bioinf.ms.rest.client.AbstractClient.execute(AbstractClient.java:167)
+	at de.unijena.bioinf.ms.rest.client.jobs.JobsClient.deleteJobs(JobsClient.java:143)
+	at de.unijena.bioinf.webapi.rest.RestAPI.lambda$deleteJobs$0(RestAPI.java:358)
+	at de.unijena.bioinf.rest.ProxyManager.consumeClient(ProxyManager.java:437)
+	at de.unijena.bioinf.webapi.rest.RestAPI.deleteJobs(RestAPI.java:358)
+	at de.unijena.bioinf.webapi.rest.WebJobWatcher$WebJobSubmitterJJob.lambda$cancelAllNonSubmitted$0(WebJobWatcher.java:243)
+	at de.unijena.bioinf.rest.NetUtils.lambda$tryAndWait$0(NetUtils.java:79)
+	at de.unijena.bioinf.rest.NetUtils.tryAndWait(NetUtils.java:93)
+	at de.unijena.bioinf.rest.NetUtils.tryAndWait(NetUtils.java:78)
+	at de.unijena.bioinf.webapi.rest.WebJobWatcher$WebJobSubmitterJJob.cancelAllNonSubmitted(WebJobWatcher.java:243)
+	at de.unijena.bioinf.webapi.rest.WebJobWatcher$WebJobSubmitterJJob.cleanup(WebJobWatcher.java:233)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:152)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+WARNING 05:27:33 - Request to Server failed! Try again in 2.0s | Exception: de.unijena.bioinf.rest.SiriusHttpException | Cause: Http Request Failed in client `JOB_WATCHER`. Cause: `InterruptedIOException` | Message: `null`
+WARNING 05:27:33 - <10695>[WebJobSubmitterJJob-10695] Failed to delete remote jobs from server!
+java.lang.InterruptedException: Interruption by thread: pool-28-thread-1
+	at de.unijena.bioinf.rest.NetUtils.lambda$checkThreadInterrupt$0(NetUtils.java:174)
+	at de.unijena.bioinf.rest.NetUtils.tryAndWait(NetUtils.java:115)
+	at de.unijena.bioinf.rest.NetUtils.tryAndWait(NetUtils.java:78)
+	at de.unijena.bioinf.webapi.rest.WebJobWatcher$WebJobSubmitterJJob.cancelAllNonSubmitted(WebJobWatcher.java:243)
+	at de.unijena.bioinf.webapi.rest.WebJobWatcher$WebJobSubmitterJJob.cleanup(WebJobWatcher.java:233)
+	at de.unijena.bioinf.jjobs.BasicJJob.call(BasicJJob.java:152)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+WARNING 05:27:33 - Watcher is already shut Down! Pls create a new Instance!
+INFO    05:27:33 - JobManager is shut down
+INFO    05:27:33 - Close clients: 'POOL_CLIENT' Successfully closed!
+INFO    05:27:33 - Close clients: 'JOB_WATCHER' Successfully closed!
+INFO    05:27:33 - Close clients: 'JOB_SUBMITTER' Successfully closed!
+
+
+Please cite the following publications when using our tool:
+
+When using the SIRIUS Software please cite the following paper:
+
+Kai D?hrkop, Markus Fleischauer, Marcus Ludwig, Alexander A. Aksenov, Alexey V. Melnik, Marvin Meusel, Pieter C. Dorrestein, Juho Rousu and Sebastian B?cker
+SIRIUS4: a rapid tool for turning tandem mass spectra into metabolite structure information
+Nat Methods, 16, 2019.  https://doi.org/10.1038/s41592-019-0344-8
+
+
+Depending on the tools you have used please also cite:
+
+Wishart, David S and Tian, Siyang and Allen, Dana and Oler, Eponine and Peters, Harrison and Lui, Vicki W and Gautam, Vasuk and Djoumbou-Feunang, Yannick and Greiner, Russell and Metz, Thomas O
+BioTransformer 3.0?a web server for accurately predicting metabolic transformation products
+Nucleic Acids Res, 50, 2022.  https://doi.org/10.1093/nar/gkac313
+(Cite if you are using: Biotransformer for structure database generation)
+
+Xing, Shipei and Shen, Sam and Xu, Banghua and Li, Xiaoxiao and Huan, Tao
+BUDDY: molecular formula discovery via bottom-up MS/MS interrogation.
+Nat Methods, 2023.  https://doi.org/10.1038/s41592-023-01850-x
+(Cite if you are using: Bottom-up molecular formula generation)
+
+Kai D?hrkop, Louis-F?lix Nothias, Markus Fleischauer, Raphael Reher, Marcus Ludwig, Martin A. Hoffmann, Daniel Petras, William H. Gerwick, Juho Rousu, Pieter C. Dorrestein and Sebastian B?cker
+Systematic classification of unknown metabolites using high-resolution fragmentation mass spectra
+Nat Biotechnol, 39, 2021.  https://doi.org/10.1038/s41587-020-0740-8
+(Cite if you are using: CANOPUS)
+
+Yannick Djoumbou Feunang, Roman Eisner, Craig Knox, Leonid Chepelev, Janna Hastings, Gareth Owen, Eoin Fahy, Christoph Steinbeck, Shankar Subramanian, Evan Bolton, Russell Greiner, David S. Wishart
+ClassyFire: automated chemical classification with a comprehensive, computable taxonomy
+J Cheminf, 8, 2016.  https://doi.org/10.1186/s13321-016-0174-y
+(Cite if you are using: CANOPUS)
+
+Kim, Hyun Woo and Wang, Mingxun and Leber, Christopher A. and Nothias, Louis-F?lix and Reher, Raphael and Kang, Kyo Bin and van der Hooft, Justin J. J. and Dorrestein, Pieter C. and Gerwick, William H. and Cottrell, Garrison W.
+NPClassifier: A Deep Neural Network-Based Structural Classification Tool for Natural Products
+Journal of Natural Products, 84, 2021.  https://doi.org/10.1021/acs.jnatprod.1c00399
+(Cite if you are using: CANOPUS)
+
+Kai D?hrkop, Huibin Shen, Marvin Meusel, Juho Rousu and Sebastian B?cker
+Searching molecular structure databases with tandem mass spectra using CSI:FingerID
+Proc Natl Acad Sci U S A, 112, 2015.  https://doi.org/10.1073/pnas.1509788112
+(Cite if you are using: CSI:FingerID)
+
+Hoffmann, Martin A. and Nothias, Louis-F?lix and Ludwig, Marcus and Fleischauer, Markus and Gentry, Emily C. and Witting, Michael and Dorrestein, Pieter C. and D?hrkop, Kai and B?cker, Sebastian
+High-confidence structural annotation of metabolites absent from spectral libraries
+Nat Biotechnol, 40, 2022.  https://doi.org/10.1038/s41587-021-01045-9
+(Cite if you are using: CSI:FingerID, COSMIC)
+
+Sebastian B?cker and Kai D?hrkop
+Fragmentation trees reloaded
+J Cheminform, 8, 2016.  https://doi.org/10.1186/s13321-016-0116-8
+(Cite if you are using: Fragmentation Trees)
+
+Sebastian B?cker, Matthias Letzel, Zsuzsanna Lipt?k and Anton Pervukhin
+SIRIUS: Decomposing isotope patterns for metabolite identification
+Bioinformatics, 25, 2009.  https://doi.org/10.1093/bioinformatics/btn603
+(Cite if you are using: Isotope Pattern analysis)
+
+Stravs, Michael A. and D?hrkop, Kai and B?cker, Sebastian and Zamboni, Nicola
+MSNovelist: de novo structure generation from mass spectra
+Nat Methods, 19, 2022.  https://doi.org/10.1038/s41592-022-01486-3
+(Cite if you are using: MSNovelist)
+
+Ludwig, Marcus and Nothias, Louis-F?lix and D?hrkop, Kai and Koester, Irina and Fleischauer, Markus and Hoffmann, Martin A. and Petras, Daniel and Vargas, Fernando and Morsy, Mustafa and Aluwihare, Lihini and Dorrestein, Pieter C. and B?cker, Sebastian
+Database-independent molecular formula annotation using Gibbs sampling through ZODIAC
+Nat Mach Intell, 2, 2020.  https://doi.org/10.1038/s42256-020-00234-6
+(Cite if you are using: ZODIAC)
+
+
+shard_001 completed
