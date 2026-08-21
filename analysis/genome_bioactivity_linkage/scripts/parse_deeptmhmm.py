@@ -11,13 +11,26 @@ import pandas as pd
 
 
 def parse_tmrs_gff3(path: Path) -> pd.DataFrame:
+    """Parse a real DeepTMHMM ``TMRs.gff3`` file.
+
+    Real DeepTMHMM output (verified against a live run's output, e.g.
+    ``/rhome/jstajich/projects/nf/nf_funannotate1/tests/output/
+    deeptmhmm_gpu_test/27596677/TMRs.gff3``) has two quirks a naive GFF3
+    parser doesn't expect:
+
+    1. Data lines are tab-padded to 8 fields (e.g.
+       ``P40231.2\\tinside\\t1\\t332\\t\\t\\t\\t``) -- only the first 4 fields
+       (protein_id, region_type, start, end) are meaningful.
+    2. Records are separated by lines containing just ``//`` (not a ``#``
+       comment), in addition to the ``# ...`` header/comment lines.
+    """
     rows = []
     with open(path) as fh:
         for line in fh:
             line = line.rstrip("\n")
-            if not line or line.startswith("#"):
+            if not line or line.startswith("#") or line == "//":
                 continue
-            protein_id, region_type, start, end = line.split("\t")
+            protein_id, region_type, start, end = line.split("\t")[:4]
             rows.append(
                 {
                     "protein_id": protein_id,
