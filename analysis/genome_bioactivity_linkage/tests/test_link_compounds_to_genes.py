@@ -17,8 +17,8 @@ def test_assign_tier():
 def test_build_candidate_table_only_matches_extracellular_matching_family():
     compounds = pd.DataFrame(
         [
-            {"row_id": 100, "compound_class": "terpenoid", "log2fc": 3.0, "q_value": 0.01},
-            {"row_id": 200, "compound_class": "polyketide", "log2fc": 1.0, "q_value": 0.2},
+            {"row_id": 100, "compound_class": "Terpenoids", "log2fc": 3.0, "q_value": 0.01},
+            {"row_id": 200, "compound_class": "Polyketides", "log2fc": 1.0, "q_value": 0.2},
         ]
     )
     gene_domains = pd.DataFrame(
@@ -58,7 +58,7 @@ def test_build_candidate_table_only_matches_extracellular_matching_family():
 
 def test_build_candidate_table_sorted_by_compound_then_tier_then_fc():
     compounds = pd.DataFrame(
-        [{"row_id": 1, "compound_class": "terpenoid", "log2fc": 5.0, "q_value": 0.01}]
+        [{"row_id": 1, "compound_class": "Terpenoids", "log2fc": 5.0, "q_value": 0.01}]
     )
     gene_domains = pd.DataFrame(
         [

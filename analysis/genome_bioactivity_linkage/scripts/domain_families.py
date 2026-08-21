@@ -21,9 +21,6 @@ COMPOUND_CLASS_TO_FAMILY: dict[str, str] = {
     "Polyketides": "pks",
     "Alkaloids (linear polyketides)": "pks",
     "Amino acids and Peptides": "nrps",
-    # Test data uses lowercase/singular forms
-    "terpenoid": "terpene_synthase",
-    "polyketide": "pks",
 }
 
 _PFAM_TO_FAMILY = {pfam: family for family, pfams in DOMAIN_FAMILIES.items() for pfam in pfams}
