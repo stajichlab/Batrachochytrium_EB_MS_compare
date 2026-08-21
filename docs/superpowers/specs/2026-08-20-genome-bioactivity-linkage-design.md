@@ -1,7 +1,7 @@
 # Genome-to-bioactive-compound linkage — design spec
 
-Status: approved by user, pending Opus bioinformatics review of shell/SLURM
-vs. Nextflow implementation choice before writing-plans.
+Status: approved by user; Opus bioinformatics review completed
+(2026-08-20) and folded in below. Ready for writing-plans.
 
 ## Purpose
 
@@ -22,42 +22,51 @@ enriched in the liquid (media) fraction.
 - **Bd**: JEL423 is the true Bd reference strain (per user; supersedes the older assumption that JAM81 is the FungiDB/RefSeq reference) — so FungiDB/NCBI JEL423 annotation should map directly onto the BFD JEL423 gene models without a separate ortholog-mapping step. Confirm at implementation time which NCBI JEL423 assembly (`GCA_048537975.1_CMM_BatrDend_JEL423_V3` per BFD's `samples.csv`) and which FungiDB release carry curated InterPro/PFAM/GO, and reconcile gene-model coordinates only if the FungiDB/NCBI JEL423 assembly version differs from the one BFD used for gene prediction (fall back to reciprocal-best-hit mapping only if coordinates don't line up).
 - **Bsal**: no RefSeq/FungiDB entry exists. Cross-check falls back to the raw NCBI GenBank annotation for `GCA_002006685.2` (AMFP13) instead of a curated source. This is materially weaker than the Bd cross-check — call this out in the writeup, don't present it as equivalent rigor.
 
-## Stage 1 — BGC + dispersed domain detection (per species, on BFD `.gbk`)
+## Stage 1 — BGC + dispersed domain detection (run inside the BFD pipeline, not this repo)
 
-- `antismash --taxon fungi --genefinding-tool none --fullhmmer --clusterhmmer --cb-general --pfam2go -c 8 <gbk>` — same invocation as BFD's existing `ANTISMASH_RUN` nextflow module (`~/projects/BFD/Fungi_BFD_runs/nextflow/modules/funannotate/function/ANTISMASH_RUN/main.nf`). Expect few/no clusters called (prior belief, stated by user); a null result here is itself informative and must be reported, not treated as pipeline failure.
-- Independent of cluster calls: mine the `--fullhmmer` PFAM domain hits (or a fresh `hmmscan -E 1e-5 Pfam-A.hmm` if antiSMASH's own sweep proves insufficient) for terpene synthase (PF01397, PF03936, PF00494), PKS (PF00109 KS, PF08659, PF00698 AT), NRPS (PF00668 C-domain, PF00501 AMP-binding, PF00550 PCP), DMATS prenyltransferase, and adjacent CYP450 domains — because chytrid secondary metabolism is expected to be dispersed/unclustered rather than organized into classic BGCs.
+BFD already has both genomes as rows in `samples.csv`
+(`GCA_048537975.1_CMM_BatrDend_JEL423_V3`, `GCA_002006685.2_Batr_sala_V2`)
+with `predict_results/` populated and no functional stage run yet, plus
+ready-made `ANTISMASH_RUN`, `RUN_PFAM` nextflow modules and a
+`--taxon GENUS:Batrachochytrium` filter to scope a run to exactly these two
+genomes. Run it there — writing functional annotation into BFD's tree
+benefits every downstream BFD user instead of forking a private copy — then
+read the outputs back from this repo:
 
-## Stage 2 — secretion prediction
+- `antismash --taxon fungi --genefinding-tool none --fullhmmer --clusterhmmer --cb-general --pfam2go -c 8 <gbk>` via BFD's existing `ANTISMASH_RUN` module (`~/projects/BFD/Fungi_BFD_runs/nextflow/modules/funannotate/function/ANTISMASH_RUN/main.nf`), launched with `sbatch nextflow/run_functional.sh --taxon GENUS:Batrachochytrium` (adjust flags as BFD's actual driver script requires at implementation time). Expect few/no clusters called (prior belief, stated by user); a null result here is itself informative and must be reported, not treated as pipeline failure.
+- Independent of cluster calls: mine PFAM domain hits via BFD's `RUN_PFAM` module using **`hmmsearch --cut_ga Pfam-A.hmm`** (PFAM's own gathering thresholds — not an arbitrary `-E 1e-5` cutoff) for terpene synthase (PF01397, PF03936), PKS (PF00109 KS, PF08659, PF00698 AT), NRPS (PF00668 C-domain, PF00501 AMP-binding, PF00550 PCP), DMATS prenyltransferase, and adjacent CYP450 domains. **PF00494 is squalene/phytoene synthase, not a terpene cyclase** — track it as its own category, not folded into "terpene synthase"; chytrid TPS genes may simply be absent from PF01397/PF03936 (a true negative, not a pipeline gap).
 
-- **SignalP 6** (HPCC module `signalp/6`) for signal-peptide calls.
-- **DeepTMHMM** for transmembrane helix calls, replacing plain TMHMM — port the invocation from `~/projects/nf/nf_funannotate1/modules/local/deeptmhmm_annotation.nf` and `tests/test_deeptmhmm_gpu.sh`: singularity image `/bigdata/stajichlab/shared/lib/singularity_cache/DeepTMHMM-1.0.sif`, run as `apptainer exec --nv -B <project_dir> "$SIF" bash -c "cd /opt/deeptmhmm && python3 predict.py --fasta <proteins.fa> --output-dir <outdir>"`, output `TMRs.gff3`. No HPCC Lmod module exists for this — it only runs containerized, and needs a GPU node (`preempt_gpu` partition, not plain `preempt`).
-- **PredGPI** for GPI-anchor calls (mirrors the BFD `function/predgpi` category, not yet run for Batrachochytrium).
-- Combine: "predicted extracellular" = SignalP+, no TM helix beyond the cleaved signal peptide, no GPI anchor.
+## Stage 2 — secretion prediction (SignalP/PredGPI via BFD; DeepTMHMM standalone)
+
+- **SignalP 6** and **PredGPI** via BFD's existing `SIGNALP_RUN` / `RUN_PREDGPI` modules, same `--taxon GENUS:Batrachochytrium`-scoped run as Stage 1 (mirrors the BFD `function/signalp`, `function/predgpi` categories, not yet populated for Batrachochytrium).
+- **DeepTMHMM** has no BFD/Lmod equivalent yet, so run it standalone in this repo: port the invocation from `~/projects/nf/nf_funannotate1/modules/local/deeptmhmm_annotation.nf` and `tests/test_deeptmhmm_gpu.sh` — singularity image `/bigdata/stajichlab/shared/lib/singularity_cache/DeepTMHMM-1.0.sif`, run as `apptainer exec --nv -B <project_dir> "$SIF" bash -c "cd /opt/deeptmhmm && python3 predict.py --fasta <proteins.fa> --output-dir <outdir>"`, output `TMRs.gff3`. Needs a GPU node (`preempt_gpu`, not plain `preempt`).
+- Combine: "predicted extracellular" = SignalP+, no GPI anchor, **and no TM helix outside the cleaved signal-peptide region** — define this overlap rule explicitly in the merge script (a TM helix call that falls entirely within the SignalP-cleaved N-terminal region must NOT disqualify the protein; only a TM helix in the mature-chain coordinates does).
 
 ## Stage 3 — cross-reference reconciliation
 
-- Bd: since JEL423 is the true reference strain, compare BFD-recompute domain calls directly against FungiDB/NCBI JEL423 curated annotation (coordinate-matched if the assembly version matches; reciprocal-best-hit mapping only as a fallback if it doesn't). Flag domain calls found in both sources as higher-confidence; calls found only in one side are reported but flagged lower-confidence.
-- Bsal: same mechanic but against raw AMFP13 GenBank annotation only (no curated FungiDB/InterPro source) — weaker cross-check, noted as such.
+- Bd: **do reciprocal-best-hit (RBH) protein mapping as the primary path, not a fallback** — FungiDB's Bd JEL423 gene models are very likely on an older (Broad) assembly, while BFD predicted genes on `GCA_048537975.1` (V3); assume the assemblies differ until proven otherwise, and gate any coordinate-based shortcut behind an explicit assembly-version check. Flag domain calls found in both the BFD-recompute (RBH-mapped) and the curated JEL423 source as higher-confidence; calls found only in one side are reported but flagged lower-confidence.
+- Bsal: same RBH mechanic but against raw AMFP13 GenBank annotation only (no curated FungiDB/InterPro source) — weaker cross-check, noted as such. Also check the GenBank annotation's own BUSCO-style **duplication** rate here, since Stage-3 is the natural place to sanity-check the Bsal protein-count anomaly from the Reference genomes section (19,449 proteins is ~2x the expected chytrid gene count) — if duplication is high, downstream Stage 4 tables must report counts per unique locus, not per transcript/isoform.
 
 ## Stage 4 — linking to metabolomics
 
-- Source tables: `analysis/sirius_annotation/sirius_annotations.tsv` (CANOPUS/NPClassifier compound class per feature) joined to `analysis/differential_features_primary/` liquid-vs-spore contrasts, restricted to features enriched in the liquid (media) fraction.
-- Compound class → candidate domain family mapping: terpenoid → terpene synthase hits; polyketide → PKS hits; peptide-like/alkaloid-with-amide-bond → NRPS/RiPP-adjacent hits; unmapped classes are left out of the candidate table rather than force-fit.
-- Per species/compound-class candidate table, secreted proteins (Stage 2) with matching domain evidence (Stage 1) are ranked by a **composite proxy score** — NOT real co-expression (no RNA-seq/proteomic quantification exists for Bd/Bsal life stages in this project, only a Trinity assembly used as gene-prediction evidence). Score inputs: (a) number/quality of matching biosynthetic domains, (b) SignalP confidence, (c) BGC cluster membership if any (Stage 1), (d) the linked metabolite's differential-abundance significance/fold-change (liq vs spore) as a prioritization weight. Document the score formula plainly as a heuristic ranking, not a causal or expression-based claim.
+- **Subtract media-control signal before linking.** Liquid-fraction CANOPUS classes (terpenoid/polyketide/etc.) will substantially include `*C_liq` media-blank components (Bd 1% Tryptone, Bsal 50% TGHL) — filter or background-subtract media-control features per `curated_gnps_metadata.tsv` conventions *before* any compound enters the candidate table, otherwise the linkage is measuring media chemistry, not fungal secretion.
+- Source tables: `analysis/sirius_annotation/sirius_annotations.tsv` (CANOPUS/NPClassifier compound class per feature) joined to `analysis/differential_features_primary/` liquid-vs-spore contrasts, restricted to features enriched in the liquid (media) fraction, after the media-control subtraction above.
+- Compound class → candidate domain family mapping: terpenoid → terpene synthase hits (PF01397/PF03936, excluding PF00494 squalene/phytoene synthase per Stage 1); polyketide → PKS hits; peptide-like/alkaloid-with-amide-bond → NRPS/RiPP-adjacent hits; unmapped classes are left out of the candidate table rather than force-fit.
+- Per species/compound-class candidate table, secreted proteins (Stage 2) with matching domain evidence (Stage 1) are ranked by a **tiered/lexicographic ranking, not a weighted composite score** — a single weighted-sum score over incommensurate inputs (domain count, SignalP confidence, cluster membership, metabolite fold-change) is unfalsifiable and hides which evidence actually drove a candidate's rank. Instead: sort candidates by evidence tier (e.g. tier 1 = domain hit + cross-reference-confirmed + BGC context; tier 2 = domain hit + cross-reference-confirmed; tier 3 = domain hit only), with the metabolite's differential-abundance significance/fold-change as a tie-breaker column within a tier — and expose every evidence column in the output table so the ranking is auditable, not opaque. This is NOT real co-expression (no RNA-seq/proteomic quantification exists for Bd/Bsal life stages in this project, only a Trinity assembly used as gene-prediction evidence) — document it plainly as a heuristic ranking.
 
 ## Compute
 
-- All SLURM jobs (antiSMASH, SignalP, hmmscan, ortholog BLAST/DIAMOND) submit through `-p preempt -A preempt`.
-- DeepTMHMM specifically requires `-p preempt_gpu -A preempt --gres=gpu:1` (GPU + singularity container, no CPU-only path).
-- Everything else (parsing, scoring, table-building) runs in this repo's existing pixi env, matching the pattern already used by `analysis/*/scripts/`.
+- Stages 1–2 run inside BFD's pipeline (its own SLURM/nextflow wiring; scope with `--taxon GENUS:Batrachochytrium` so only these two genomes run) — use `-p preempt -A preempt` for any BFD job submission this work triggers, consistent with the rest of this spec.
+- DeepTMHMM (standalone, this repo) requires `-p preempt_gpu -A preempt --gres=gpu:1` (GPU + singularity container, no CPU-only path).
+- Stage 3 RBH mapping (BLAST/DIAMOND) and everything in Stage 4 (parsing, ranking, table-building) runs in this repo's existing pixi env via `-p preempt -A preempt` where SLURM is needed, matching the pattern already used by `analysis/*/scripts/`.
 
 ## Output
 
 New `analysis/genome_bioactivity_linkage/` directory:
-- `scripts/` — one script per stage, following the existing `analysis/<topic>/scripts/` convention in this repo.
-- Per-species domain/secretion/BGC tables (intermediate).
-- Final linkage table(s): compound class × candidate gene × evidence/score, one per species.
-- `GENOME_BIOACTIVITY_LINKAGE.md` writeup following the `analysis/<topic>/<TOPIC>.md` convention already used by `SIRIUS_ANNOTATION.md`, including the caveats above (Bsal weaker cross-check, proxy score is not real co-expression, Bsal protein-count anomaly).
+- `scripts/` — DeepTMHMM sbatch wrapper (Stage 2), RBH cross-reference script (Stage 3), and the media-subtraction + linking/ranking script (Stage 4); Stage 1–2's BFD-side tools are invoked in BFD's own tree, not duplicated here.
+- Per-species domain/secretion/BGC tables pulled from BFD's outputs plus this repo's DeepTMHMM run (intermediate).
+- Final linkage table(s): compound class × candidate gene × tiered evidence, one per species.
+- `GENOME_BIOACTIVITY_LINKAGE.md` writeup following the `analysis/<topic>/<TOPIC>.md` convention already used by `SIRIUS_ANNOTATION.md`, including the caveats above (Bsal weaker cross-check, tiered ranking is not real co-expression, Bsal protein-count/duplication anomaly, media-control subtraction applied).
 
 ## Reproducibility / caching (SIRIUS is still incomplete)
 
@@ -85,12 +94,16 @@ must therefore be cheap to rerun from scratch on demand, not a one-shot:
   pilot merge") each time Stage 4 is rerun, so a stale linkage table is
   never mistaken for one reflecting full SIRIUS coverage.
 
-## Open implementation question (pending review)
+## Implementation approach (resolved by review)
 
-Whether Stages 1–4 should be plain shell/SLURM scripts (matching this
-repo's existing `analysis/*/scripts/*.py` + sbatch pattern) or whether the
-per-genome/per-tool fan-out (antiSMASH × 2 genomes, SignalP × 2, DeepTMHMM ×
-2, hmmscan × 2, ortholog BLAST × 1) justifies standing up a small Nextflow
-pipeline (this project has no existing Nextflow use, unlike sibling BFD/
-nf_funannotate1 projects). A bioinformatics-focused review will assess this
-before an implementation plan is written.
+No new Nextflow pipeline in this repo, and no hand-rolled shell reimplementation
+of tools BFD already wraps. Stages 1–2 run inside BFD's existing pipeline
+(`ANTISMASH_RUN`, `SIGNALP_RUN`, `RUN_PFAM`, `RUN_PREDGPI` modules, scoped
+with `--taxon GENUS:Batrachochytrium`) since both genomes are already BFD
+samples and the annotation belongs in BFD's shared tree. DeepTMHMM (Stage 2)
+and Stages 3–4 (RBH cross-reference, linking/ranking) are plain
+pixi-env Python + `sbatch` scripts in this repo's own
+`analysis/genome_bioactivity_linkage/scripts/`, matching this project's
+existing `analysis/<topic>/scripts/` convention — a 2-genome, ~10-task
+fan-out gets no benefit from a workflow manager's parallelism/resume
+features, and this repo has zero prior Nextflow usage.
