@@ -24,8 +24,8 @@ declare -A BFD_PROTEINS=(
 
 for species in "${!BFD_PROTEINS[@]}"; do
     outdir="${OUT_ROOT}/${species}"
-    if [ -s "${outdir}/rbh.tsv" ]; then
-        echo "SKIP ${species}: ${outdir}/rbh.tsv already exists"
+    if [ -s "${outdir}/rev.tsv" ]; then
+        echo "SKIP ${species}: ${outdir}/rev.tsv already exists"
         continue
     fi
     mkdir -p "${outdir}"
