@@ -54,12 +54,26 @@ sbatch analysis/genome_bioactivity_linkage/scripts/run_rbh.sh
 pixi run gbl-build-tables
 ```
 
-At that point, spot-check that `parse_pfam_domains.py`'s hardcoded domtblout
-column offsets and `merge_secretion.py`'s SignalP/PredGPI loader (plain
-`pd.read_csv(..., sep="\t")` with the `protein_id, is_signal_peptide,
-cleavage_site` / `protein_id, has_gpi_anchor` column contract Task 8
-assumed) actually match BFD's real output format, and adjust
-`build_linkage_tables.py`'s loader lines if not.
+**Update (final whole-branch review fix pass, 2026-08-20/21):** the plain
+`pd.read_csv(..., sep="\t")` loaders Task 8 assumed for SignalP/PredGPI did
+NOT match BFD's real output format — both are GFF3, not a flat TSV with the
+`protein_id, is_signal_peptide, cleavage_site` / `protein_id,
+has_gpi_anchor` column contract `merge_secretion.predicted_extracellular`
+requires. This has been fixed: `merge_secretion.load_signalp_gff3` and
+`merge_secretion.load_predgpi_gff3` now parse the real GFF3 shapes directly
+(verified against real BFD output files under
+`/bigdata/stajichlab/shared/projects/BFD/Fungi_BFD_runs/results/function/
+{signalp,predgpi}/`), and `build_linkage_tables.py`'s `run_for_species` calls
+them instead of raw `pd.read_csv`. Similarly, `parse_deeptmhmm.py`'s
+`parse_tmrs_gff3` and the PFAM `find_bfd_output(..., suffix=".domtblout.gz")`
+disambiguation, and the `pfam_calls` protein-id transcript-suffix mismatch
+against `.gbk` locus_tags, were all verified/fixed against real files at the
+same time — see the fix-pass report at
+`.superpowers/sdd/2026-08-20-genome-bioactivity-linkage/
+final-review-fix-report.md` for details. `parse_pfam_domains.py`'s domtblout
+column offsets have NOT yet been spot-checked against a real domtblout file
+and remain a re-verification item once the BFD `pfam_hmmscan` run is
+confirmed complete for both species.
 
 ## Datasets
 
@@ -80,10 +94,23 @@ assumed) actually match BFD's real output format, and adjust
   `build_linkage_tables.py` reads it fresh on every invocation.
 - `analysis/differential_features_primary/all_significant_features_summary.tsv`
   — 103,638-row primary differential-features table; this pipeline restricts
-  to rows whose `comparison` string contains `"liq"` (the liquid-fraction
-  contrasts), matching Stage 4's liquid-fraction focus, and keeps the
+  to rows whose `comparison` matches a genuine `liq_<stage>_vs_spore_<stage>`
+  enrichment contrast (e.g. `dendrobatidis_liq_Developed_vs_spore_Developed`)
+  **with positive `log2FC_a_over_b`** (liq higher than spore), matching Stage
+  4's "find liquid/secreted-enriched compounds" focus, and keeps the
   lowest-`q_value` row per compound `row_id` as that compound's tie-breaker
-  `log2fc`/`q_value`.
+  `log2fc`/`q_value`. This is deliberately narrower than a naive
+  `comparison.str.contains("liq")` filter, which would also admit (a)
+  liq-vs-spore rows with *negative* fold-change (spore-enriched — wrong
+  direction) and (b) liq-vs-liq life-stage contrasts (e.g.
+  `..._liq_Zoospore_vs_liq_Developed`), which carry no liq-vs-spore
+  enrichment information at all. The file's own `is_secreted_candidate`
+  column was considered as a more direct filter but turns out to be
+  populated on the wrong rows for this purpose (a pre-existing bug in
+  `differential_features_primary.py`'s life-stage-family merge, out of
+  scope for this pipeline to fix) — it is always `False` on the genuine
+  liq-vs-spore rows — so filtering is done directly on `comparison` +
+  `log2FC_a_over_b` sign instead.
 - `data/metdata/curated_gnps_metadata.tsv` + this project's aligned feature
   table (`fungal_over_blank_ratio` background filter, Task 2).
 
@@ -119,12 +146,14 @@ Per species (`dendrobatidis`, `salamandrivorans`):
    `background_subtraction.fungal_over_blank_ratio`; map each surviving
    compound's SIRIUS NPC pathway/class to a domain family via
    `domain_families.COMPOUND_CLASS_TO_FAMILY`; join each compound `row_id` to
-   its most-significant liq-fraction differential-abundance result
-   (lowest `q_value` among `comparison` strings containing `"liq"`) from
+   its most-significant liq-vs-spore enrichment result (lowest `q_value`
+   among genuine `liq_<stage>_vs_spore_<stage>` `comparison` rows with
+   positive `log2FC_a_over_b`, i.e. liq higher than spore) from
    `all_significant_features_summary.tsv` — compounds with **no** matching
-   liq-fraction contrast row are excluded from the candidate table entirely
-   (never shown to be differentially abundant in the liquid fraction, so no
-   fabricated tie-breaker value is assigned).
+   liq-vs-spore-enriched contrast row are excluded from the candidate table
+   entirely (never shown to be liquid-enriched, so no fabricated tie-breaker
+   value is assigned; see "Datasets" above for why this is narrower than a
+   naive `"liq"` substring filter).
 6. **Tiered linking** (Stage 4): `link_compounds_to_genes.build_candidate_table`
    matches each compound's domain family against extracellular
    (`is_extracellular`) proteins of that family, assigns a tier
@@ -135,7 +164,14 @@ Per species (`dendrobatidis`, `salamandrivorans`):
    never collapsed into a single weighted composite score.
 
 Output: `analysis/genome_bioactivity_linkage/results/<species>_candidate_table.tsv`,
-one row per (compound, candidate protein) pair.
+one row per (compound, candidate protein, domain family) triple — a protein
+with multiple PFAM domain hits mapping to the same family (e.g. a PKS with
+both a KS domain PF00109 and an AT domain PF00698, both → `pks`) is
+deduplicated to a single row, with the number of contributing domain hits
+recorded in `n_domain_hits`. (A protein could in principle carry domains
+from two *different* families, in which case it legitimately appears as two
+rows — rare in practice, but the reason the granularity is phrased as
+"...protein, family..." rather than simply "...protein...".)
 
 ## Known caveats
 
@@ -163,7 +199,17 @@ one row per (compound, candidate protein) pair.
    diagnostic step: a duplication-rate check (e.g. BUSCO duplication rate, or
    an all-vs-all self-blast on the BFD proteome) once the BFD run completes —
    the natural place to run it is Task 5/6's cross-reference step, per the
-   original plan's Stage 3.
+   original plan's Stage 3. **A related, separate caveat:** the candidate
+   table's `protein_id` granularity is **per-transcript, not per-locus** —
+   BFD protein/PFAM/SignalP/PredGPI ids all carry a transcript suffix (e.g.
+   `FCC698BD_000001-T1`; confirmed the same `-T\d+` convention for both Bd
+   JEL423 and Bsal AMFP13). A locus with multiple predicted isoforms can
+   therefore appear as multiple separate candidate rows, even after the
+   within-protein `n_domain_hits` dedup (Known caveat/I1 above) — that dedup
+   collapses multiple domain hits within one `protein_id` (one transcript),
+   not across the several transcripts of one locus. Some fraction of Bsal's
+   elevated protein count may reflect this rather than genuinely elevated
+   gene content; this has not been separately quantified.
 4. **SIRIUS coverage is a snapshot, not final.** As of this writing,
    `sirius_annotations.tsv` reflects the transfer path plus a 112-feature
    native SIRIUS pilot (1,885 annotated features total; see
@@ -173,7 +219,18 @@ one row per (compound, candidate protein) pair.
    contents will change (likely grow) once a larger native run is folded in
    — re-state the snapshot date/feature count here whenever Stage 4 is
    rerun.
-5. **Media is a species confounder**, inherited from the underlying
+6. **`COMPOUND_CLASS_TO_FAMILY` coverage of SIRIUS's real vocabulary.**
+   Checked directly against `analysis/sirius_annotation/sirius_annotations.tsv`
+   (1,885 rows): the previous `"Alkaloids (linear polyketides)"` key never
+   actually occurred in the data (the real `sirius_npc_pathway` value is
+   plain `"Alkaloids"`, 88 rows) — that key has been corrected to
+   `"Alkaloids"` → `"nrps"` (see `domain_families.py` for the rationale).
+   Before this fix, 1,444/1,885 (76.6%) of SIRIUS-annotated features fell
+   into a mapped compound class; after it, 1,532/1,885 (81.3%) do. Note
+   `"RiPPs"`-class rows (12 of them) were already covered — their
+   `sirius_npc_pathway` is `"Amino acids and Peptides"` (already mapped to
+   `nrps`), not a distinct alkaloid/RiPP pathway value.
+7. **Media is a species confounder**, inherited from the underlying
    metabolomics data (Bd `1% Tryptone` vs Bsal `50% TGHL`) — see the
    project's top-level `CLAUDE.md`. The background filter compares each
    species against its own matched `C_liq` companion blank, so this does not

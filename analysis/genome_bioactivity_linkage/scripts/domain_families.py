@@ -19,7 +19,14 @@ DOMAIN_FAMILIES: dict[str, set[str]] = {
 COMPOUND_CLASS_TO_FAMILY: dict[str, str] = {
     "Terpenoids": "terpene_synthase",
     "Polyketides": "pks",
-    "Alkaloids (linear polyketides)": "pks",
+    # "Alkaloids" (real sirius_npc_pathway value -- verified against
+    # analysis/sirius_annotation/sirius_annotations.tsv; "Alkaloids (linear
+    # polyketides)" never actually occurs there) is mapped to "nrps" rather
+    # than "pks": alkaloids are more commonly nitrogen-heterocycle/amino-
+    # acid-derived than polyketide-derived, and this pipeline has no
+    # distinct RiPP/alkaloid-specific gene family, so "nrps" is the closest
+    # existing category.
+    "Alkaloids": "nrps",
     "Amino acids and Peptides": "nrps",
 }
 

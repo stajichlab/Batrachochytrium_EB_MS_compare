@@ -1,5 +1,9 @@
 #!/usr/bin/bash -l
-#SBATCH -p short_gpu -N 1 -n 1 -c 4 --mem 16gb --gres=gpu:1 --time 0-02:00:00
+# -p short_gpu (rather than preempt_gpu) is a DELIBERATE override of the
+# partition, per the project owner's explicit instruction for this job --
+# do not "fix" it back to preempt_gpu. -A preempt is still the project
+# owner's stated blanket account preference for all SLURM jobs.
+#SBATCH -p short_gpu -N 1 -n 1 -c 4 --mem 16gb --gres=gpu:1 --time 0-02:00:00 -A preempt
 #SBATCH --job-name=gbl_deeptmhmm
 #SBATCH --output=logs/gbl_deeptmhmm.%j.log
 #

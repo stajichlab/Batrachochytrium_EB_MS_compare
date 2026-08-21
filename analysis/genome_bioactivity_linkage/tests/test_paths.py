@@ -33,3 +33,23 @@ def test_find_bfd_output_finds_locustag_file(tmp_path, monkeypatch):
     target.write_bytes(b"")
     found = paths.find_bfd_output("pfam_hmmscan", "dendrobatidis")
     assert found == target
+
+
+def test_find_bfd_output_with_suffix_disambiguates_domtblout_from_tblout(tmp_path, monkeypatch):
+    # Every real pfam_hmmscan locustag bucket contains BOTH a .domtblout.gz
+    # AND a .tblout.gz. Without an explicit suffix filter, sorted()[0] picks
+    # the domtblout one only by alphabetical luck ('d' < 't') -- construct
+    # the ambiguous case explicitly rather than relying on that luck.
+    monkeypatch.setattr(paths, "BFD_ROOT", tmp_path)
+    bucket = tmp_path / "results" / "function" / "pfam_hmmscan" / "00"
+    bucket.mkdir(parents=True)
+    domtblout = bucket / "FCC698BD.domtblout.gz"
+    tblout = bucket / "FCC698BD.tblout.gz"
+    domtblout.write_bytes(b"")
+    tblout.write_bytes(b"")
+
+    found = paths.find_bfd_output("pfam_hmmscan", "dendrobatidis", suffix=".domtblout.gz")
+    assert found == domtblout
+
+    found_tblout = paths.find_bfd_output("pfam_hmmscan", "dendrobatidis", suffix=".tblout.gz")
+    assert found_tblout == tblout

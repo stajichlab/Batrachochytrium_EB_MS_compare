@@ -56,9 +56,17 @@ def test_build_candidate_table_only_matches_extracellular_matching_family():
     assert row_c["tier"] == 2
 
 
-def test_build_candidate_table_sorted_by_compound_then_tier_then_fc():
+def test_build_candidate_table_sorted_by_tier_then_fc_then_compound():
+    # Two different compounds (genuinely different fold-changes) both
+    # matching "terpene_synthase", against genes spanning all three tiers,
+    # to prove the table is ranked tier-first (not compound-first) with
+    # |compound_log2fc| breaking ties within a tier -- see
+    # GENOME_BIOACTIVITY_LINKAGE.md I2.
     compounds = pd.DataFrame(
-        [{"row_id": 1, "compound_class": "Terpenoids", "log2fc": 5.0, "q_value": 0.01}]
+        [
+            {"row_id": 2, "compound_class": "Terpenoids", "log2fc": 1.0, "q_value": 0.03},
+            {"row_id": 1, "compound_class": "Terpenoids", "log2fc": 5.0, "q_value": 0.01},
+        ]
     )
     gene_domains = pd.DataFrame(
         [
@@ -79,4 +87,14 @@ def test_build_candidate_table_sorted_by_compound_then_tier_then_fc():
         ]
     )
     table = build_candidate_table(compounds, gene_domains)
-    assert list(table["candidate_protein_id"]) == ["high_tier", "low_tier"]
+    # Tier-first: both "high_tier" rows (tier 1) precede both "low_tier"
+    # rows (tier 3), regardless of which compound they're paired with.
+    assert list(table["tier"]) == [1, 1, 3, 3]
+    assert list(table["candidate_protein_id"]) == ["high_tier", "high_tier", "low_tier", "low_tier"]
+    # Within tier 1 (a tie on protein), the higher |fc| compound (row_id=1,
+    # fc=5.0) ranks before the lower |fc| compound (row_id=2, fc=1.0) --
+    # proving the fold-change tie-breaker is not inert.
+    tier1 = table[table["tier"] == 1]
+    assert list(tier1["compound_row_id"]) == [1, 2]
+    tier3 = table[table["tier"] == 3]
+    assert list(tier3["compound_row_id"]) == [1, 2]

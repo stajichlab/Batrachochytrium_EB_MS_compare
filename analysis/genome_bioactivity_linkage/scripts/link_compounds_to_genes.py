@@ -48,8 +48,16 @@ def build_candidate_table(compounds: pd.DataFrame, gene_domains: pd.DataFrame) -
     )
     if table.empty:
         return table
+    # Ranked tier-first, not compound-first: ``compound_log2fc`` is constant
+    # within every compound_row_id group (it's a compound-level attribute,
+    # not a per-row value), so a compound-first sort would make the
+    # fold-change key inert as a tie-breaker and the table wouldn't be
+    # globally ranked by tier the way the spec describes ("tie-breaker
+    # within a tier" implies tier-first ranking). compound_row_id is kept as
+    # the final key purely for deterministic, stable ordering among
+    # otherwise-tied (tier, |fc|) rows.
     table["_abs_fc"] = table["compound_log2fc"].abs()
     table = table.sort_values(
-        ["compound_row_id", "tier", "_abs_fc"], ascending=[True, True, False]
+        ["tier", "_abs_fc", "compound_row_id"], ascending=[True, False, True]
     ).drop(columns="_abs_fc").reset_index(drop=True)
     return table

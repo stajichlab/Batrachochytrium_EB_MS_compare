@@ -22,3 +22,11 @@ def test_compound_class_to_family_map_omits_unmapped_classes():
     assert domain_families.COMPOUND_CLASS_TO_FAMILY["Terpenoids"] == "terpene_synthase"
     assert domain_families.COMPOUND_CLASS_TO_FAMILY["Polyketides"] == "pks"
     assert "Fatty acyls" not in domain_families.COMPOUND_CLASS_TO_FAMILY
+
+
+def test_compound_class_to_family_maps_real_alkaloids_pathway_value():
+    # "Alkaloids" is the real sirius_npc_pathway value that occurs in
+    # analysis/sirius_annotation/sirius_annotations.tsv; the previous key
+    # "Alkaloids (linear polyketides)" never actually occurred there.
+    assert domain_families.COMPOUND_CLASS_TO_FAMILY["Alkaloids"] in domain_families.DOMAIN_FAMILIES
+    assert "Alkaloids (linear polyketides)" not in domain_families.COMPOUND_CLASS_TO_FAMILY

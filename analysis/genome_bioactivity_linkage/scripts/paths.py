@@ -42,11 +42,25 @@ def bfd_antismash_json(species_key: str) -> Path:
     )
 
 
-def find_bfd_output(kind: str, species_key: str) -> Path:
-    """Locate a locustag-bucketed BFD functional-annotation file, e.g. kind='pfam_hmmscan'."""
+def find_bfd_output(kind: str, species_key: str, suffix: str | None = None) -> Path:
+    """Locate a locustag-bucketed BFD functional-annotation file, e.g. kind='pfam_hmmscan'.
+
+    A locustag bucket for a given ``kind`` can legitimately contain more
+    than one file for the same locustag -- e.g. every real ``pfam_hmmscan``
+    bucket has BOTH ``<TAG>.domtblout.gz`` AND ``<TAG>.tblout.gz``. Without
+    ``suffix``, ties are broken by ``sorted(matches)[0]`` (today this
+    happens to pick the right file for pfam_hmmscan since 'd' < 't', but
+    that's luck, not a guarantee, and picking the wrong file would silently
+    produce a garbage/empty result with no error). Pass ``suffix`` (e.g.
+    ``".domtblout.gz"``) to filter to only matches ending with it first.
+    """
     locustag = SPECIES[species_key]["locustag"]
     search_root = BFD_ROOT / "results" / "function" / kind
     matches = sorted(search_root.glob(f"**/{locustag}*"))
+    if suffix is not None:
+        suffix_matches = [m for m in matches if str(m).endswith(suffix)]
+        if suffix_matches:
+            matches = suffix_matches
     if not matches:
         raise FileNotFoundError(
             f"No BFD '{kind}' output found for locustag {locustag} under {search_root} "
