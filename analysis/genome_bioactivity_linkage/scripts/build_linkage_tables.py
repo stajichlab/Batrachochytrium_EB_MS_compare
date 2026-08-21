@@ -18,6 +18,7 @@ GENOME_BIOACTIVITY_LINKAGE.md "Known caveats" / task-10 review notes):
    lowest-q-value row kept per compound). Compounds with no matching row in
    that file are excluded from the candidate table entirely.
 """
+import re
 import sys
 from pathlib import Path
 
@@ -28,12 +29,25 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from background_subtraction import fungal_over_blank_ratio, load_feature_intensities, load_metadata
 from domain_families import COMPOUND_CLASS_TO_FAMILY
 from link_compounds_to_genes import build_candidate_table
-from merge_secretion import predicted_extracellular
+from merge_secretion import load_predgpi_gff3, load_signalp_gff3, predicted_extracellular
 from parse_antismash_clusters import load_fullhmmer_hits, load_regions, protein_in_bgc
 from parse_deeptmhmm import parse_tmrs_gff3
 from parse_pfam_domains import classify_domains, parse_domtblout
 from parse_rbh import reciprocal_best_hits
 from paths import GBL_ROOT, SPECIES, bfd_antismash_json, bfd_gbk, find_bfd_output
+
+# Matches the transcript-suffix conventions this pipeline has seen on BFD
+# protein ids (e.g. "FCC698BD_000001-T1") that are absent from the BFD .gbk's
+# CDS /locus_tag values (e.g. "FCC698BD_000001") -- see
+# GENOME_BIOACTIVITY_LINKAGE.md C3 / _strip_transcript_suffix below.
+_TRANSCRIPT_SUFFIX_RE = re.compile(r"(-T\d+|-mRNA-\d+)$")
+
+# Genuine liq-vs-spore enrichment contrasts (the pipeline's stated purpose is
+# finding liquid/secreted-enriched compounds) -- e.g.
+# "dendrobatidis_liq_Developed_vs_spore_Developed". Deliberately excludes
+# liq-vs-liq life-stage contrasts like "dendrobatidis_liq_Zoospore_vs_liq_
+# Developed", which carry no liquid-vs-spore enrichment information.
+_LIQ_VS_SPORE_RE = re.compile(r"liq_\w+_vs_spore_\w+")
 
 DIFFERENTIAL_FEATURES_PATH = (
     GBL_ROOT.parents[0] / "differential_features_primary" / "all_significant_features_summary.tsv"
@@ -46,15 +60,39 @@ def build_gene_domain_table(
     secretion: pd.DataFrame,
     rbh_confirmed_proteins: set,
 ) -> pd.DataFrame:
-    merged = pfam_calls.merge(secretion, on="protein_id", how="left")
+    """One row per (protein_id, family) pair (see GENOME_BIOACTIVITY_LINKAGE.md
+    I1): a protein can carry multiple domain hits mapping to the same family
+    (e.g. a PKS with both a KS domain PF00109 and an AT domain PF00698, both
+    -> "pks") -- these are deduplicated to a single candidate row rather than
+    producing duplicate identical-looking rows, with the number of
+    contributing domain hits preserved in ``n_domain_hits``.
+    """
+    dedup = (
+        pfam_calls.groupby(["protein_id", "family"])
+        .size()
+        .reset_index(name="n_domain_hits")
+    )
+    merged = dedup.merge(secretion, on="protein_id", how="left")
     merged["has_bgc_context"] = merged["protein_id"].isin(bgc_proteins)
     merged["is_cross_ref_confirmed"] = merged["protein_id"].isin(rbh_confirmed_proteins)
-    merged["is_extracellular"] = merged["is_extracellular"].fillna(False)
+    merged["is_extracellular"] = merged["is_extracellular"].fillna(False).astype(bool)
     return merged[
         [
-            "protein_id", "family", "has_bgc_context", "is_cross_ref_confirmed", "is_extracellular",
+            "protein_id", "family", "n_domain_hits", "has_bgc_context",
+            "is_cross_ref_confirmed", "is_extracellular",
         ]
     ]
+
+
+def _strip_transcript_suffix(protein_id: str) -> str:
+    """Strip a trailing transcript-id suffix (e.g. "-T1", "-mRNA-1") from a
+    BFD protein id so it resolves against the BFD .gbk's CDS /locus_tag
+    values, which carry no such suffix (see GENOME_BIOACTIVITY_LINKAGE.md
+    C3: "FCC698BD_000001-T1" (PFAM domtblout target name) vs
+    "FCC698BD_000001" (.gbk locus_tag) -- confirmed identical convention for
+    both Bd JEL423 and Bsal AMFP13 protein FASTA headers).
+    """
+    return _TRANSCRIPT_SUFFIX_RE.sub("", protein_id)
 
 
 def load_protein_coords(gbk_path: Path) -> dict:
@@ -85,39 +123,78 @@ def compute_bgc_proteins(pfam_calls: pd.DataFrame, protein_coords: dict, regions
 
     Deliberately NOT ``{p for p in fullhmmer["protein_id"] if p in
     set(pfam_calls["protein_id"])}`` -- see module docstring deviation 1.
+
+    ``pfam_calls["protein_id"]`` values carry a transcript-id suffix (e.g.
+    "FCC698BD_000001-T1") that ``protein_coords`` (keyed by the .gbk's
+    suffix-less CDS /locus_tag, e.g. "FCC698BD_000001") does not -- see
+    GENOME_BIOACTIVITY_LINKAGE.md C3. The suffix is stripped before lookup
+    so this resolves correctly instead of silently missing every protein.
     """
+    unique_ids = pfam_calls["protein_id"].unique()
+    n_resolved = 0
     bgc_proteins = set()
-    for protein_id in pfam_calls["protein_id"].unique():
-        coord = protein_coords.get(protein_id)
+    for protein_id in unique_ids:
+        coord = protein_coords.get(_strip_transcript_suffix(protein_id))
         if coord is None:
             continue
+        n_resolved += 1
         record_id, start, end = coord
         if protein_in_bgc(protein_id, (start, end), regions, record_id):
             bgc_proteins.add(protein_id)
+
+    if len(unique_ids) > 0 and n_resolved < len(unique_ids) / 2:
+        raise ValueError(
+            f"compute_bgc_proteins: only {n_resolved}/{len(unique_ids)} unique "
+            "pfam_calls protein_ids resolved against protein_coords (.gbk "
+            "locus_tags) -- this looks like a protein-id namespace mismatch "
+            "(e.g. an unhandled transcript-suffix convention), not real "
+            "biology. See GENOME_BIOACTIVITY_LINKAGE.md C3."
+        )
     return bgc_proteins
 
 
 def load_compound_log2fc_qvalue(species_key: str) -> pd.DataFrame:
-    """Join compound row_ids to their most-significant liq-fraction contrast
-    result (lowest q_value) from the primary differential-features table.
+    """Join compound row_ids to their most-significant liq-vs-spore
+    enrichment contrast result (lowest q_value) from the primary
+    differential-features table.
 
     Deliberately NOT a hardcoded ``log2fc=0.0``/``q_value=1.0`` placeholder --
-    see module docstring deviation 2. A compound with no matching liq-fraction
+    see module docstring deviation 2. A compound with no matching liq-vs-spore
     contrast row is excluded upstream (never significant in the liquid
     fraction, so it should not receive a fabricated tie-breaker value).
+
+    Restricted to genuine liq-vs-spore ENRICHMENT contrasts (see
+    GENOME_BIOACTIVITY_LINKAGE.md I3): a naive ``comparison.str.contains
+    ("liq")`` filter also lets through (a) liq-vs-spore rows with NEGATIVE
+    log2FC (spore-enriched, wrong direction for finding liquid/secreted
+    compounds) and (b) liq-vs-liq life-stage contrasts (e.g.
+    "..._liq_Zoospore_vs_liq_Developed"), which carry no liq-vs-spore
+    enrichment information at all -- a different kind of comparison whose
+    q_value/log2FC are not comparable to the liq-vs-spore ones. This
+    project's own ``is_secreted_candidate`` column (``all_significant_
+    features_summary.tsv``) was considered instead, but it turns out to be
+    populated on the WRONG rows for this purpose (a bug in
+    ``differential_features_primary.py``'s "life_stage"-family merge, not
+    fixed here -- out of scope for this pipeline): it is always False on the
+    genuine "*_liq_*_vs_spore_*" ("secreted_vs_cellular"-family) rows this
+    function needs. So we filter directly on ``comparison`` matching a
+    ``liq_<stage>_vs_spore_<stage>`` pattern and ``log2FC_a_over_b > 0``
+    (liq higher than spore) instead.
     """
     diff = pd.read_csv(
         DIFFERENTIAL_FEATURES_PATH,
         sep="\t",
         usecols=["row_id", "species", "comparison", "log2FC_a_over_b", "q_value"],
     )
-    diff = diff[(diff["species"] == species_key) & (diff["comparison"].str.contains("liq"))]
+    is_liq_vs_spore = diff["comparison"].str.contains(_LIQ_VS_SPORE_RE)
+    is_liq_enriched = diff["log2FC_a_over_b"] > 0
+    diff = diff[(diff["species"] == species_key) & is_liq_vs_spore & is_liq_enriched]
     diff = diff.sort_values("q_value").drop_duplicates("row_id", keep="first")
     return diff.rename(columns={"log2FC_a_over_b": "log2fc"})[["row_id", "log2fc", "q_value"]]
 
 
 def run_for_species(species_key: str) -> pd.DataFrame:
-    domtbl_path = find_bfd_output("pfam_hmmscan", species_key)
+    domtbl_path = find_bfd_output("pfam_hmmscan", species_key, suffix=".domtblout.gz")
     pfam_calls = classify_domains(parse_domtblout(domtbl_path))
 
     antismash_json = bfd_antismash_json(species_key)
@@ -134,8 +211,8 @@ def run_for_species(species_key: str) -> pd.DataFrame:
     deeptmhmm_gff3 = parse_tmrs_gff3(deeptmhmm_dir / "TMRs.gff3")
     signalp_path = find_bfd_output("signalp", species_key)
     predgpi_path = find_bfd_output("predgpi", species_key)
-    signalp = pd.read_csv(signalp_path, sep="\t")
-    predgpi = pd.read_csv(predgpi_path, sep="\t")
+    signalp = load_signalp_gff3(signalp_path)
+    predgpi = load_predgpi_gff3(predgpi_path)
     secretion = predicted_extracellular(signalp, deeptmhmm_gff3, predgpi)
 
     gene_domains = build_gene_domain_table(pfam_calls, bgc_proteins, secretion, rbh_confirmed_proteins)
