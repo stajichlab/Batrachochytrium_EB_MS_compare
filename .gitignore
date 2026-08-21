@@ -17,3 +17,7 @@ __pycache__/
 # regenerable/restorable from those sources. Curated metadata (small) is tracked.
 data/raw/
 .worktrees/
+
+# genome-bioactivity-linkage: downloaded/generated reference annotations and
+# other pipeline outputs are regenerable via scripts/*.sh; do not commit.
+analysis/genome_bioactivity_linkage/results/
