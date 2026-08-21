@@ -59,9 +59,13 @@ def fungal_over_blank_ratio(
     blank_samples = [f for f in scoped.loc[scoped["is_C_companion"], "filename"] if f in features.columns]
     if not fungal_samples:
         raise ValueError(f"No fungal liq samples found for {species}/{life_stage} in feature table")
+    if not blank_samples:
+        raise ValueError(
+            f"No C_liq companion blank samples found for {species}/{life_stage} in feature table"
+        )
 
     mean_fungal = features[fungal_samples].mean(axis=1)
-    mean_blank = features[blank_samples].mean(axis=1) if blank_samples else pd.Series(0.0, index=features.index)
+    mean_blank = features[blank_samples].mean(axis=1)
 
     log2fc = np.log2((mean_fungal + _PSEUDOCOUNT) / (mean_blank + _PSEUDOCOUNT))
     passes = log2fc >= np.log2(min_fc)

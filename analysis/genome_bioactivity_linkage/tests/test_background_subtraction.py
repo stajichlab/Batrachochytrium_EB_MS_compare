@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from background_subtraction import fungal_over_blank_ratio  # noqa: E402
@@ -73,3 +74,19 @@ def test_zero_blank_signal_treated_as_pass():
     )
     row = result.loc[result["row_id"] == 3].iloc[0]
     assert bool(row["passes_background_filter"]) is True
+
+
+def test_no_blank_samples_raises_value_error():
+    meta = pd.DataFrame(
+        [
+            _meta_row("A1_liq.mzML", "Batrachochytrium dendrobatidis", "Zoospore", False),
+        ]
+    )
+    features = pd.DataFrame(
+        {"A1_liq.mzML": [500.0]},
+        index=pd.Index([4], name="row_id"),
+    )
+    with pytest.raises(ValueError):
+        fungal_over_blank_ratio(
+            features, meta, species="Batrachochytrium dendrobatidis", life_stage="Zoospore", min_fc=2.0
+        )
