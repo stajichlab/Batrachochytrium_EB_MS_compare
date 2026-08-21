@@ -9,14 +9,14 @@ def predicted_extracellular(
     signalp: pd.DataFrame, deeptmhmm_gff3: pd.DataFrame, predgpi: pd.DataFrame
 ) -> pd.DataFrame:
     merged = signalp.merge(predgpi, on="protein_id", how="left")
-    merged["has_gpi_anchor"] = merged["has_gpi_anchor"].fillna(False)
+    merged["has_gpi_anchor"] = merged["has_gpi_anchor"].fillna(False).astype(bool)
 
     def _disqualifying_tm(row):
         if not row["is_signal_peptide"]:
             return False  # irrelevant once excluded by signalp_positive below
         return has_tm_helix_outside_signal(deeptmhmm_gff3, row["protein_id"], row["cleavage_site"])
 
-    merged["has_disqualifying_tm"] = merged.apply(_disqualifying_tm, axis=1)
+    merged["has_disqualifying_tm"] = merged.apply(_disqualifying_tm, axis=1).astype(bool)
     merged["signalp_positive"] = merged["is_signal_peptide"]
     merged["signal_cleavage_site"] = merged["cleavage_site"]
     merged["is_extracellular"] = (

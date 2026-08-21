@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -50,3 +51,17 @@ def test_no_signal_peptide_excludes():
     result = predicted_extracellular(signalp, deeptmhmm, predgpi)
     row = result[result["protein_id"] == "protD"].iloc[0]
     assert bool(row["is_extracellular"]) is False
+
+
+def test_protein_missing_from_predgpi_is_not_falsely_extracellular():
+    signalp = pd.DataFrame([{"protein_id": "protE", "is_signal_peptide": True, "cleavage_site": 25}])
+    deeptmhmm = pd.DataFrame(
+        [{"protein_id": "protE", "region_type": "signal", "start": 1, "end": 25}]
+    )
+    # protE is deliberately ABSENT from predgpi (not just has_gpi_anchor=False)
+    predgpi = pd.DataFrame(columns=["protein_id", "has_gpi_anchor"])
+    result = predicted_extracellular(signalp, deeptmhmm, predgpi)
+    row = result[result["protein_id"] == "protE"].iloc[0]
+    # Verify is_extracellular is proper bool dtype (numpy.bool_ or Python bool)
+    assert isinstance(row["is_extracellular"], (bool, np.bool_))
+    assert bool(row["is_extracellular"]) is True
