@@ -330,6 +330,12 @@ def main():
             sub_sig["direction"] = np.where(
                 sub_sig["log2FC_a_over_b"] > 0, f"up_in_{cond_a}", f"up_in_{cond_b}"
             )
+            # Secreted-candidate hint: liq/spore direction across this species.
+            # (Same merge as the life_stage family above -- without it,
+            # liq_over_spore_log2fc/is_secreted_candidate are silently NaN/False
+            # for every secreted_vs_cellular row, defeating the flag's purpose.)
+            sub_sig = sub_sig.merge(liq_dir[species], on="row_id", how="left")
+            sub_sig["is_secreted_candidate"] = sub_sig["liq_over_spore_log2fc"] >= 1.0
             sig_rows.append(sub_sig)
 
     if sig_rows:
