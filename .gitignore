@@ -16,3 +16,4 @@ __pycache__/
 # expanded tree) and MassIVE MSV000090464. Do not embed the 234M bundle here; data/raw is
 # regenerable/restorable from those sources. Curated metadata (small) is tracked.
 data/raw/
+.worktrees/
