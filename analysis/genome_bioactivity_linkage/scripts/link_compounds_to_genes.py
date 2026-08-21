@@ -30,6 +30,7 @@ def build_candidate_table(compounds: pd.DataFrame, gene_domains: pd.DataFrame) -
                     "compound_class": compound["compound_class"],
                     "candidate_protein_id": gene["protein_id"],
                     "domain_family": family,
+                    "n_domain_hits": gene["n_domain_hits"],
                     "tier": tier,
                     "has_bgc_context": gene["has_bgc_context"],
                     "is_cross_ref_confirmed": gene["is_cross_ref_confirmed"],
@@ -42,8 +43,8 @@ def build_candidate_table(compounds: pd.DataFrame, gene_domains: pd.DataFrame) -
         rows,
         columns=[
             "compound_row_id", "compound_class", "candidate_protein_id", "domain_family",
-            "tier", "has_bgc_context", "is_cross_ref_confirmed", "is_extracellular",
-            "compound_log2fc", "compound_q_value",
+            "n_domain_hits", "tier", "has_bgc_context", "is_cross_ref_confirmed",
+            "is_extracellular", "compound_log2fc", "compound_q_value",
         ],
     )
     if table.empty:

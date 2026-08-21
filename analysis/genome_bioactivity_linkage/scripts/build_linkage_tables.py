@@ -209,7 +209,7 @@ def run_for_species(species_key: str) -> pd.DataFrame:
 
     deeptmhmm_dir = GBL_ROOT / "results" / "deeptmhmm" / species_key
     deeptmhmm_gff3 = parse_tmrs_gff3(deeptmhmm_dir / "TMRs.gff3")
-    signalp_path = find_bfd_output("signalp", species_key)
+    signalp_path = find_bfd_output("signalp", species_key, suffix=".signalp.gff3.gz")
     predgpi_path = find_bfd_output("predgpi", species_key)
     signalp = load_signalp_gff3(signalp_path)
     predgpi = load_predgpi_gff3(predgpi_path)

@@ -158,10 +158,13 @@ Per species (`dendrobatidis`, `salamandrivorans`):
    matches each compound's domain family against extracellular
    (`is_extracellular`) proteins of that family, assigns a tier
    (1 = BGC context **and** cross-ref confirmed; 2 = either one; 3 =
-   neither), and sorts within a compound by tier, then by
-   `abs(compound_log2fc)` descending (real differential-abundance magnitude,
-   not a placeholder) — a **tiered/lexicographic ranking**, deliberately
-   never collapsed into a single weighted composite score.
+   neither), and sorts the whole table **tier-first**, then by
+   `abs(compound_log2fc)` descending within a tier (real differential-abundance
+   magnitude, not a placeholder), with `compound_row_id` as a final
+   deterministic tie-breaker — a **tiered/lexicographic ranking**, deliberately
+   never collapsed into a single weighted composite score. (Sorting
+   compound-first would make the fold-change key inert, since it's constant
+   within every compound — see Known caveat below.)
 
 Output: `analysis/genome_bioactivity_linkage/results/<species>_candidate_table.tsv`,
 one row per (compound, candidate protein, domain family) triple — a protein
@@ -236,3 +239,11 @@ rows — rare in practice, but the reason the granularity is phrased as
    species against its own matched `C_liq` companion blank, so this does not
    bias `passes_background_filter`, but cross-species compound-class
    comparisons should still be read with the media difference in mind.
+8. **The candidate table is ranked tier-first, not compound-first.**
+   `compound_log2fc` is a compound-level attribute (constant across every
+   row for a given compound), so sorting compound-first would make it an
+   inert tie-breaker and the table wouldn't be globally ranked by evidence
+   tier. `build_candidate_table` sorts `(tier, |compound_log2fc| desc,
+   compound_row_id)` instead — a reader wanting a per-compound view should
+   filter/group by `compound_row_id` after loading the table, not assume the
+   rows arrive pre-grouped by compound.

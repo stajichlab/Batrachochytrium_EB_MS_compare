@@ -57,13 +57,17 @@ def find_bfd_output(kind: str, species_key: str, suffix: str | None = None) -> P
     locustag = SPECIES[species_key]["locustag"]
     search_root = BFD_ROOT / "results" / "function" / kind
     matches = sorted(search_root.glob(f"**/{locustag}*"))
-    if suffix is not None:
-        suffix_matches = [m for m in matches if str(m).endswith(suffix)]
-        if suffix_matches:
-            matches = suffix_matches
     if not matches:
         raise FileNotFoundError(
             f"No BFD '{kind}' output found for locustag {locustag} under {search_root} "
             f"— BFD functional-annotation run may not be finished yet"
         )
+    if suffix is not None:
+        suffix_matches = [m for m in matches if str(m).endswith(suffix)]
+        if not suffix_matches:
+            raise FileNotFoundError(
+                f"No BFD '{kind}' output for locustag {locustag} under {search_root} "
+                f"matches suffix {suffix!r} (found: {[m.name for m in matches]})"
+            )
+        matches = suffix_matches
     return matches[0]

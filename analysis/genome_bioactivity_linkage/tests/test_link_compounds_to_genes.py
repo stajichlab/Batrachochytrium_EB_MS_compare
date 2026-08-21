@@ -26,6 +26,7 @@ def test_build_candidate_table_only_matches_extracellular_matching_family():
             {
                 "protein_id": "protA",
                 "family": "terpene_synthase",
+                "n_domain_hits": 1,
                 "has_bgc_context": True,
                 "is_cross_ref_confirmed": True,
                 "is_extracellular": True,
@@ -33,6 +34,7 @@ def test_build_candidate_table_only_matches_extracellular_matching_family():
             {
                 "protein_id": "protB",
                 "family": "terpene_synthase",
+                "n_domain_hits": 1,
                 "has_bgc_context": False,
                 "is_cross_ref_confirmed": False,
                 "is_extracellular": False,  # excluded: not secreted
@@ -40,6 +42,7 @@ def test_build_candidate_table_only_matches_extracellular_matching_family():
             {
                 "protein_id": "protC",
                 "family": "pks",
+                "n_domain_hits": 2,
                 "has_bgc_context": False,
                 "is_cross_ref_confirmed": True,
                 "is_extracellular": True,
@@ -51,9 +54,14 @@ def test_build_candidate_table_only_matches_extracellular_matching_family():
     row_a = table[table["candidate_protein_id"] == "protA"].iloc[0]
     assert row_a["compound_row_id"] == 100
     assert row_a["tier"] == 1
+    assert row_a["n_domain_hits"] == 1
     row_c = table[table["candidate_protein_id"] == "protC"].iloc[0]
     assert row_c["compound_row_id"] == 200
     assert row_c["tier"] == 2
+    # n_domain_hits (evidence preserved from build_gene_domain_table's I1
+    # dedup) must actually reach the final output table, not just be
+    # computed and dropped -- see GENOME_BIOACTIVITY_LINKAGE.md residual #3.
+    assert row_c["n_domain_hits"] == 2
 
 
 def test_build_candidate_table_sorted_by_tier_then_fc_then_compound():
@@ -73,6 +81,7 @@ def test_build_candidate_table_sorted_by_tier_then_fc_then_compound():
             {
                 "protein_id": "low_tier",
                 "family": "terpene_synthase",
+                "n_domain_hits": 1,
                 "has_bgc_context": False,
                 "is_cross_ref_confirmed": False,
                 "is_extracellular": True,
@@ -80,6 +89,7 @@ def test_build_candidate_table_sorted_by_tier_then_fc_then_compound():
             {
                 "protein_id": "high_tier",
                 "family": "terpene_synthase",
+                "n_domain_hits": 1,
                 "has_bgc_context": True,
                 "is_cross_ref_confirmed": True,
                 "is_extracellular": True,

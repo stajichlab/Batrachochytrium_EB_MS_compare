@@ -53,3 +53,19 @@ def test_find_bfd_output_with_suffix_disambiguates_domtblout_from_tblout(tmp_pat
 
     found_tblout = paths.find_bfd_output("pfam_hmmscan", "dendrobatidis", suffix=".tblout.gz")
     assert found_tblout == tblout
+
+
+def test_find_bfd_output_raises_when_suffix_matches_nothing(tmp_path, monkeypatch):
+    # A suffix that matches none of the real files must raise, not silently
+    # fall back to the unfiltered match list (which would defeat the whole
+    # point of passing suffix -- see test above).
+    monkeypatch.setattr(paths, "BFD_ROOT", tmp_path)
+    bucket = tmp_path / "results" / "function" / "signalp" / "00"
+    bucket.mkdir(parents=True)
+    (bucket / "FCC698BD.signalp.results.txt.gz").write_bytes(b"")
+    try:
+        paths.find_bfd_output("signalp", "dendrobatidis", suffix=".signalp.gff3.gz")
+        assert False, "expected FileNotFoundError"
+    except FileNotFoundError as e:
+        assert "FCC698BD" in str(e)
+        assert ".signalp.gff3.gz" in str(e)
