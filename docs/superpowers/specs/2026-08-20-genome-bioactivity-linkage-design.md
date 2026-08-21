@@ -39,7 +39,7 @@ read the outputs back from this repo:
 ## Stage 2 — secretion prediction (SignalP/PredGPI via BFD; DeepTMHMM standalone)
 
 - **SignalP 6** and **PredGPI** via BFD's existing `SIGNALP_RUN` / `RUN_PREDGPI` modules, same `--taxon GENUS:Batrachochytrium`-scoped run as Stage 1 (mirrors the BFD `function/signalp`, `function/predgpi` categories, not yet populated for Batrachochytrium).
-- **DeepTMHMM** has no BFD/Lmod equivalent yet, so run it standalone in this repo: port the invocation from `~/projects/nf/nf_funannotate1/modules/local/deeptmhmm_annotation.nf` and `tests/test_deeptmhmm_gpu.sh` — singularity image `/bigdata/stajichlab/shared/lib/singularity_cache/DeepTMHMM-1.0.sif`, run as `apptainer exec --nv -B <project_dir> "$SIF" bash -c "cd /opt/deeptmhmm && python3 predict.py --fasta <proteins.fa> --output-dir <outdir>"`, output `TMRs.gff3`. Needs a GPU node (`preempt_gpu`, not plain `preempt`).
+- **DeepTMHMM** has no BFD/Lmod equivalent yet, so run it standalone in this repo: port the invocation from `~/projects/nf/nf_funannotate1/modules/local/deeptmhmm_annotation.nf` and `tests/test_deeptmhmm_gpu.sh` — singularity image `/bigdata/stajichlab/shared/lib/singularity_cache/DeepTMHMM-1.0.sif`, run as `apptainer exec --nv -B <project_dir> "$SIF" bash -c "cd /opt/deeptmhmm && python3 predict.py --fasta <proteins.fa> --output-dir <outdir>"`, output `TMRs.gff3`. Needs a GPU node (`short_gpu`).
 - Combine: "predicted extracellular" = SignalP+, no GPI anchor, **and no TM helix outside the cleaved signal-peptide region** — define this overlap rule explicitly in the merge script (a TM helix call that falls entirely within the SignalP-cleaved N-terminal region must NOT disqualify the protein; only a TM helix in the mature-chain coordinates does).
 
 ## Stage 3 — cross-reference reconciliation
@@ -57,7 +57,7 @@ read the outputs back from this repo:
 ## Compute
 
 - Stages 1–2 run inside BFD's pipeline (its own SLURM/nextflow wiring; scope with `--taxon GENUS:Batrachochytrium` so only these two genomes run) — use `-p preempt -A preempt` for any BFD job submission this work triggers, consistent with the rest of this spec.
-- DeepTMHMM (standalone, this repo) requires `-p preempt_gpu -A preempt --gres=gpu:1` (GPU + singularity container, no CPU-only path).
+- DeepTMHMM (standalone, this repo) requires `-p short_gpu --gres=gpu:1` (GPU + singularity container, no CPU-only path).
 - Stage 3 RBH mapping (BLAST/DIAMOND) and everything in Stage 4 (parsing, ranking, table-building) runs in this repo's existing pixi env via `-p preempt -A preempt` where SLURM is needed, matching the pattern already used by `analysis/*/scripts/`.
 
 ## Output
