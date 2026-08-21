@@ -59,6 +59,32 @@ New `analysis/genome_bioactivity_linkage/` directory:
 - Final linkage table(s): compound class × candidate gene × evidence/score, one per species.
 - `GENOME_BIOACTIVITY_LINKAGE.md` writeup following the `analysis/<topic>/<TOPIC>.md` convention already used by `SIRIUS_ANNOTATION.md`, including the caveats above (Bsal weaker cross-check, proxy score is not real co-expression, Bsal protein-count anomaly).
 
+## Reproducibility / caching (SIRIUS is still incomplete)
+
+`analysis/sirius_annotation/` is explicitly **not final** — the full native
+SIRIUS run (~3,815 remaining targets) is deferred, not cancelled (see
+`SIRIUS_ANNOTATION.md`), and will add annotations to `sirius_annotations.tsv`
+whenever it's launched later. Stage 4 (the only stage that reads that file)
+must therefore be cheap to rerun from scratch on demand, not a one-shot:
+
+- Stages 1–3 (antiSMASH/SignalP/DeepTMHMM/PredGPI/hmmscan/cross-reference) are
+  the expensive, genome-side steps and only need to run once per genome —
+  each writes to a persistent, genome-keyed output directory (matching BFD's
+  own persistence convention, e.g. `results/<species>/antismash_local/`,
+  `results/<species>/signalp/`) and every script/sbatch step must **skip
+  cleanly if its output already exists** (check-then-run, not
+  overwrite-always), so re-invoking the stage-1–3 driver after an interrupted
+  run or a later re-review doesn't repeat finished work.
+- Stage 4 (linking) is cheap pure-Python and must be re-run in full each time
+  it's invoked — no caching there, no partial-update logic. It always reads
+  the current `sirius_annotations.tsv` fresh, so as soon as the full native
+  SIRIUS run is merged, simply re-running the Stage 4 script picks up the new
+  annotations automatically with no manual bookkeeping.
+- The `GENOME_BIOACTIVITY_LINKAGE.md` writeup should note the run date/
+  SIRIUS-coverage snapshot (e.g. "1,885 features annotated as of 2026-08-20
+  pilot merge") each time Stage 4 is rerun, so a stale linkage table is
+  never mistaken for one reflecting full SIRIUS coverage.
+
 ## Open implementation question (pending review)
 
 Whether Stages 1–4 should be plain shell/SLURM scripts (matching this
