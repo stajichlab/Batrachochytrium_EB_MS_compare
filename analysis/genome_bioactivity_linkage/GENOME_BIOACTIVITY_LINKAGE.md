@@ -212,7 +212,18 @@ rows — rare in practice, but the reason the granularity is phrased as
    collapses multiple domain hits within one `protein_id` (one transcript),
    not across the several transcripts of one locus. Some fraction of Bsal's
    elevated protein count may reflect this rather than genuinely elevated
-   gene content; this has not been separately quantified.
+   gene content; this has not been separately quantified. **A third, direct
+   data point on this anomaly:** Bsal's single longest protein,
+   `F61BA062_016014-T1` (4,777 aa — the next-longest protein in either
+   proteome is 4,544 aa), crashes DeepTMHMM's topology-decoding step
+   (`ValueError: the first two dimensions of emissions and tags must match,
+   got (4777, 1) and (1, 1)`; run `27718539`, 2026-08-23 log). It is excluded
+   from `run_deeptmhmm.sh`'s input (see `EXCLUDED_PROTEIN_IDS` there) and
+   saved to `results/deeptmhmm/salamandrivorans_excluded_proteins.fasta` for
+   separate investigation — plausibly a fused/misassembled gene model given
+   its outlier length, consistent with the broader over-prediction concern
+   above. It therefore has no `is_extracellular` call and cannot appear as a
+   candidate in this species' output table until investigated.
 4. **SIRIUS coverage is a snapshot, not final.** As of this writing,
    `sirius_annotations.tsv` reflects the transfer path plus a 112-feature
    native SIRIUS pilot (1,885 annotated features total; see
