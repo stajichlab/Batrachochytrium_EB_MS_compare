@@ -46,7 +46,7 @@ SELECT_FLAGS=()
 [[ "$MAX_FEATURES" =~ ^[0-9]+$ ]] && [[ "$MAX_FEATURES" -gt 0 ]] && SELECT_FLAGS=(--max-features "$MAX_FEATURES")
 
 # Step 1: select targets (has_ms2 & charge 1+ & un-annotated)
-$PY "$PIPELINE/select_native_targets.py" "${SELECT_FLAGS[@]:-}"
+$PY "$PIPELINE/select_native_targets.py" "${SELECT_FLAGS[@]}"
 
 # Step 2: export MGF for the targets from the Everything-Bagel feature MGF
 $PY "$PIPELINE/export_native_mgf.py" --charge 1
