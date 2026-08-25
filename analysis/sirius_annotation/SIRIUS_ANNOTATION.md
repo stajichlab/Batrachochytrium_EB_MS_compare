@@ -33,6 +33,22 @@ transfer works, what it produced, its caveats, and how to fold in the next
   112 won by pilot). Full native run (`bash
   analysis/sirius_annotation/scripts/run_sirius_native.sh 30 0 1`) is the
   next step if full native coverage is desired.
+- **Full native run: DEFERRED (2026-08-20).** The pilot validated the pipeline
+  and was ready to scale (~3,815 targets → ~131 shards of 30, `%1` serial on
+  the `short` queue, ~22–28 h), but the `short` queue and the shared SIRIUS
+  6.3.12 login-token server are already busy with the sibling ***Herptile***
+  project's array job `27671478 sirius-herptile-full` (172 shards, serial) +
+  its queued merge `27671479` (their task logs show transient
+  `JOB_WATCHER`/token-retry failures under load). Launch was held to avoid
+  queueing behind it and compounding login-token contention. When launching,
+  point the full run at a **fresh output dir** (`sirius_native_results_full/`)
+  so it cannot collide with the pilot's `shard_000–004` (the pilot's 150 are a
+  subset of the ~3,927 full targets).
+  Rationale for this decision: `.living/decisions.md` (2026-08-20 entry).
+- Native pilot over-covered 6 features (`545`, `601`, `1905`, `2729`, `8042`,
+  `8793`) — target selection did not exclude them, so each now has **both** a
+  transferred row and a `native-EB97X` row in `sirius_annotations.tsv`.
+  Downstream dedup/conflict handling should prefer the native row for these.
 - See "Known caveats" below for the merge-collapse conflicts.
 
 ## Datasets

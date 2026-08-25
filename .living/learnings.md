@@ -91,3 +91,11 @@ Append-only log of gotchas, surprises, and insights.
 - **Why it matters**: GitHub rejects pushes containing any file over 100 MB (hard), and warns above 50 MB. Chunking derived HTML artifacts by an analysis dimension (here `species`) keeps interactive outputs in-repo and pushable without Git LFS or sacrificing the rollup view.
 - **Resolution**: edit `generate_feature_tables.py` (split rollup by `df["species"]`, per-species `write_index` links), regenerate via `pixi run feature-tables-primary`, delete the stale combined rollup, re-stage, update `DIFFERENTIAL_FEATURES_PRIMARY.md` / `ANALYSIS_MANIFEST.md`.
 - **Tags**: `github`, `git-push`, `file-size-limit`, `feature-tables`, `rollup`, `chunking`
+
+## 2026-08-20 — SIRIUS arrays across sibling projects contend for the shared login-token server; identify competing runs via `squeue`
+
+- **Category**: infra
+- **What happened**: After our native SIRIUS pilot validated (job 27605104), the full run was staged but a `squeue -u $USER -p short` showed the sibling Herptile project's array `27671478 sirius-herptile-full` (172 remaining serial shards, `%1`) + merge `27671479` (pending `afterok`) occupying the same partition. Herptile's running-task log (task 7) shows SIRIUS 6.3.12 `JOB_WATCHER` login-token retry failures (`Request to Server failed! Try again in 16.0s`) — evidence the shared online-resolver/login-token service degrades under concurrent loads. We deferred our full run rather than add a second token-contended array.
+- **Why it matters**: It is not enough that your own array runs `%1` — another project's SIRIUS array on the same partition is still competing for the same serialized login-token resource and queue slots. Check `squeue` for the partition and identify competing SIRIUS jobs by name/workdir before launching a big run; `JobArrayTaskLimit` + `Dependency` states mark a throttled/dependent array.
+- **Resolution**: Deferral documented in `.living/decisions.md` (2026-08-20) and `analysis/sirius_annotation/SIRIUS_ANNOTATION.md`; launch command + fresh out-dir (`sirius_native_results_full/`) recorded for when the queue clears.
+- **Tags**: `sirius`, `queue-management`, `hpcc-short`, `login-token`, `concurrency`, `deferral`, `hpc

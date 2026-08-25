@@ -74,3 +74,17 @@ Append-only log of non-obvious decisions and their rationale.
 **Consequences**: 103,637 significant feature-rows (33,066 unique features); 6,688 NPC-annotated; 3,003 secreted candidates; 1,041 bioactivity-flagged. Users must treat `bioactive` as reviewing-prompt, and `liq_over_spore_log2fc` as a hint (stage-confounded), not a test.
 
 **Tags**: `metabolomics`, `sirius`, `bioactivity`, `secreted-compounds`, `decision`, `annotation-join`
+
+## 2026-08-20 — Defer the full native SIRIUS run while the Herptile project occupies the `short` queue
+
+**Context**: The 149-spectra pilot (job 27605104, 5 shards × 30, `%1`) validated the full native path (112 formula / 99 structure / 99 NPC / 99 ClassyFire rows merged and folded in). The approved full run (3,921 remaining charge-1+ targets → ~131 shards, ~22–28 h serial on `short`) was ready to launch. But `squeue` shows a sibling project actively running SIRIUS on the same partition: Herptile array `27671478 sirius-herptile-full` (172 remaining serial shards, `%1`) + `27671479 sirius-herptile-full-merge` pending on `afterok:27671478_*`. Herptile's own task logs show SIRIUS login-token (`JOB_WATCHER`) transient failures under load (`Request to Server failed! Try again in 16.0s`).
+
+**Decision**: Hold the full-run submission until `27671478`/`27671479` clear the `short` queue, to avoid two serial SIRIUS arrays competing for queue space and the shared SIRIUS login-token server. Combined with the pilot-first policy, keep `%1` serialization. When launched, generate targets fresh (3,921, excluding the 6 already-annotated features `545/601/1905/2729/8042/8793`) and write to a NEW out-dir `sirius_native_results_full/` (never reuse `sirius_native_results/`, whose `shard_000–004` are a subset of the full targets).
+
+**Alternatives considered**: Launch now and accept contention (rejected — mutual slowdown from token serialization + two arrays on one small queue); launch on a different partition (rejected — `short` is the intended queue and other partitions lack SIRIUS/conda provisioning guarantees for this pipeline).
+
+**Rationale**: The full run has no deadline; starting it today gains nothing but queue/token contention risk and mixes two projects' `JOB_WATCHER` retry storms.
+
+**Consequences**: `SIRIUS_ANNOTATION.md` and `ANALYSIS_MANIFEST.md` marked full-run **deferred (2026-08-20)**; exact launch command recorded. No compute wasted; pilot pipeline stays as the validated template. The 6 duplicate features can later be collapsed in favor of their `native-EB97X` rows.
+
+**Tags**: `metabolomics`, `sirius`, `decision`, `native-run`, `queue-management`, `deferral`
