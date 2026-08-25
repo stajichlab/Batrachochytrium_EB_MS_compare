@@ -17,38 +17,33 @@ transfer works, what it produced, its caveats, and how to fold in the next
 
 ## Status
 
-**status**: transfer + native **pilot merged** (1,885 annotated features);
-**full native run not yet started**
+**status**: transfer + native **full run merged** (4,957 annotated features)
 
 - Transfer executed with default thresholds → 2,182/2,860 (76.3%) of EB's
   SIRIUS-annotated features assigned to local features; 1,773 local features
   annotated.
 - Native SIRIUS pilot (150 targets → 149 usable spectra, 5 shards, job
-  `27605104`) **completed and merged**: 112 formula / 99 structure /
-  107 formula-CANOPUS / 99 structure-CANOPUS identifications folded in → 1,885
-  local features annotated (1,773 transferred + 112 native `native-EB97X`).
-  Merge introduced 0 new merge-conflicts. Runtime benchmark: all 5 shards
-  finished well within the `short`-queue limits (see Pilot section).
-- Remaining un-annotated (SIRIUS-runnable) features: ~3,815 (3,927 targets −
-  112 won by pilot). Full native run (`bash
-  analysis/sirius_annotation/scripts/run_sirius_native.sh 30 0 1`) is the
-  next step if full native coverage is desired.
-- **Full native run: DEFERRED (2026-08-20).** The pilot validated the pipeline
-  and was ready to scale (~3,815 targets → ~131 shards of 30, `%1` serial on
-  the `short` queue, ~22–28 h), but the `short` queue and the shared SIRIUS
-  6.3.12 login-token server are already busy with the sibling ***Herptile***
-  project's array job `27671478 sirius-herptile-full` (172 shards, serial) +
-  its queued merge `27671479` (their task logs show transient
-  `JOB_WATCHER`/token-retry failures under load). Launch was held to avoid
-  queueing behind it and compounding login-token contention. When launching,
-  point the full run at a **fresh output dir** (`sirius_native_results_full/`)
-  so it cannot collide with the pilot's `shard_000–004` (the pilot's 150 are a
-  subset of the ~3,927 full targets).
-  Rationale for this decision: `.living/decisions.md` (2026-08-20 entry).
+  `27605104`) **completed and merged 2026-08-20**: 112 formula / 99 structure
+  identifications folded in as an interim step (superseded by the full run
+  below).
+- **Native SIRIUS full run (job `27718540`, 127 shards, all 3,927 charge-1+
+  targets) COMPLETED and MERGED 2026-08-25.** One shard (`_11`) hit the
+  array's 1 h per-task time limit (`TIMEOUT`) and was resubmitted standalone
+  on the `short` partition with `--time=02:00:00` (job `27748769_11`,
+  completed in 1h07m) before merging. Merge + fold-in (`merged_full/` →
+  `--native-label native-full-e9838293-bagel`) produced 3,184 formula /
+  2,764 structure / 3,062 formula-CANOPUS / 2,764 structure-CANOPUS
+  identifications, superseding the 112-row pilot (`native-EB97X`) for every
+  feature it also covered. **Final: 4,957 local features annotated (1,773
+  transferred + 3,184 native)**, 4,268 with a structure name. 0 new
+  merge-conflicts from the fold-in.
+- Downstream `differential-features-primary` / `feature-tables-primary`
+  re-run 2026-08-25 with the full annotation set: 103,637 significant
+  feature-rows, **2,639 bioactivity-flagged** (up from 1,106 with the pilot).
 - Native pilot over-covered 6 features (`545`, `601`, `1905`, `2729`, `8042`,
-  `8793`) — target selection did not exclude them, so each now has **both** a
-  transferred row and a `native-EB97X` row in `sirius_annotations.tsv`.
-  Downstream dedup/conflict handling should prefer the native row for these.
+  `8793`) — target selection did not exclude them, so each carried **both** a
+  transferred row and a `native-EB97X` row before the full-run merge
+  superseded the pilot rows for any feature the full run also covered.
 - See "Known caveats" below for the merge-collapse conflicts.
 
 ## Datasets
@@ -111,9 +106,22 @@ Threshold sweep (validated before running): (5 ppm, 0.3) → 2,044;
 | ─ `ms2_tie` | 533 |
 | ─ unique formula/structure (single hits) | 1,177 |
 | Not assigned | 678 (266 `no_match`, 50 `no_ms2_candidate`, 362 `low_cosine`) |
-| **Local features annotated** (accumulated, one row per feature id) | **1,773** |
+| **Local features annotated** (transferred only) | **1,773** |
 | ─ with formula | 1,773 (100%) |
 | ─ with structure name | 1,657 |
+
+**After the full native run (2026-08-25):**
+
+| Metric | Value |
+|--------|-------|
+| Native SIRIUS targets (charge 1+, un-annotated by transfer) | 3,927 |
+| Usable native spectra (after degenerate-block filter) | 3,810 |
+| Native formula identifications | 3,184 |
+| Native structure identifications | 2,764 |
+| **Local features annotated (final, accumulated)** | **4,957** |
+| ─ transferred | 1,773 |
+| ─ native | 3,184 |
+| ─ with structure name | 4,268 |
 
 ## Outputs
 
@@ -256,6 +264,45 @@ python3 analysis/sirius_annotation/scripts/import_sirius_transfer.py \
 
 After fold-in: 1,885 assigned local features (1,773 transferred + 112 native),
 0 new merge-conflicts.
+
+### Full run (job 27718540)
+
+3,927 charge-1+ targets → 3,810 usable spectra → 127 shards of 30
+(`shard_000`–`shard_126`). Submitted via `bash
+analysis/sirius_annotation/scripts/run_sirius_native.sh 30 0 1` to the
+`short` partition, `%1` serial. 126/127 shards completed within the
+per-task 1 h array time limit; shard `_11` hit `TIMEOUT` at 1h00m and was
+resubmitted standalone with a longer time limit:
+
+```bash
+sbatch --partition=short --time=02:00:00 --array=11 \
+  --export=ALL,SHARD_DIR=$PWD/analysis/sirius_annotation/shards_native,OUT_DIR=$PWD/analysis/sirius_annotation/sirius_native_results,SIF=/bigdata/stajichlab/shared/singularity/sirius-6.3.12-linux-x64.sif \
+  analysis/sirius_annotation/scripts/run_sirius_native.sbatch
+```
+
+Completed 2026-08-25 (job `27748769_11`, 1h07m). Merge + fold in (executed
+2026-08-25, after all 127 shards were COMPLETED):
+
+```bash
+python3 /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/EB/scripts/sirius_container_pipeline/merge_sirius_shards.py \
+  --shard-root analysis/sirius_annotation/sirius_native_results \
+  --out-dir analysis/sirius_annotation/sirius_native_results/merged_full
+python3 analysis/sirius_annotation/scripts/import_sirius_transfer.py \
+  --native-merged analysis/sirius_annotation/sirius_native_results/merged_full \
+  --native-label native-full-e9838293-bagel
+```
+
+After fold-in: **4,957 assigned local features (1,773 transferred + 3,184
+native)**, 0 new merge-conflicts. Downstream primary differential tables were
+then regenerated (`pixi run differential-features-primary && pixi run
+feature-tables-primary`): 103,637 significant feature-rows, 2,639
+bioactivity-flagged.
+
+**Note the output-dir naming**: the pilot's merge lives in `.../merged/`
+(112 rows, `native-EB97X`, 2026-08-20) and the full run's merge lives in
+`.../merged_full/` (3,184 rows, `native-full-e9838293-bagel`, 2026-08-25) —
+do not reuse `merged/` for the full run's output, and do not confuse the two
+labels when auditing `sirius_source_run` in `sirius_annotations.tsv`.
 
 ## Reproducibility
 
