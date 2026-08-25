@@ -22,6 +22,12 @@ data/raw/
 # other pipeline outputs are regenerable via scripts/*.sh; do not commit.
 analysis/genome_bioactivity_linkage/results/
 
+# rnaseq-expression: STAR genome indices (SA/SAindex/Genome routinely
+# hundreds of MB, over GitHub's 100 MB per-file limit) and BAMs are
+# regenerable via scripts/*.sh from data/raw/ (also ignored) + the
+# reference genomes; do not commit.
+analysis/rnaseq_expression/results/
+
 shard_*/
 *.sirius
 *.mgf
