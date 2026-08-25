@@ -36,6 +36,16 @@ Run: `pixi run build-ordination-table && pixi run pcoa-ordination`
   conditions overlap, consistent with F-003 (life-stage signal is in the spore
   fraction).
 
+![All-samples PCoA, colored by matrix](figures/pcoa_all.png)
+
+![PCoA colored by the 6 sampled conditions](figures/pcoa_condition.png)
+
+![PCoA colored by collapsed life-stage (Zoospore vs Developed)](figures/pcoa_stagegroup.png)
+
+| *B. dendrobatidis* | *B. salamandrivorans* |
+|---|---|
+| ![Bd PCoA](figures/by_species/pcoa_dendrobatidis.png) | ![Bsal PCoA](figures/by_species/pcoa_salamandrivorans.png) |
+
 ## Key inputs
 - `data/raw/gnps2_e9838293_bagel/nf_output/feature_finding/feature_finding_results/aligned_features.csv`
 - `data/metdata/curated_gnps_metadata.tsv`

@@ -105,12 +105,35 @@ Reads:
   Zoospore from Developed, whereas in the spore fraction 5.6k-7.2k do —
   consistent with F-002 (matrix dominates; the supernatant is compositionally
   dominated by shared media/secreted chemistry).
-- 103,637 significant feature-rows cover 33,066 unique features; ~6,688 have
-  an NPC class annotation; 3,003 flagged as secreted candidates, 1,041 as
-  bioactivity-flagged.
+- 103,637 significant feature-rows cover 33,066 unique features; 15,791 have
+  an NPC class annotation (full native SIRIUS run, 2026-08-25); 62,771
+  flagged as secreted candidates, 2,639 as bioactivity-flagged.
 - Bsal (salamandrivorans), which secretes rapidly in culture, shows the
   spore-fraction zoospore-to-developed signal skew (7,211 vs 54 in liq) most
   strongly.
+
+## Figures
+
+Volcano (log2FC vs -log10 q) and top-features plots for each of the 8 primary
+contrasts (full-resolution `.pdf` alongside each `.png`):
+
+### Life stage (Zoospore vs Developed)
+
+| contrast | volcano | top features |
+|---|---|---|
+| Bd liq | ![](dendrobatidis_liq_Zoospore_vs_liq_Developed/volcano.png) | ![](dendrobatidis_liq_Zoospore_vs_liq_Developed/top_features.png) |
+| Bd spore | ![](dendrobatidis_spore_Zoospore_vs_spore_Developed/volcano.png) | ![](dendrobatidis_spore_Zoospore_vs_spore_Developed/top_features.png) |
+| Bsal liq | ![](salamandrivorans_liq_Zoospore_vs_liq_Developed/volcano.png) | ![](salamandrivorans_liq_Zoospore_vs_liq_Developed/top_features.png) |
+| Bsal spore | ![](salamandrivorans_spore_Zoospore_vs_spore_Developed/volcano.png) | ![](salamandrivorans_spore_Zoospore_vs_spore_Developed/top_features.png) |
+
+### Secreted vs cellular (liq vs spore)
+
+| contrast | volcano | top features |
+|---|---|---|
+| Bd Zoospore | ![](dendrobatidis_liq_Zoospore_vs_spore_Zoospore/volcano.png) | ![](dendrobatidis_liq_Zoospore_vs_spore_Zoospore/top_features.png) |
+| Bd Developed | ![](dendrobatidis_liq_Developed_vs_spore_Developed/volcano.png) | ![](dendrobatidis_liq_Developed_vs_spore_Developed/top_features.png) |
+| Bsal Zoospore | ![](salamandrivorans_liq_Zoospore_vs_spore_Zoospore/volcano.png) | ![](salamandrivorans_liq_Zoospore_vs_spore_Zoospore/top_features.png) |
+| Bsal Developed | ![](salamandrivorans_liq_Developed_vs_spore_Developed/volcano.png) | ![](salamandrivorans_liq_Developed_vs_spore_Developed/top_features.png) |
 
 ## Caveats
 - The bioactivity keyword regex is a filter, not an annotation of record;
