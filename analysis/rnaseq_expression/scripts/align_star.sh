@@ -52,11 +52,17 @@ fi
 
 rm -rf "${outdir}"
 mkdir -p "${outdir}"
+# --limitBAMsortRAM: STAR's default sort-buffer estimate (based on genome
+# index size) is too small for these Bd runs' read depth -- confirmed
+# 2026-08-25 (job 27752021 tasks 0-2 FATAL ERROR "not enough memory for
+# BAM sorting", all 3 Bd reps; the 5 Bsal reps succeeded with the default).
+# 12G leaves headroom under this job's 16gb allocation.
 STAR --runMode alignReads \
     --genomeDir "${index_dir}" \
     --readFilesIn "${reads[@]}" \
     --readFilesCommand zcat \
     --outSAMtype BAM SortedByCoordinate \
+    --limitBAMsortRAM 12000000000 \
     --quantMode GeneCounts \
     --outFileNamePrefix "${outdir}/" \
     --runThreadN "${SLURM_CPUS_PER_TASK:-8}"
