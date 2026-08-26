@@ -1,0 +1,29 @@
+ClusterBlast scores for LYON02000150.1
+
+Table of genes, locations, strands and annotations of query cluster:
+BSLG_009743	28312	30040	+	ubiquinol oxidase, mitochondrial	
+BSLG_009744	32515	36284	+	hypothetical protein	
+BSLG_009745	37057	45356	-	hypothetical protein	
+BSLG_009746	46366	47334	+	hypothetical protein	
+BSLG_009747	47479	49674	-	hypothetical protein	
+BSLG_009748	49911	50220	-	hypothetical protein	
+
+
+Significant hits: 
+1. BGC0001248.3	clavaric acid
+
+
+Details:
+
+>>
+1. BGC0001248.3
+Source: clavaric acid
+Type: terpene
+Number of proteins with BLAST hits to this cluster: 1
+Cumulative BLAST score: 644.0
+
+Table of genes, locations, strands and annotations of subject cluster:
+
+Table of Blast hits (query gene, subject gene, %identity, blast score, %coverage, e-value):
+BSLG_009744	ACF70484.1	47	644	102.73775216138328	1.16e-224
+

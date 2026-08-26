@@ -1,0 +1,16 @@
+ClusterBlast scores for LYON02000132.1
+
+Table of genes, locations, strands and annotations of query cluster:
+BSLG_007639	499697	501225	+	ubiquinol oxidase, mitochondrial	
+BSLG_007640	503711	507480	+	hypothetical protein	
+BSLG_007641	508251	514471	-	hypothetical protein	
+BSLG_007642	514770	516549	-	hypothetical protein	
+BSLG_007643	517313	517982	+	hypothetical protein	
+BSLG_007644	518214	518526	+	hypothetical protein	
+BSLG_007645	518669	521406	-	hypothetical protein	
+
+
+Significant hits: 
+
+
+Details:

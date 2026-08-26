@@ -1,0 +1,24 @@
+ClusterBlast scores for LYON02000001.1
+
+Table of genes, locations, strands and annotations of query cluster:
+BSLG_000859	4981188	4983416	-	hypothetical protein	
+BSLG_000860	4984179	4990760	+	hypothetical protein	
+BSLG_000861	4991656	4994307	-	hypothetical protein	
+BSLG_000862	4995099	4995911	+	hypothetical protein	
+BSLG_000863	4997597	5001980	-	hypothetical protein	
+BSLG_000864	5002834	5004646	+	hypothetical protein	
+BSLG_000865	5005569	5006974	-	hypothetical protein	
+BSLG_000866	5008733	5015114	-	hypothetical protein	
+BSLG_000867	5017101	5020720	+	hypothetical protein	
+BSLG_000868	5023224	5029250	-	hypothetical protein	
+BSLG_000869	5030036	5031098	+	peptidyl-prolyl cis-trans isomerase	
+BSLG_000870	5031403	5033249	-	hypothetical protein	
+BSLG_000871	5034894	5035587	+	hypothetical protein	
+BSLG_000872	5038383	5041156	+	hypothetical protein	
+BSLG_000873	5042821	5043890	+	hypothetical protein	
+
+
+Significant hits: 
+
+
+Details:

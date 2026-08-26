@@ -1,0 +1,15 @@
+ClusterBlast scores for LYON02000131.1
+
+Table of genes, locations, strands and annotations of query cluster:
+BSLG_007504	6017	10272	-	hypothetical protein	
+BSLG_007505	13812	15854	+	hypothetical protein	
+BSLG_007506	16973	18982	+	hypothetical protein	
+BSLG_007507	20771	22401	+	hypothetical protein	
+BSLG_007508	22763	24313	-	hypothetical protein	
+BSLG_007509	26412	28005	-	hypothetical protein	
+
+
+Significant hits: 
+
+
+Details:
