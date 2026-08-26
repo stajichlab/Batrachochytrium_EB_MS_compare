@@ -49,7 +49,7 @@ def test_build_candidate_table_only_matches_extracellular_matching_family():
             },
         ]
     )
-    table = build_candidate_table(compounds, gene_domains)
+    table = build_candidate_table(compounds, gene_domains, require_extracellular=True)
     assert set(table["candidate_protein_id"]) == {"protA", "protC"}
     row_a = table[table["candidate_protein_id"] == "protA"].iloc[0]
     assert row_a["compound_row_id"] == 100
@@ -62,6 +62,32 @@ def test_build_candidate_table_only_matches_extracellular_matching_family():
     # dedup) must actually reach the final output table, not just be
     # computed and dropped -- see GENOME_BIOACTIVITY_LINKAGE.md residual #3.
     assert row_c["n_domain_hits"] == 2
+
+
+def test_build_candidate_table_relaxed_default_includes_cytoplasmic():
+    # Since 2026-08-25 the default is require_extracellular=False (NRPS/PKS/
+    # P450/terpene-synthase enzymes are near-universally cytoplasmic -- the
+    # metabolite, not the enzyme, is exported). The strict pass exercised in
+    # test_build_candidate_table_only_matches_extracellular_matching_family
+    # above is now opt-in via require_extracellular=True.
+    compounds = pd.DataFrame([{"row_id": 100, "compound_class": "Polyketides", "log2fc": 2.0, "q_value": 0.01}])
+    gene_domains = pd.DataFrame(
+        [
+            {
+                "protein_id": "cytoplasmic_pks",
+                "family": "pks",
+                "n_domain_hits": 1,
+                "has_bgc_context": False,
+                "is_cross_ref_confirmed": True,
+                "is_extracellular": False,
+            }
+        ]
+    )
+    relaxed = build_candidate_table(compounds, gene_domains)
+    assert set(relaxed["candidate_protein_id"]) == {"cytoplasmic_pks"}
+    assert bool(relaxed.iloc[0]["is_extracellular"]) is False
+    strict = build_candidate_table(compounds, gene_domains, require_extracellular=True)
+    assert strict.empty
 
 
 def test_build_candidate_table_sorted_by_tier_then_fc_then_compound():

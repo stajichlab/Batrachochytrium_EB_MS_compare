@@ -216,6 +216,50 @@ from two *different* families, in which case it legitimately appears as two
 rows — rare in practice, but the reason the granularity is phrased as
 "...protein, family..." rather than simply "...protein...".)
 
+## Follow-ups resolved (2026-08-26)
+
+Four nested follow-up items from the original caveats are now closed; the
+details live in the referenced files.
+
+1. **RNA-seq expression evidence folded in (4th tiering signal).** STAR's
+   own `--quantMode GeneCounts` was useless on this data (NCBI GFF3 exon
+   lines carry no `gene_id`), fixed by gffread GFF3→GTF conversion +
+   featureCounts on the existing BAMs (unstranded, `-s 0`). Each candidate
+   now carries `reference_protein_id`, `ref_locus`, `gene_total_raw`,
+   `n_rep_ge_min`, `rna_is_expressed`, `rna_no_evidence`. Bd: 2,634/2,634
+   candidates' genes detected (Bd baseline 95% — weak discriminator); Bsal:
+   7,222/8,322 (baseline 63% — informative). Both Tier-1 NRPS genes are
+   transcribed (Bd BDV3_005439 2,534 rc/3 reps; Bsal BSLG_000866 739 rc/5
+   reps). Not condition-matched to the LC-MS growth condition — presence/
+   absence only. See `analysis/rnaseq_expression/RNASEQ_EXPRESSION.md`.
+2. **Tier-1 NRPS genes fully characterized.** Both are type-I NRPS
+   assemblies with siderophore/cyclic-peptide-type MIBiG similarity (Bd:
+   C-A(**Ala**)-PCP module + downstream transaminase, top MIBiG hassallidin C/D
+   BGC0000369 / anachelin BGC0002532; Bsal: C-A(X)-PCP + flanking large NRPS
+   ORFs BSLG_000863/867/868 + PPIase, top MIBiG nostophycin BGC0001029).
+   See `results/TIER1_NRPS_CHARACTERIZATION.md`.
+3. **Bsal protein-count anomaly quantified.** BFD emits exactly one
+   transcript per locus (no isoform multiplicity); the 19,449-transcript
+   count is 19,449 BFD loci vs 10,867 NCBI genes. All-vs-all DIAMOND
+   self-blast: Bd 8,396 proteins → 1,234 near-dups (14.7%) / 966 strict
+   (11.5%); Bsal 19,449 → **5,983 near-dups (30.7%) / 3,453 strict (17.8%)**,
+   plus a heavier short-protein tail (Bsal 29.5% <200 aa vs Bd 18.4%) —
+   consistent with BFD over-predicting duplicated short ORFs for Bsal on top
+   of genuine recent duplication. The DeepTMHMM-excluded outlier
+   `F61BA062_016014-T1` is a real ~4.8-kb single-exon "hypothetical protein"
+   present in BOTH the BFD model (F61BA062_016014) and the NCBI reference
+   (KAJ1332392.1/BSLG_008696), has no PFAM domains and no internal repeat
+   structure, and is transcribed (274/179 counts) — a genuine (uncharacterized,
+   possibly fused) giant ORF, not a BFD artifact. See
+   `analysis/genome_bioactivity_linkage/results/duplication_check/`.
+4. **`parse_pfam_domains.py` offsets verified against real domtblout.**
+   Spot-checked against the real local `hmmsearch --domtblout` files
+   (`results/pfam_hmmscan/<species>/<TAG>.domtblout.gz`) with
+   `split(None, 22)`: fields 0 (protein target id), 3 (Pfam query name), 4
+   (Pfam accession), 6/7 (full E-value/score) all land on the correct
+   columns — the parser is correct for the hmmsearch format the local
+   fallback (and BFD's own PFAM module) produces.
+
 ## Known caveats
 
 1. **Bsal's cross-check is weaker than Bd's.** Bd JEL423 has a curated

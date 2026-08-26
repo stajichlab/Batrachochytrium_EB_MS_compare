@@ -16,7 +16,12 @@ def test_species_table_has_both_species():
 
 
 def test_find_bfd_output_missing_raises_with_expected_path(tmp_path, monkeypatch):
+    # Both search roots (BFD's shared run AND this project's local fallback)
+    # must be redirected to tmp_path: since 2026-08-25 the real local
+    # pfam_hmmscan/... fallback files exist on disk, so a monkeypatched
+    # BFD_ROOT alone no longer triggers the missing-path case.
     monkeypatch.setattr(paths, "BFD_ROOT", tmp_path)
+    monkeypatch.setattr(paths, "GBL_ROOT", tmp_path)
     try:
         paths.find_bfd_output("pfam_hmmscan", "dendrobatidis")
         assert False, "expected FileNotFoundError"

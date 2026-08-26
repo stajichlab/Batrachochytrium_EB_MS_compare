@@ -92,6 +92,14 @@ Append-only log of gotchas, surprises, and insights.
 - **Resolution**: edit `generate_feature_tables.py` (split rollup by `df["species"]`, per-species `write_index` links), regenerate via `pixi run feature-tables-primary`, delete the stale combined rollup, re-stage, update `DIFFERENTIAL_FEATURES_PRIMARY.md` / `ANALYSIS_MANIFEST.md`.
 - **Tags**: `github`, `git-push`, `file-size-limit`, `feature-tables`, `rollup`, `chunking`
 
+## 2026-08-24 — Mycelium Stop hook flags live-growing SLURM job logs as unaddressed session activity on every check
+
+- **Category**: infra / tooling gotcha
+- **What happened**: While monitoring the resubmitted DeepTMHMM job (`27731394`) and the SIRIUS native array (`27718540`), each `sacct`/`tail` check on their SLURM stdout logs (`logs/gbl_deeptmhmm.27731394.log`, `analysis/sirius_annotation/logs/27718540_*.log`) registered as new session file activity. The Stop hook (`mycelium-stop-check.sh`) requires `.living/` to be touched *after* that activity, but edits to `.living/log/*.md` are explicitly excluded from the "living changed" signal (`--exclude-prefix ".living/log/"`) — only `learnings.md`/`decisions.md`/`conventions.md`/`findings/` count. A pure-monitoring session that only updates its own session log therefore gets blocked repeatedly, even after finalizing the log, because the excluded log edit doesn't satisfy the check and the job's own log file keeps growing on its own between checks.
+- **Why it matters**: A session spent only watching a long-running background SLURM job (no code/data changes) still needs at least one real entry in `learnings.md`/`decisions.md`/`findings/` (not just the session log) to pass Stop — otherwise it will keep re-blocking on every status check, since re-tailing the job log after finalizing `.living/log/` re-triggers the same "files changed but not addressed" signal.
+- **Resolution**: Recorded this behavior itself as the learning for this session. In future pure-monitoring sessions, either (a) make a single learnings.md/decisions.md entry once (even a short "monitored job X, no incident" note) rather than repeatedly editing only the session log, or (b) avoid re-reading the growing job log more than once per turn if a Stop is imminent.
+- **Tags**: `mycelium`, `stop-hook`, `slurm`, `monitoring`, `tooling-gotcha`, `session-lifecycle`
+
 ## 2026-08-20 — SIRIUS arrays across sibling projects contend for the shared login-token server; identify competing runs via `squeue`
 
 - **Category**: infra
@@ -99,3 +107,51 @@ Append-only log of gotchas, surprises, and insights.
 - **Why it matters**: It is not enough that your own array runs `%1` — another project's SIRIUS array on the same partition is still competing for the same serialized login-token resource and queue slots. Check `squeue` for the partition and identify competing SIRIUS jobs by name/workdir before launching a big run; `JobArrayTaskLimit` + `Dependency` states mark a throttled/dependent array.
 - **Resolution**: Deferral documented in `.living/decisions.md` (2026-08-20) and `analysis/sirius_annotation/SIRIUS_ANNOTATION.md`; launch command + fresh out-dir (`sirius_native_results_full/`) recorded for when the queue clears.
 - **Tags**: `sirius`, `queue-management`, `hpcc-short`, `login-token`, `concurrency`, `deferral`, `hpc
+
+## 2026-08-25 — SIRIUS native array: shard_011 hit the default 1h per-task SLURM limit; retry with a longer --time
+
+- **Category**: infra / hpc
+- **What happened**: Of the 127-shard full native SIRIUS array (job `27718540`), 126 shards `COMPLETED`; shard_011 (`27718540_11`) was `TIMEOUT`'d by SLURM at the `run_sirius_native.sbatch` default `--time=01:00:00`, mid-toolchain (fragmentation-tree/fingerprint jobs cancelled), leaving only a partial `.sirius` project archive and no `write-summaries` output (no `shard_011/` results dir). `run_sirius_native.sbatch` has no per-shard override for slow shards — some shards apparently contain harder-to-fragment compounds that exceed 1h on 4 cores.
+- **Why it matters**: A `TIMEOUT` (not `FAILED`) sacct state on one array task is easy to miss when skimming for `COMPLETED` counts, and the partial `.sirius` project directory left behind must be deleted before a clean rerun (SIRIUS may otherwise try to resume/append to a truncated workspace).
+- **Resolution**: Removed the stale `shard_011.sirius` partial archive, resubmitted just `--array=11-11` with `--time=02:00:00` via a direct `sbatch` call (job `27748769`), then merged all 127 shards with `EB/scripts/sirius_container_pipeline/merge_sirius_shards.py` into a fresh `sirius_native_results/merged_full/` dir and imported via `import_sirius_transfer.py --native-merged ... --native-label native-full-e9838293-bagel`.
+- **Tags**: `sirius`, `slurm`, `timeout`, `array-job`, `retry`, `hpc`
+
+## 2026-08-25 — SignalP 6 on a 19k-protein proteome is far too slow on CPU; use the GPU build
+
+- **Category**: infra / hpc
+- **What happened**: `run_signalp.sh`'s local fallback (`signalp/6.0h`, CPU) ran on both species' BFD-predicted proteomes. `dendrobatidis` (8,396 proteins) completed in 15 min, but `salamandrivorans` (19,449 proteins) ran at ~2.6 sequences/s and `TIMEOUT`'d at 92% against the `short` partition's 2h cap (job `27753328_1`). SignalP 6 has a GPU build (`signalp/6.0h-gpu`) that this project's script wasn't using, on the reasoning (now shown wrong for a 19k-protein proteome) that "two small fungal proteomes" didn't need it.
+- **Why it matters**: SignalP 6's per-sequence CPU cost doesn't scale down cleanly just because the organism is "small" — proteome protein *count* is what matters, and 19k proteins is enough to blow a 2h CPU budget. The GPU build removes the bottleneck entirely and the `short_gpu` partition (2h cap, various GPU types) is more than sufficient once GPU-accelerated.
+- **Resolution**: Rewrote `run_signalp.sh` to use `signalp/6.0h-gpu` on `-p short_gpu --gres=gpu:1 --time=02:00:00` for both species (was `-p short`, CPU-only, `signalp/6.0h`); resubmitted only the missing `salamandrivorans` array index (`--array=1-1`, job `27773831`) — the script's existing `if [ -s "${gff3}.gz" ]; then exit 0; fi` skip-guard made this safe without re-running `dendrobatidis`. Completed well under the 2h cap.
+- **Tags**: `signalp`, `gpu`, `slurm`, `timeout`, `hpc`, `bioinformatics`
+
+## 2026-08-25 — genome-bioactivity-linkage's `is_extracellular` gate can zero out candidates for small domain-hit sets
+
+- **Category**: analytical-design
+- **What happened**: With BFD's own PFAM/antiSMASH/SignalP/PredGPI run still absent for both `Batrachochytrium` species, this project's local fallback (PFAM `hmmscan`, antiSMASH-on-NCBI-reference, SignalP, PredGPI, DeepTMHMM, RBH) let `build_linkage_tables.py` run end-to-end for the first time against real data. `dendrobatidis` produced 0 candidate rows: its 44 biosynthetic-domain-carrying proteins (nrps/pks/p450/squalene_phytoene_synthase) have zero overlap with the 765/982 proteins flagged `is_extracellular`. `link_compounds_to_genes.build_candidate_table` requires both a domain-family match *and* `is_extracellular` before a gene can appear as a candidate at all (by design, see `GENOME_BIOACTIVITY_LINKAGE.md` Stage 4 step 6) — biologically defensible (NRPS/PKS/P450/terpene synthases are cytoplasmic; it's the metabolite that's exported, not the enzyme) but strict enough to fully zero a small (44-protein) domain-hit set. `salamandrivorans` (bigger proteome, 19,449 proteins) cleared the gate for exactly 1 protein, yielding 2 candidate rows.
+- **Why it matters**: A "no candidates" result from this pipeline for a given species is not necessarily "pipeline broken" or "no biosynthetic potential" — it can be an artifact of a strict co-occurring-evidence filter interacting with a small domain-hit set. Worth distinguishing before concluding "Bd has no candidate biosynthetic genes for its liq-enriched compounds."
+- **Resolution**: Documented as a known caveat in `GENOME_BIOACTIVITY_LINKAGE.md`'s Status section rather than silently changed — relaxing `is_extracellular` from a hard filter to a separate tier/flag is a scientific design call for the user to make, not an unrequested code change.
+- **Tags**: `genome-bioactivity-linkage`, `secretion-prediction`, `analytical-design`, `pfam`, `caveat`
+
+## 2026-08-26 — STAR --quantMode GeneCounts produced zero gene counts: NCBI GFF3 exons carry no gene_id; fix is gffread GTF + featureCounts on existing BAMs
+
+- **Category**: bioinformatics / gotcha
+- **What happened**: The RNA-seq STAR alignment pipeline (commit 13f1c83) produced BAMs and `ReadsPerGene.out.tab` for all 8 runs, but every count file had only the 4 summary rows + `MissingGeneID` — no real gene counts. Root cause: the NCBI `genomic.gff` (GFF3) "exon" lines carry `Parent=rna-*` + `locus_tag` and NO `gene_id` attribute, and STAR's `--quantMode GeneCounts` tallies reads per `gene_id`, so everything landed in MissingGeneID.
+- **Why it matters**: "STAR finished OK" masked a completely empty expression result; trusting the RunsPerGene files would have fed all-NaN expression into the linkage tiering.
+- **Resolution**: convert each GFF3 → GTF with `gffread -T` (threads gene/mRNA Parent chain into gene_id/transcript_id), then recount the existing BAMs with subread `featureCounts` (`-s 0`, unstranded best by ~2× for this dataset; `-p --countReadPairs`). No re-alignment needed. Fold into candidate tables via `build_expression_evidence.py` (BFD protein → RBH NCBI protein → locus → counts).
+- **Tags**: `rnaseq`, `star`, `featurecounts`, `gff3`, `gtf`, `gffread`, `gene-counts`, `genome-bioactivity-linkage`
+
+## 2026-08-26 — SRR id prefixes are not clean glob families: a sloppy ls pattern silently dropped 3 of 8 samples from featureCounts
+
+- **Category**: data-engineering / gotcha
+- **What happened**: `run_featurecounts.sh` selected BAMs with `ls .../SRR1301211*/Aligned...` and `ls .../SRR2768388*/...`. SRR ids increment irregularly (Bsal: SRR13012113/117/121/125/129; Bd: SRR27683879/80/81), so `SRR1301211*` matched only 113/117 and `SRR2768388*` only 80/81 — 3 of 8 samples silently dropped (took some effort to notice because `ls`/`file`/`samtools` all succeed on the existing dirs and the glob "worked" by returning a subset). A wrong blast of concurrent NFS dir-cache weirdness red-herringed the diagnosis initially.
+- **Why it matters**: A silently-truncated sample set corrupts per-gene counts/expression without erroring. Diagnostic pattern `SRR...*` must be replaced with exact ids or an awk on samples.tsv.
+- **Resolution**: rewrote the script to derive BAM paths from `samples.tsv` by species (`awk -F'\t' '$2==species {print $1}'`), resubmitted (job 27778101), verified 3/5 bam columns present before downstream use.
+- **Tags**: `data-engineering`, `glob`, `srr`, `sample-sheet`, `silent-failure`, `featurecounts`
+
+## 2026-08-26 — Bsal BFD proteome over-prediction quantified: 30.7% self-BLAST near-duplicates (Bd 14.7%) + heavy short-protein tail; the DeepTMHMM outlier is real in NCBI too
+
+- **Category**: genomics / analytical-design
+- **What happened**: Ran the recommended diagnostic for the Bsal protein-count anomaly (GENOME_BIOACTIVITY_LINKAGE.md caveat): DIAMOND all-vs-all self-blastp on both BFD proteomes. Bsal 19,449 proteins → 5,983 with a ≥90%-ident/≥80%-cov paralog (30.7%) vs Bd 8,396 → 1,234 (14.7%); strict (≥95%/≥90%) 17.8% vs 11.5%. Bsal also has 29.5% of proteins <200 aa (Bd 18.4%) and BFD returns exactly one transcript per locus (no isoform multiplicity), vs NCBI's 10,867 genes for the same assembly. The DeepTMHMM-crashing 4,777-aa outlier F61BA062_016014-T1 is annotated in BOTH BFD and NCBI (BSLG_008696 / KAJ1332392.1, 4,681 aa, "hypothetical protein"), has no PFAM domains or internal repeat structure, and is transcribed (274/179 counts).
+- **Why it matters**: Bsal's larger candidate table (8,322 vs 2,634 rows) and 2× proteome partly reflect over-prediction of short duplicated ORFs, not 2× biology; results should be interpreted with that lens.
+- **Resolution**: duplication diagnostics and outlier analysis written to `results/duplication_check/` and `results/TIER1_NRPS_CHARACTERIZATION.md`; F-004 finding registered.
+- **Tags**: `genome-bioactivity-linkage`, `duplication`, `over-prediction`, `bsal`, `diamond`, `gene-content`
