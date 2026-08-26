@@ -1,0 +1,19 @@
+ClusterBlast scores for CP161931.1
+
+Table of genes, locations, strands and annotations of query cluster:
+BDV3_007213	649024	652074	+	hypothetical protein	
+BDV3_007214	652511	654693	+	hypothetical protein	
+BDV3_007215_887a6c7a	654921	658907	-	hypothetical protein	
+BDV3_007215	654921	659036	-	hypothetical protein	
+BDV3_007216	659435	660721	+	hypothetical protein	
+BDV3_007217	660750	662087	-	hypothetical protein	
+BDV3_007218	662309	669580	-	hypothetical protein	
+BDV3_007219	669805	671558	-	hypothetical protein	
+BDV3_007220	671970	674390	+	hypothetical protein	
+BDV3_007221	674535	676165	-	hypothetical protein	
+
+
+Significant hits: 
+
+
+Details:

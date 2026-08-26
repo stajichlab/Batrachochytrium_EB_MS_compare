@@ -1,0 +1,19 @@
+ClusterBlast scores for CP161933.1
+
+Table of genes, locations, strands and annotations of query cluster:
+BDV3_002107	634862	638687	+	hypothetical protein	
+BDV3_002108	638825	639380	-	hypothetical protein	
+BDV3_002109	639736	640762	+	hypothetical protein	
+BDV3_002110	640978	642474	+	hypothetical protein	
+BDV3_002111	642893	644089	+	hypothetical protein	
+BDV3_002112	644544	646577	+	hypothetical protein	
+BDV3_002113	646795	648573	-	hypothetical protein	
+BDV3_002114	648682	650393	-	hypothetical protein	
+BDV3_002115	650876	655347	+	hypothetical protein	
+BDV3_002116	655845	658627	-	hypothetical protein	
+
+
+Significant hits: 
+
+
+Details:

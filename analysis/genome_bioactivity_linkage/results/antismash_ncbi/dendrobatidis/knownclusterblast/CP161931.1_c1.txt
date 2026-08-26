@@ -1,0 +1,32 @@
+ClusterBlast scores for CP161931.1
+
+Table of genes, locations, strands and annotations of query cluster:
+BDV3_007186	570475	574519	+	hypothetical protein	
+BDV3_007187	575082	577858	+	hypothetical protein	
+BDV3_007188	578634	579814	+	hypothetical protein	
+BDV3_007189	580023	583114	+	hypothetical protein	
+BDV3_007190_699a12e7	583979	591434	-	hypothetical protein	
+BDV3_007190	583979	591434	-	hypothetical protein	
+BDV3_007191	592066	593186	+	hypothetical protein	
+BDV3_007192	593394	595709	-	hypothetical protein	
+BDV3_007193	595888	596716	-	hypothetical protein	
+
+
+Significant hits: 
+1. BGC0001248.3	clavaric acid
+
+
+Details:
+
+>>
+1. BGC0001248.3
+Source: clavaric acid
+Type: terpene
+Number of proteins with BLAST hits to this cluster: 1
+Cumulative BLAST score: 795.0
+
+Table of genes, locations, strands and annotations of subject cluster:
+
+Table of Blast hits (query gene, subject gene, %identity, blast score, %coverage, e-value):
+BDV3_007189	ACF70484.1	54	795	97.63560500695411	2.63e-283
+

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+    
+          <tr>
+              <td>AAK53484.1</td>
+              <td>cystathionine_gamma-synthase</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0000774.4">BGC0000774.4</a></td>
+              <td>saccharide:lipopolysaccharide</td>
+              <td>54.0</td>
+              <td>101.8</td>
+              <td>412.0</td>
+              <td>7.75e-143</td>
+          </tr>
+    
+          <tr>
+              <td>QIQ28599.1</td>
+              <td>Nbc3</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0002541.2">BGC0002541.2</a></td>
+              <td>other:other</td>
+              <td>48.0</td>
+              <td>98.7</td>
+              <td>341.0</td>
+              <td>3.31e-115</td>
+          </tr>
+    
+          <tr>
+              <td>CAY48793.1</td>
+              <td>methionine_gamma-lyase</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0001312.5">BGC0001312.5</a></td>
+              <td>NRPS:Type I</td>
+              <td>44.0</td>
+              <td>102.5</td>
+              <td>306.0</td>
+              <td>4.13e-101</td>
+          </tr>
+    
+          <tr>
+              <td>AAM94792.1</td>
+              <td>CalE6</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0000033.5">BGC0000033.5</a></td>
+              <td>PKS</td>
+              <td>42.0</td>
+              <td>96.7</td>
+              <td>273.0</td>
+              <td>1.4e-88</td>
+          </tr>
+    
+          <tr>
+              <td>AAK21284.1</td>
+              <td>putative_cystathionine_gamma-lyase</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0000783.3">BGC0000783.3</a></td>
+              <td>saccharide</td>
+              <td>58.0</td>
+              <td>53.2</td>
+              <td>230.0</td>
+              <td>3.34e-74</td>
+          </tr>
+    
+          <tr>
+              <td>EWG54273.1</td>
+              <td>O-acetylhomoserine_(thiol)-lyase</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0001190.3">BGC0001190.3</a></td>
+              <td>PKS</td>
+              <td>35.0</td>
+              <td>108.1</td>
+              <td>205.0</td>
+              <td>9.75e-62</td>
+          </tr>
+    
+          <tr>
+              <td>ADG39435.1</td>
+              <td>AllM</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0000886.4">BGC0000886.4</a></td>
+              <td>other:other</td>
+              <td>37.0</td>
+              <td>100.8</td>
+              <td>202.0</td>
+              <td>4.3e-61</td>
+          </tr>
+    
+          <tr>
+              <td>ABC94351.1</td>
+              <td>cystathionine_gamma-synthase_protein</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0000457.5">BGC0000457.5</a></td>
+              <td>NRPS:Type I</td>
+              <td>33.0</td>
+              <td>94.7</td>
+              <td>192.0</td>
+              <td>3.91e-57</td>
+          </tr>
+    
+          <tr>
+              <td>AAV68703.1</td>
+              <td>LolC-1</td>
+              <td><a target="_new" href="https://mibig.secondarymetabolites.org/go/BGC0000815.4">BGC0000815.4</a></td>
+              <td>other:other</td>
+              <td>33.0</td>
+              <td>106.9</td>
+              <td>177.0</td>
+              <td>1.11e-50</td>
+          </tr>
+    
+    </tbody>
+  </table>
+</body>

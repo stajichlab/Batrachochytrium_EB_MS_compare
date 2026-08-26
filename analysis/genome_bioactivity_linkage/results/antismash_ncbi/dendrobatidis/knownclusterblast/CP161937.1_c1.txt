@@ -1,0 +1,20 @@
+ClusterBlast scores for CP161937.1
+
+Table of genes, locations, strands and annotations of query cluster:
+BDV3_003004	99338	100235	-	hypothetical protein	
+BDV3_003005	104130	104775	+	hypothetical protein	
+BDV3_003006_feb2f85c	105236	106781	-	hypothetical protein	
+BDV3_003006	105236	107489	-	hypothetical protein	
+BDV3_003007	108219	112840	-	hypothetical protein	
+BDV3_003008	113470	114301	-	hypothetical protein	
+BDV3_003009	114697	115901	+	hypothetical protein	
+BDV3_003010	116075	117678	+	hypothetical protein	
+BDV3_003011	118007	119785	-	hypothetical protein	
+BDV3_003012	120195	123667	-	hypothetical protein	
+BDV3_003013	123742	125056	-	hypothetical protein	
+
+
+Significant hits: 
+
+
+Details:
