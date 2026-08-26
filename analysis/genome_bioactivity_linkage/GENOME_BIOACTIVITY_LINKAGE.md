@@ -21,7 +21,8 @@ compounds (Stage 4) to rank candidate genes per compound.
 
 ## Status
 
-**Implemented and unit-tested; not yet run against real BFD output.**
+**Implemented, unit-tested, and now run end-to-end against real functional-
+annotation data for both species (2026-08-25).**
 
 All ten build tasks in the implementation plan are complete:
 
@@ -38,13 +39,50 @@ All ten build tasks in the implementation plan are complete:
 - Task 10 (this task): end-to-end driver (`build_linkage_tables.py`), pixi
   task registration, this writeup
 
-**Blocked on:** the BFD `--taxon GENUS:Batrachochytrium` functional-annotation
-run (PFAM `hmmscan`/`hmmsearch` domtblout, antiSMASH `--fullhmmer` JSON,
-SignalP, PredGPI) has not finished producing output for either species as of
-this writing. `paths.find_bfd_output` / `paths.bfd_antismash_json` raise
-`FileNotFoundError` by design when their target files are absent — this is
-correct "skip cleanly / rerun on demand" behavior, not a bug. Once that BFD
-run completes:
+**No longer blocked on BFD's own shared functional-annotation run** — as of
+2026-08-25, BFD's own `results/function/{pfam_hmmscan,signalp,predgpi}` still
+has zero output for either `Batrachochytrium` locustag (`FCC698BD`,
+`F61BA062`), and BFD's own `antismash_local` sub-run has never materialized
+for either genome either. Instead, this project ran **its own local
+fallback** for every Stage 1–2 input `paths.find_bfd_output` /
+`bfd_antismash_json` accept (`run_pfam.sh`, `run_signalp.sh`,
+`run_predgpi.sh`, `run_deeptmhmm.sh`, `run_rbh.sh`, plus
+`run_antismash_reference.sh` against the NCBI reference GBFF, confirmed
+contig-coordinate-compatible with BFD's own gene models — see
+`bfd_antismash_json`'s docstring in `paths.py`). `pixi run gbl-build-tables`
+now completes cleanly for both species and writes
+`results/{dendrobatidis,salamandrivorans}_candidate_table.tsv`:
+
+- **With the original strict `require_extracellular=True` gate**:
+  dendrobatidis produced **0 candidate rows** — its 44 biosynthetic-domain-
+  hit proteins (24 `nrps`, 16 `pks`, 12 `p450`, 2
+  `squalene_phytoene_synthase`) have **zero overlap** with the 765/982
+  SignalP/DeepTMHMM/PredGPI-scored `is_extracellular` proteins (expected:
+  NRPS/PKS/P450/terpene-synthase enzymes are near-universally cytoplasmic —
+  the compound, not the enzyme, is what gets exported). salamandrivorans
+  produced only **2 candidate rows** (both tier 3, the same PKS protein
+  `F61BA062_017028-T1` linked to 2 liq-enriched Polyketide compounds).
+- **After relaxing the gate** (`require_extracellular=False`, now the
+  default — see Known caveat #5): dendrobatidis → **2,634 candidate rows**
+  (147 unique compounds × 32 unique proteins; tier 1: 144, tier 2: 2,487,
+  tier 3: 3; `is_extracellular=True` for **0** of them). salamandrivorans →
+  **8,322 candidate rows** (277 unique compounds × 66 unique proteins; tier
+  1: 275, tier 2: 4,432, tier 3: 3,615; `is_extracellular=True` for only
+  **2** of them — the same 2 rows from the strict run). The relaxation is
+  therefore doing essentially all of the work: nearly every new candidate is
+  a plausible cytoplasmic biosynthesis gene that the old gate excluded
+  outright, not a secreted-pathway gene the old gate was missing for some
+  other reason.
+
+Retry note: the local `run_signalp.sh` CPU pass (`signalp/6.0h`, job
+`27753328`) completed `dendrobatidis` in 15 min but **TIMEOUT'd on
+`salamandrivorans`** at 92% (19,449 proteins, ~2.6 sequences/s, 2h `short`
+limit) — SignalP 6 is GPU-capable; the script now uses `signalp/6.0h-gpu` on
+`short_gpu --gres=gpu:1` (job `27773831`, completed in well under 2h).
+
+Original blocked-state instructions (kept for when BFD's own shared run
+eventually appears — its output should be preferred automatically by
+`find_bfd_output`'s search-root order with no code changes needed):
 
 ```bash
 pixi run gbl-fetch-reference   # already run; re-runs are a no-op (skip-if-exists)
@@ -87,10 +125,10 @@ confirmed complete for both species.
 - `analysis/sirius_annotation/sirius_annotations.tsv` — SIRIUS/CANOPUS
   compound-class annotations (see that project's `SIRIUS_ANNOTATION.md` for
   its own status/snapshot). **SIRIUS coverage snapshot used for this run:**
-  1,885 annotated local features as of 2026-08-20 (1,773 transferred + 112
-  native pilot, job `27605104`) — the full native SIRIUS run remains
-  deferred; if `sirius_annotations.tsv` is regenerated with a larger native
-  run, this note must be re-stated with the new feature count/date, since
+  4,957 annotated local features as of 2026-08-25 (1,773 transferred + 3,184
+  native, job `27718540` full run + `27748769_11` retry, superseding the
+  earlier 112-feature pilot) — if `sirius_annotations.tsv` is regenerated
+  again, this note must be re-stated with the new feature count/date, since
   `build_linkage_tables.py` reads it fresh on every invocation.
 - `analysis/differential_features_primary/all_significant_features_summary.tsv`
   — 103,638-row primary differential-features table; this pipeline restricts
@@ -155,9 +193,11 @@ Per species (`dendrobatidis`, `salamandrivorans`):
    value is assigned; see "Datasets" above for why this is narrower than a
    naive `"liq"` substring filter).
 6. **Tiered linking** (Stage 4): `link_compounds_to_genes.build_candidate_table`
-   matches each compound's domain family against extracellular
-   (`is_extracellular`) proteins of that family, assigns a tier
-   (1 = BGC context **and** cross-ref confirmed; 2 = either one; 3 =
+   matches each compound's domain family against **all** PFAM domain-hit
+   proteins of that family (not gated on `is_extracellular` by default as of
+   2026-08-25 — see Known caveat #5; pass `require_extracellular=True` to
+   restore the original strict secreted-pathway-only behavior), assigns a
+   tier (1 = BGC context **and** cross-ref confirmed; 2 = either one; 3 =
    neither), and sorts the whole table **tier-first**, then by
    `abs(compound_log2fc)` descending within a tier (real differential-abundance
    magnitude, not a placeholder), with `compound_row_id` as a final
@@ -233,6 +273,29 @@ rows — rare in practice, but the reason the granularity is phrased as
    contents will change (likely grow) once a larger native run is folded in
    — re-state the snapshot date/feature count here whenever Stage 4 is
    rerun.
+5. **`is_extracellular` was relaxed from a hard filter to an informational
+   column (2026-08-25).** The original design required a candidate gene to
+   be `is_extracellular` (SignalP/DeepTMHMM/PredGPI-predicted secreted)
+   before it could appear in the candidate table at all — biologically
+   motivated (compound secretion assumed to require enzyme secretion) but it
+   zeroed Bd's entire 44-protein domain-hit set on real data (zero overlap
+   between the domain-hit and extracellular-scored protein sets — NRPS/PKS/
+   P450/terpene-synthase enzymes are near-universally cytoplasmic; it's the
+   *metabolite*, not the enzyme, that's exported). `build_candidate_table`
+   now defaults to `require_extracellular=False`: every domain-hit protein
+   of a matched family becomes a candidate regardless of localization,
+   `is_extracellular` stays on every row for downstream filtering/
+   prioritization, and `require_extracellular=True` restores the original
+   strict behavior. **Read tier alongside `is_extracellular`, not tier
+   alone**: a Tier 1 candidate (BGC context + RBH-confirmed) is not
+   automatically a secreted-pathway gene now that the gate is off — check
+   `is_extracellular` per row if that distinction matters for a given
+   compound. Counts jumped from 0/2 (strict) to 2,634/8,322 (relaxed) for
+   dendrobatidis/salamandrivorans respectively, and (as of this run) exactly
+   0 and 2 of those rows are `is_extracellular=True` — i.e. the relaxation
+   is doing essentially all of the work, confirming the zero-overlap finding
+   was the real driver of the original near-empty tables, not some other
+   narrower bottleneck.
 6. **`COMPOUND_CLASS_TO_FAMILY` coverage of SIRIUS's real vocabulary.**
    Checked directly against `analysis/sirius_annotation/sirius_annotations.tsv`
    (1,885 rows): the previous `"Alkaloids (linear polyketides)"` key never

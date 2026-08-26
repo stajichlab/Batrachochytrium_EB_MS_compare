@@ -2,14 +2,16 @@
 # Runs SignalP 6 on both species' BFD-predicted proteomes locally, since
 # BFD's own shared signalp run has no output at all for either
 # Batrachochytrium genome as of 2026-08-25. Mirrors BFD's own invocation
-# (see BFD/Fungi_BFD_runs/nextflow/modules/BFD/SIGNALP/main.nf) except
-# using the CPU build (signalp/6, not signalp/6-gpu) since this is only
-# two small fungal proteomes and avoids GPU-queue contention -- same
-# flags otherwise (-org euk --mode fast -format txt), so
+# (see BFD/Fungi_BFD_runs/nextflow/modules/BFD/SIGNALP/main.nf) -- flags
+# match (-org euk --mode fast -format txt), so
 # merge_secretion.load_signalp_gff3 needs no changes.
 #
+# Uses the GPU build (signalp/6.0h-gpu): the CPU build (job 27753328) ran
+# at ~2.6 sequences/s and TIMEOUT'd on salamandrivorans (19,449 proteins,
+# 92% done at the 2h limit) -- confirmed 2026-08-25.
+#
 # Output: analysis/genome_bioactivity_linkage/results/signalp/<species>/<LOCUSTAG>.signalp.gff3.gz
-#SBATCH -p short -N 1 -n 1 -c 8 --mem 16gb --time=02:00:00
+#SBATCH -p short_gpu -N 1 -n 1 -c 8 --mem 16gb --gres=gpu:1 --time=02:00:00
 #SBATCH --job-name=gbl_signalp
 #SBATCH --output=logs/gbl_signalp.%A_%a.log
 #SBATCH --array=0-1
@@ -25,7 +27,7 @@ source /etc/profile.d/modules.sh 2>/dev/null || true
 # the fast-mode model weights (distilled_model_signalp6.pt) -- confirmed
 # 2026-08-25 (job 27753303 FAILED with FileNotFoundError). 6.0h has the
 # complete model set (fast + sequential slow-mode models).
-module load signalp/6.0h
+module load signalp/6.0h-gpu
 
 declare -A PROTEINS=(
     [dendrobatidis]="${BFD_ROOT}/genome_annotation/Batrachochytrium_dendrobatidis_JEL423/predict_results/Batrachochytrium_dendrobatidis_JEL423.proteins.fa"

@@ -14,14 +14,26 @@ def assign_tier(has_bgc_context: bool, is_cross_ref_confirmed: bool) -> int:
     return 3
 
 
-def build_candidate_table(compounds: pd.DataFrame, gene_domains: pd.DataFrame) -> pd.DataFrame:
-    extracellular = gene_domains[gene_domains["is_extracellular"]]
+def build_candidate_table(
+    compounds: pd.DataFrame, gene_domains: pd.DataFrame, require_extracellular: bool = False
+) -> pd.DataFrame:
+    """``require_extracellular=False`` (default since 2026-08-25, relaxed from
+    a hard filter): NRPS/PKS/P450/terpene-synthase biosynthetic enzymes are
+    near-universally cytoplasmic -- it's the metabolite, not the enzyme, that
+    gets exported -- so gating candidate genes on ``is_extracellular`` zeroed
+    out Bd's entire (44-protein) domain-hit set on real data (see
+    GENOME_BIOACTIVITY_LINKAGE.md Known caveats). ``is_extracellular`` is
+    still computed and returned as a column on every row for downstream
+    filtering/prioritization; pass ``require_extracellular=True`` to restore
+    the original strict behavior (secreted-pathway-only candidates).
+    """
+    candidates = gene_domains[gene_domains["is_extracellular"]] if require_extracellular else gene_domains
     rows = []
     for _, compound in compounds.iterrows():
         family = COMPOUND_CLASS_TO_FAMILY.get(compound["compound_class"])
         if family is None:
             continue  # unmapped compound class -- left out per spec, not force-fit
-        matches = extracellular[extracellular["family"] == family]
+        matches = candidates[candidates["family"] == family]
         for _, gene in matches.iterrows():
             tier = assign_tier(gene["has_bgc_context"], gene["is_cross_ref_confirmed"])
             rows.append(
