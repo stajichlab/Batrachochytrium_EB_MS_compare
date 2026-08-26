@@ -1,0 +1,78 @@
+HANDOFF — Batrachochytrium MS / genome-bioactivity linkage follow-up
+=====================================================================
+Date: 2026-08-26
+Project: /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS
+Branch: main (NOTHING COMMITTED — all work is uncommitted for review)
+
+NEXT-SESSION FOCUS
+------------------
+Continue linking candidate bioactive molecules to compounds with more
+precision. The five follow-up items from the linkage review are DONE. The
+natural next step (open question in F-004) is closing the loop between the
+two characterized Tier-1 NRPS BGCs and the top liq-enriched SIRIUS-annotated
+peptide features (oligopeptide / cyclo-peptide candidates in
+analysis/differential_features_primary/liq_enriched_curation/) via MS²
+comparison — i.e. does either chytrid's peptide profile match the predicted
+Ala-rich / cyclo-peptide product class of its NRPS cluster?
+
+WHAT WAS COMPLETED (see GENOME_BIOACTIVITY_FOLLOWUP_SUMMARY.md for full detail)
+--------------------------------------------------------------------------------
+1. RNA-seq gene counts fixed (STAR GeneCounts was empty: NCBI GFF3 exons lack
+   gene_id). Fix: gffread GTF + featureCounts -s 0 on existing BAMs. Added
+   4th expression boolean (rna_is_expressed et al.) to candidate tables.
+2. Tier-1 NRPS BGCs characterized. Bd BDV3_005439 (C-A-Ala-PCP; MIBiG
+   hassallidin/anachelin-type). Bsal BSLG_000866 (C-A-X-PCP + flanking NRPS
+   ORFs; MIBiG nostophycin/cyanopeptolin-type). See
+   analysis/genome_bioactivity_linkage/results/TIER1_NRPS_CHARACTERIZATION.md.
+3. Bsal over-prediction quantified: 30.7% near-duplicate proteins (Bd 14.7%),
+   19,449 BFD loci vs 10,867 NCBI genes. DeepTMHMM outlier is a real annotated
+   giant ORF in both annotations (BSLG_008696/KAJ1332392.1), transcribed.
+4. parse_pfam_domains.py column offsets verified correct against real
+   hmmsearch --domtblout files.
+5. Metabolomics-USI scaffold built + validated live (per-species top
+   liq-enriched features with render/mirror/json USI links).
+
+KEY ARTIFACTS (reference these; do not duplicate their content)
+---------------------------------------------------------------
+- GENOME_BIOACTIVITY_FOLLOWUP_SUMMARY.md                 (this repo root; full summary)
+- analysis/rnaseq_expression/RNASEQ_EXPRESSION.md        (gene-count pipeline + results)
+- analysis/rnaseq_expression/scripts/run_featurecounts.sh
+- analysis/rnaseq_expression/scripts/build_expression_evidence.py
+- analysis/genome_bioactivity_linkage/results/TIER1_NRPS_CHARACTERIZATION.md   [gitignored results tree — force-add if you want it committed]
+- analysis/genome_bioactivity_linkage/results/duplication_check/<species>/self.blastp.tsv
+- analysis/genome_bioactivity_linkage/results/{dendrobatidis,salamandrivorans}_candidate_table.tsv
+- analysis/differential_features_primary/liq_enriched_curation/{dendrobatidis,salamandrivorans}_liq_enriched_top.tsv / _usi.html
+- analysis/differential_features_primary/scripts/build_usi_curation.py
+- .living/findings/bsal-overprediction-and-tier1-nrps.md  (F-004)
+- .living/log/2026-08-26-001-batrachochytrium-ms.md
+- pixi.toml  (tasks: rna-expression-evidence, usi-curation)
+
+REPRO CHAIN / VERIFICATION
+--------------------------
+- pixi run gbl-build-tables && pixi run rna-expression-evidence (candidate tables + expression)
+- pixi run pytest analysis/genome_bioactivity_linkage/tests  → 49 passed
+- pixi run usi-curation
+- USI endpoints already validated live (Bd 473, Bsal 2953 → real peak arrays)
+
+IMPORTANT NOTES
+---------------
+- analysis/genome_bioactivity_linkage/results/ and
+  analysis/rnaseq_expression/results/ are gitignored (regenerable); only the
+  candidate table TSVs are force-tracked.
+- RNA-seq expression is presence/absence only (public runs, NOT the LC-MS
+  growth condition); absence is weaker than presence. Bd baseline 95%
+  detection → rna_is_expressed is a weak Bd discriminator; informative for Bsal (63% baseline).
+- Two stale tests updated to match require_extracellular=False default; all 49 pass.
+- Candidates for MS² follow-up worth prioritizing: Bd feature 473
+  "H-Leu-Leu-Phe-Gly-Nle-Pro-Val-" (m/z 1058.58), Bd 884 "H-Leu-Pro-Lys-Pro-
+  Pro-Lys-Pro-", Bsal 2953 "cyclo[Phe-D-Phe-Val-DL-Pro-Pro...]" (m/z 1213.59),
+  Bsal 975 "Spectral Match to Leu-Val".
+- Nothing is committed; stage and commit deliberately (review the diff first).
+
+SUGGESTED SKILLS FOR NEXT AGENT
+-------------------------------
+- research  — for MIBiG compound literature + comparing NRPS A-domain
+  specificity predictions against candidate peptide MS²
+- write a new analysis doc under analysis/<topic>/ for the peptide-vs-NRPS
+  closure step (UPPER_SNAKE_CASE.md per repo convention)
+- code-review — before committing this batch, review the uncommitted diff
