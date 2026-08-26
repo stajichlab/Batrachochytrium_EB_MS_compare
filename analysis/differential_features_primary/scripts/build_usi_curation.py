@@ -29,8 +29,15 @@ USI_BASE = f"mzspec:GNPS2:TASK-{TASK}-nf_output/feature_finding/aligned_features
 
 
 def gene_uri(feature_id: int, suffix: str) -> str:
+    # Trailing slash before the query string is required -- without it the
+    # resolver 308-redirects to the http:// (not https://) version of the
+    # same URL (confirmed 2026-08-26: `/json?usi1=...` -> 308 ->
+    # `http://.../json/?usi1=...`), which browsers/img-tags/some HTTP
+    # clients don't reliably follow (mixed-content blocking on an https
+    # page, or a client that doesn't auto-follow), so links/images
+    # silently fail to resolve to a specific spectrum.
     usi = f"{USI_BASE}{feature_id}"
-    return f"https://metabolomics-usi.gnps2.org/{suffix}?usi1={usi}"
+    return f"https://metabolomics-usi.gnps2.org/{suffix}/?usi1={usi}"
 
 
 def main() -> None:
