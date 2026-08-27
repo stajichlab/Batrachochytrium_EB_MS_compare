@@ -13,7 +13,7 @@
 
 ### Open Questions
 - Does either chytrid's peptide profile (top liq-enriched "Amino acids and Peptides" features) match a predicted Ala-rich / cyclo-peptide product from these NRPS clusters (SIRIUS + USI-level verification)?
-- Is Bsal's over-prediction concentrated in specific gene families (segmental duplicates?) that would change the biological interpretation of its larger candidate table?
+- ~~Is Bsal's over-prediction concentrated in specific gene families (segmental duplicates?) that would change the biological interpretation of its larger candidate table?~~ **Answered 2026-08-26** for the MEROPS M36 (fungalysin) family specifically: NO — Bsal's 328 M36 hits are proportionally *less* near-duplicated (30%) than Bd's much smaller 39-hit set (56%), and this matches an independent literature finding (Yu et al. 2025, G3, using the same corrected T2T Bd JEL423 assembly this project already uses) that M36 is genuinely contracted in Bd and "highly expanded (n=177)" in Bsal since the species split. See `analysis/genome_bioactivity_linkage/PROTEASE_CANDIDATES.md`. Whether this generalizes to Bsal's *other* over-predicted gene families remains open.
 
 ---
 

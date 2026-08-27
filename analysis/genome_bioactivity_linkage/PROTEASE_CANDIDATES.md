@@ -71,20 +71,67 @@ including dermatophyte keratinases):
 All top-ranked secreted candidates (lowest e-value) in both species are
 RBH-cross-ref-confirmed against the NCBI reference proteome.
 
-## Open question — is the Bsal M36 count real expansion or over-prediction?
+## Resolved — the Bsal M36 expansion is real biology, not (primarily) over-prediction
 
-Bsal's raw MEROPS-hit and secreted-candidate counts are ~3-7x Bd's, in
-the same direction as (and possibly compounding) the already-documented
-Bsal protein-count/duplication anomaly (F-004,
-`.living/findings/bsal-overprediction-and-tier1-nrps.md`: 30.7%
-near-duplicate proteins vs Bd's 14.7%). This has **not** been
-disambiguated here — it is plausible that Bsal genuinely has an expanded
-fungalysin repertoire (a real, biologically interesting virulence-gene
-expansion, consistent with Bsal's more severe/rapid pathogenicity in
-some hosts), that near-duplicate gene models are inflating the count, or
-both. Cross-referencing the M36-hit protein ids against
-`results/duplication_check/salamandrivorans/self.blastp.tsv`'s
-near-duplicate pairs would settle this and is the natural next step.
+**Cross-reference against the duplication self-blast (2026-08-26):** using
+an independently-chosen near-duplicate definition (pident ≥90% AND
+min-coverage ≥80% against a same-species self-blastp hit, excluding
+self-hits — not necessarily identical to whatever threshold produced the
+F-004 aggregate 14.7%/30.7% figures, since that computation's exact
+method wasn't saved as a script) applied specifically to the M36 hits:
+
+| Species | All M36 hits | Near-duplicate | Secreted M36 candidates | Near-duplicate |
+|---|---|---|---|---|
+| Bd JEL423 | 39 | 22 (56%) | 32 | 17 (53%) |
+| Bsal AMFP13 | 328 | 98 (30%) | 233 | 87 (37%) |
+
+This is the **opposite** of what the "Bsal count is inflated by
+over-prediction" hypothesis predicts: Bd's smaller M36 set is
+*proportionally more* duplicated than Bsal's much larger one. Bsal's
+extra M36 genes are mostly non-redundant paralogs by this metric, not an
+artifact of the same duplication process documented for the proteome
+overall (F-004). This argues the M36 count difference reflects **real,
+lineage-specific gene-family size**, not an assembly/gene-calling
+artifact — see literature corroboration below, which independently
+confirms this via a completely different assembly and method.
+
+## Literature corroboration (2026-08-26 web search)
+
+This species-level M36 pattern (Bd small, Bsal large) is **independently
+reported in the primary literature**, and the match to our own pipeline
+is unusually direct:
+
+- Yu et al. (2025), *A near-complete telomere-to-telomere genome assembly
+  for Batrachochytrium dendrobatidis GPL JEL423 reveals a larger CBM18
+  gene family and a smaller M36 metalloprotease gene family than
+  previously recognized*, G3 Genes|Genomes|Genetics
+  ([Oxford Academic](https://academic.oup.com/g3journal/article/15/2/jkae304/7930337),
+  [bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2024.10.22.619730v1)):
+  their new T2T assembly (`CMM_BatrDend_JEL423_V3`, Oxford Nanopore,
+  University of Exeter) shows Bd JEL423 encodes **fewer than half** the
+  M36 genes predicted from the older, more fragmented assembly, and a
+  gene-tree analysis shows the M36 family is **"highly expanded (n=177)
+  in B. salamandrivorans since its split with B. dendrobatidis."**
+  — **`CMM_BatrDend_JEL423_V3` is exactly the Bd reference assembly this
+  project already uses** (confirmed: `assemblyName` in
+  `results/reference_annotation/dendrobatidis/ncbi_dataset/data/assembly_data_report.jsonl`
+  matches verbatim). Our own BFD-based count (39 total M36 hits in Bd,
+  vs 328 in Bsal — order-of-magnitude consistent with their n=177 for
+  Bsal via a different gene-family-calling method) is therefore not just
+  plausible, it is built on the same corrected assembly the paper used,
+  and reproduces its qualitative conclusion independently.
+- Fisher lab / Rosenblum lab work on Bd secreted proteases (e.g. a
+  subtilisin-like **serine** protease induced by thyroid hormone that
+  degrades host antimicrobial peptides —
+  [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S187861461300069X))
+  supports the general "Bd secretes proteases that degrade host
+  defense/structural peptides" mechanism this analysis is built on,
+  independent of the M36 family specifically.
+
+**Practical upshot:** the M36 expansion in Bsal should be treated as a
+genuine, literature-supported virulence-factor difference between the two
+species, not an artifact to be explained away — strengthening rather
+than undermining the secreted-protease candidate list above.
 
 ## Caveats
 
