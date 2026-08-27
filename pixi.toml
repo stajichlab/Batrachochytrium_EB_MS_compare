@@ -22,5 +22,6 @@ differential-features-primary = "python analysis/differential_features_primary/s
 feature-tables-primary = "python analysis/differential_features_primary/scripts/generate_feature_tables.py"
 gbl-fetch-reference = "bash analysis/genome_bioactivity_linkage/scripts/fetch_reference_annotation.sh"
 gbl-build-tables = "python analysis/genome_bioactivity_linkage/scripts/build_linkage_tables.py"
+gbl-protease-candidates = "python analysis/genome_bioactivity_linkage/scripts/build_protease_candidates.py"
 rna-expression-evidence = "python analysis/rnaseq_expression/scripts/build_expression_evidence.py"
 usi-curation = "python analysis/differential_features_primary/scripts/build_usi_curation.py"

@@ -259,6 +259,17 @@ details live in the referenced files.
    (Pfam accession), 6/7 (full E-value/score) all land on the correct
    columns — the parser is correct for the hmmsearch format the local
    fallback (and BFD's own PFAM module) produces.
+5. **Secreted-protease candidates added (MEROPS, 2026-08-26).** A
+   companion, non-compound-linked candidate table ranking BFD proteins
+   with a MEROPS peptidase-family hit by the same secretion/orthology/
+   expression evidence as the main table — same local-fallback pattern
+   (`run_merops.sh`, BFD's own shared `merops` run also has zero output
+   for either locustag). Dominated by MEROPS family **M36**
+   (fungalysin/deuterolysin metalloproteases, a well-documented secreted
+   fungal virulence-factor family): 32/45 (Bd) and 233/247 (Bsal) secreted
+   candidates. Bsal's much larger raw count may reflect the same
+   over-prediction/duplication anomaly noted above, genuine gene-family
+   expansion, or both — not disambiguated. See `PROTEASE_CANDIDATES.md`.
 
 ## Known caveats
 
