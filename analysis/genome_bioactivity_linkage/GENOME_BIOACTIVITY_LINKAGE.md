@@ -237,7 +237,7 @@ details live in the referenced files.
    C-A(**Ala**)-PCP module + downstream transaminase, top MIBiG hassallidin C/D
    BGC0000369 / anachelin BGC0002532; Bsal: C-A(X)-PCP + flanking large NRPS
    ORFs BSLG_000863/867/868 + PPIase, top MIBiG nostophycin BGC0001029).
-   See `results/TIER1_NRPS_CHARACTERIZATION.md`.
+   See `TIER1_NRPS_CHARACTERIZATION.md`.
 3. **Bsal protein-count anomaly quantified.** BFD emits exactly one
    transcript per locus (no isoform multiplicity); the 19,449-transcript
    count is 19,449 BFD loci vs 10,867 NCBI genes. All-vs-all DIAMOND
