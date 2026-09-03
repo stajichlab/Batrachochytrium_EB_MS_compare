@@ -1,0 +1,7 @@
+species	life_stage	n_plate_pairs	n_tested	n_depleted	n_enriched	frac_depleted	frac_enriched
+dendrobatidis	Zoospore	5	25157	58	147	0.0023	0.0058
+dendrobatidis	Sporangium	5	25157	300	260	0.0119	0.0103
+dendrobatidis	Mature	5	25157	1911	857	0.076	0.0341
+salamandrivorans	Zoospore	5	25157	103	214	0.0041	0.0085
+salamandrivorans	Sporangium	5	25157	1107	860	0.044	0.0342
+salamandrivorans	Mature	5	25157	3568	1428	0.1418	0.0568

@@ -29,3 +29,4 @@ rna-expression-evidence = "python analysis/rnaseq_expression/scripts/build_expre
 usi-curation = "python analysis/differential_features_primary/scripts/build_usi_curation.py"
 peptide-origin = "python analysis/differential_features_primary/scripts/peptide_origin_test.py"
 network-components = "python analysis/molecular_network/scripts/component_analysis.py"
+media-consumption = "python analysis/differential_features_primary/scripts/media_consumption.py"

@@ -29,7 +29,7 @@ Last summarized: 2026-09-02 (heuristic)
 ## Most recent (10)
 
 - [2026-09-02] L-25: Mycelium's Stop hook and init_repo require Python 3.11 (`datetime.UTC`) but invoke bare `python3`; on a 3.10 box Stop blocks with a message that hides the real error
-- [2026-09-02] L-24: The blank-clearing "secreted" peptides are proline-rich at casein/gelatin levels: the secreted metabolome is dominated by medium proteolysis
+- [2026-09-02] L-24: RETRACTED: the proline-composition test for medium-peptide origin fails its own controls; the surviving signal is a hydroxyproline contrast in Bsal only
 - [2026-09-02] L-23: Media blanks were 50% of every liq group; and at n=5 "n_significant" is a step function of the feature universe, not an effect size
 - [2026-09-02] L-22: Media-blank term applied: 91% of "secreted candidates" were medium; ordinal trend recovers 3-6x more life-stage signal than the collapse
 - [2026-09-02] L-21: F-003's "Sporangium-vs-Mature is always 0-significant" is wrong for Bd's spore fraction: 5,507 features separate them

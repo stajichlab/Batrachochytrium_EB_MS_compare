@@ -1,13 +1,13 @@
-species	matrix	stage_a	stage_b	n_a	n_b	n_tested	min_attainable_p	k_needed_for_BH_q05	complete_separations	expected_by_chance	enrichment	binom_p	bh_can_call_any
-dendrobatidis	liq	Zoospore	Sporangium	5	5	17113	0.007936507936507936	2717	414	135.8	3.05	7.75318870146234e-83	False
-dendrobatidis	liq	Zoospore	Mature	5	5	17400	0.007936507936507936	2762	2798	138.1	20.26	0.0	True
-dendrobatidis	liq	Sporangium	Mature	5	5	17266	0.007936507936507936	2741	2231	137.0	16.28	0.0	False
-dendrobatidis	spore	Zoospore	Sporangium	5	5	12014	0.007936507936507936	1907	2266	95.3	23.77	0.0	True
-dendrobatidis	spore	Zoospore	Mature	5	5	12026	0.007936507936507936	1909	4061	95.4	42.55	0.0	True
-dendrobatidis	spore	Sporangium	Mature	5	5	13558	0.007936507936507936	2153	2583	107.6	24.0	0.0	True
-salamandrivorans	liq	Zoospore	Sporangium	5	5	19380	0.007936507936507936	3077	1118	153.8	7.27	0.0	False
-salamandrivorans	liq	Zoospore	Mature	5	5	19792	0.007936507936507936	3142	3546	157.1	22.57	0.0	True
-salamandrivorans	liq	Sporangium	Mature	5	5	19335	0.007936507936507936	3070	1807	153.5	11.78	0.0	False
-salamandrivorans	spore	Zoospore	Sporangium	5	5	12630	0.007936507936507936	2005	2555	100.2	25.49	0.0	True
-salamandrivorans	spore	Zoospore	Mature	5	5	13093	0.007936507936507936	2079	3647	103.9	35.1	0.0	True
-salamandrivorans	spore	Sporangium	Mature	5	5	13478	0.007936507936507936	2140	715	107.0	6.68	0.0	False
+species	matrix	stage_a	stage_b	n_a	n_b	n_tested	min_attainable_p	k_needed_for_BH_q05	complete_separations	expected_by_chance	enrichment	perm_null_median	perm_null_max	n_perm_splits	perm_p	bh_can_call_any
+dendrobatidis	liq	Zoospore	Sporangium	5	5	17113	0.007936507936507936	2717	414	135.8	3.05	74.5	857	126	0.023809523809523808	False
+dendrobatidis	liq	Zoospore	Mature	5	5	17400	0.007936507936507936	2762	2798	138.1	20.26	55.0	2798	126	0.007936507936507936	True
+dendrobatidis	liq	Sporangium	Mature	5	5	17266	0.007936507936507936	2741	2231	137.0	16.28	64.5	2231	126	0.007936507936507936	False
+dendrobatidis	spore	Zoospore	Sporangium	5	5	12014	0.007936507936507936	1907	2266	95.3	23.77	15.5	2266	126	0.007936507936507936	True
+dendrobatidis	spore	Zoospore	Mature	5	5	12026	0.007936507936507936	1909	4061	95.4	42.55	13.5	4061	126	0.007936507936507936	True
+dendrobatidis	spore	Sporangium	Mature	5	5	13558	0.007936507936507936	2153	2583	107.6	24.0	27.0	2583	126	0.007936507936507936	True
+salamandrivorans	liq	Zoospore	Sporangium	5	5	19380	0.007936507936507936	3077	1118	153.8	7.27	83.0	1118	126	0.007936507936507936	False
+salamandrivorans	liq	Zoospore	Mature	5	5	19792	0.007936507936507936	3142	3546	157.1	22.57	61.5	3546	126	0.007936507936507936	True
+salamandrivorans	liq	Sporangium	Mature	5	5	19335	0.007936507936507936	3070	1807	153.5	11.78	67.0	1807	126	0.007936507936507936	False
+salamandrivorans	spore	Zoospore	Sporangium	5	5	12630	0.007936507936507936	2005	2555	100.2	25.49	16.5	2555	126	0.007936507936507936	True
+salamandrivorans	spore	Zoospore	Mature	5	5	13093	0.007936507936507936	2079	3647	103.9	35.1	17.0	3647	126	0.007936507936507936	True
+salamandrivorans	spore	Sporangium	Mature	5	5	13478	0.007936507936507936	2140	715	107.0	6.68	38.5	715	126	0.007936507936507936	False

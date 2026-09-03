@@ -1,5 +1,38 @@
 #!/usr/bin/env python3
-"""Test whether the blank-clearing 'secreted' peptides are medium-protein digest products.
+"""RETRACTED TEST (2026-09-02) -- kept for the audit trail, do not cite its conclusion.
+
+This script tests whether blank-clearing liq peptides are medium-protein digest
+products via proline composition parsed from SIRIUS structure names. **The test
+fails its own controls and its conclusion is withdrawn.** Run it only to
+reproduce the negative result.
+
+Why it fails:
+  * The whole SIRIUS annotation table, parsed identically, is 19.5% Pro+Hyp
+    (872 peptides, 5,048 residues). The shortlist values -- Bd 24.3%, Bsal
+    16.9% -- are indistinguishable from that baseline (binomial p=0.23, 0.42).
+    The ~20% level is a property of which peptides the structure database can
+    name, not of these samples.
+  * Against each species' own non-blank-clearing (medium) peptides (Bd 19.7%,
+    Bsal 18.2%) the shortlist differs at Fisher p=0.27 / 0.75. The statistic
+    cannot separate a blank-clearing peptide from a medium peptide.
+  * The reference substrate was wrong: tryptone is a digest of WHOLE casein
+    (~11.3% Pro), not beta-casein (16.7%). Bd's 24.3% rejects whole casein.
+  * The unit of independence is the molecule, not the residue: 19 + 31 parsed
+    rows are ~15 and ~24 distinct molecules (some are isotope/duplicate-m/z
+    copies), so the binomial overstates precision by roughly the peptide length.
+
+Lesson worth keeping: a compositional statistic computed over database-assigned
+identities inherits the database's composition. Its control must be a
+same-database baseline, not an external reference proteome.
+
+The surviving, much narrower result uses fragment ions with a built-in negative
+control: the hydroxyproline immonium (86.0600) is in 26.3% of Bsal liq peptide
+MS2 spectra vs 9.2% of Bd's (OR 3.53, p=7.1e-16). Hyp is collagen-specific and
+only Bsal's medium contains gelatin. See CORRECTED_REANALYSIS_REPORT.md 6.2.
+
+---- original docstring below ----
+
+Test whether the blank-clearing 'secreted' peptides are medium-protein digest products.
 
 The question
 ------------

@@ -8,7 +8,8 @@ Sporangium+Mature into a single `Developed` stage. That collapse was
 justified by the claim that "every within-matrix Sporangium-vs-Mature
 contrast was 0-significant" -- which is FALSE for Bd's spore fraction:
 `dendrobatidis_spore_Sporangium_vs_spore_Mature` = 5,507 significant of
-21,816 tested in the 30-way scan, against 0 for Bsal spore.
+21,816 tested on the original 38,547-feature table (2,583 of 13,558 on the
+corrected one), against 0 for Bsal spore.
 
 Note the "Bsal spore is 2-state" reading of that 0 does NOT hold up. At
 n=5v5 the minimum attainable two-sided Mann-Whitney p is 2/C(10,5)=0.0079,
@@ -41,9 +42,9 @@ equivalent up to a monotone transform; it is rank-based and gives a signed
 effect size (rho: + = rises toward Mature, - = falls toward Zoospore).
 Significance uses a LABEL-PERMUTATION null (see spearman_permutation), not
 scipy's t-approximation, which is invalid under 3 tied x-levels.
-n = 15 for spore strata (5 per stage) and n = 30 for liq strata (10 per
-stage) -- ALL FUNGAL as of 2026-09-02; the liq strata previously contained
-15 fungal + 15 sterile media blanks, which diluted every liq result.
+n = 15 for EVERY stratum (5 per stage), all fungal as of 2026-09-02. The liq
+strata previously showed n = 30 only because they contained 15 fungal + 15
+sterile media blanks, which diluted every liq result.
 
 Outputs (analysis/differential_features_primary/lifestage_trend/):
   <species>_<matrix>_trend.tsv  : every tested feature, rho/p/q, direction,
@@ -53,8 +54,8 @@ Outputs (analysis/differential_features_primary/lifestage_trend/):
 
 Caveats
 -------
-- n=15 (spore) bounds the achievable Spearman p-value; treat spore-stratum
-  q-values as screening, not confirmation.
+- n=15 bounds the achievable p-value in every stratum (exact tie-free floor
+  2/C(15,5) = 2.64e-6); treat q-values as screening, not confirmation.
 - These are the SAME samples the pairwise tiers use, so trend hits are not
   independent evidence from the pairwise hits -- this is a different
   question (monotonic progression) on shared data, not a replication.
@@ -124,9 +125,9 @@ def spearman_permutation(mat: np.ndarray, ranks: np.ndarray, n_perm: int, seed: 
     Implementation: feature ranks are invariant under label permutation, so
     rho reduces to a Pearson correlation between standardized feature ranks
     and the standardized stage vector, and each permutation is a single
-    matrix-vector product. The null is pooled across features (all features
-    see the same shuffled labels), giving n_perm x n_features null values for
-    empirical p resolution far finer than n_perm alone.
+    matrix-vector product. Each feature is scored against ITS OWN null (see
+    the comment at the accumulation loop for why pooling across features is
+    wrong), so the attainable p floor is 1/(n_perm+1).
     """
     n_samp, n_feat = mat.shape
     # Rank within each feature (ties -> average), then standardize.
@@ -147,15 +148,22 @@ def spearman_permutation(mat: np.ndarray, ranks: np.ndarray, n_perm: int, seed: 
 
     rng = np.random.default_rng(seed)
     perm = ranks.copy()
-    null = np.empty(n_perm * n_feat, dtype=np.float32)
-    for k in range(n_perm):
+    abs_obs = np.abs(rho)
+    exceed = np.zeros(n_feat, dtype=np.int64)
+    for _ in range(n_perm):
         rng.shuffle(perm)
-        null[k * n_feat:(k + 1) * n_feat] = np.abs(rho_for(perm))
-    null.sort()
-
-    # Empirical two-sided p: fraction of the pooled null at least as extreme.
-    exceed = len(null) - np.searchsorted(null, np.abs(rho), side="left")
-    pval = (exceed + 1) / (len(null) + 1)
+        exceed += (np.abs(rho_for(perm)) >= abs_obs - 1e-9)
+    # PER-FEATURE null (corrected 2026-09-02). The first version POOLED all
+    # n_perm x n_feat null values and scored every feature against that shared
+    # distribution. That is only valid if features are exchangeable in their
+    # nulls, and they are not: a tie-free feature and a 90%-zero feature have
+    # very different |rho| null distributions. Pooling therefore let sparse
+    # features borrow the extreme tail of dense ones -- the same class of error
+    # the t-approximation had, just smaller. Measured on Bd spore, the pooled p
+    # was smaller than the per-feature p for ~93% of features, and its minimum
+    # (2.59e-07) sat 10x BELOW the exact tie-free floor of 2/C(15,5)=2.64e-06.
+    # Each feature now gets its own null, so the floor is 1/(n_perm+1).
+    pval = (exceed + 1) / (n_perm + 1)
     pval[constant] = 1.0
     return rho, pval, int(constant.sum())
 
@@ -233,7 +241,7 @@ def main() -> None:
     ap.add_argument("--fdr", type=float, default=0.05)
     ap.add_argument("--prevalence-min", type=float, default=0.10)
     ap.add_argument("--top-n", type=int, default=12)
-    ap.add_argument("--n-perm", type=int, default=1000,
+    ap.add_argument("--n-perm", type=int, default=20000,
                     help="label permutations for the null (default 1000)")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()

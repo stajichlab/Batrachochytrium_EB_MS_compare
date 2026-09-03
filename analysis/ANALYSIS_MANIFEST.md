@@ -95,3 +95,8 @@
 - **Key inputs**: `data/raw/gnps2_e9838293_bagel/nf_output/networking/filtered_pairs.tsv`, `analysis/ordination/linked_data/`, `analysis/sirius_annotation/sirius_annotations.tsv`, `background_subtraction.py`.
 - **Key outputs**: `analysis/molecular_network/{components.tsv,delta_mz_ladders.tsv,component_summary.md,component_sizes.png/.pdf}`. Repro: `pixi run network-components`.
 - **Readme**: [MOLECULAR_NETWORK.md](molecular_network/MOLECULAR_NETWORK.md)
+
+## differential_features_primary (media consumption)
+
+- **Status**: complete (2026-09-02). Complement of the enrichment analysis: features **depleted** relative to their own plate blank are medium components the fungus consumed or transformed — the most robust liquid-fraction readout here, since it does not require the feature to be fungal in origin. Depletion grows monotonically with culture age in both species (Bd 58 -> 300 -> 1,911; Bsal 103 -> 1,107 -> 3,568 across Zoospore/Sporangium/Mature). **Both species preferentially deplete peptide-class features** (Bd 91.9% vs 76.2% background, OR 3.87, p=1.8e-11; Bsal 93.9%, OR 5.64, p=1.6e-22), and **only Bsal also releases a peptide-enriched set** (OR 2.07, p=1.9e-05) while Bd's released material is peptide-poor (OR 0.60, n.s.) — the asymmetry an expanded secreted M36 protease repertoire predicts. Media differ between species so absolute counts are not cross-comparable; the compositional Fisher tests are within-species against each species' own background, so the medium confound cancels.
+- **Key outputs**: `analysis/differential_features_primary/media_consumption/{consumption.tsv,class_enrichment.tsv,consumption.png/.pdf}`. Repro: `pixi run media-consumption`.

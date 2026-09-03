@@ -23,12 +23,14 @@ i.e. at n=5v5 and q=0.05, k >= 0.159*m -- about 16% of all tested features
 must separate perfectly AT ONCE or nothing is called at all.
 
 That makes "n_significant" a step function of the feature universe, not a
-measure of biological effect. It is why `dendrobatidis_spore_Sporangium_vs_
-spore_Mature` reported 5,507 significant on the 38,547-feature table and 0 on
-the artifact-filtered 25,157-feature table: the underlying separation counts
-barely moved, but removing ~22% duplicate isotope-peak tests pushed the
-simultaneous-floor count below the BH threshold. Reporting either number as
-"the developmental signal" is an artifact of the denominator.
+measure of biological effect. `dendrobatidis_spore_Sporangium_vs_spore_Mature`
+illustrates it: 5,507 significant on the 38,547-feature table, 2,583 on the
+artifact-filtered 25,157-feature table, and 0 in an intermediate run that used
+scipy's asymptotic null (whose 5v5 floor of 1.219e-2 raises the required
+simultaneous-separation count by 1.5x). The underlying separation count barely
+moves across all three -- it sits at ~24x the null throughout. Only the
+denominator and the p-floor move. Reporting any of those counts as "the
+developmental signal" is an artifact of those two quantities.
 
 What this script reports instead
 --------------------------------
@@ -37,9 +39,17 @@ For each contrast, the number of features showing COMPLETE SEPARATION
 is exactly the event that attains p_min, compared against its analytic null
 expectation:
 
-    expected = n_tested * 2 / C(n1+n2, n1)
+    expected   = n_tested * 2 / C(n1+n2, n1)
     enrichment = observed / expected
-    binomial p = P(X >= observed | n_tested, 2/C(n1+n2,n1))
+    perm_p     = exact label-permutation p over every distinct relabelling
+
+The null is a LABEL PERMUTATION, not a binomial. A binomial over features
+would assume feature independence, which is exactly what the ordination
+disproves, and it returned p = 0.0 for 10 of 12 contrasts. Permuting sample
+labels keeps the between-feature correlation intact. Note the analytic
+2/C(n,k) expectation is CONSERVATIVE here -- zero-inflation ties break
+separation, so the permutation median runs below it and the enrichment ratios
+are understated rather than inflated.
 
 Enrichment is denominator-stable and comparable across contrasts, and it
 answers "is there ordered signal here" without a discontinuous threshold.
@@ -68,7 +78,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.stats import binomtest
+from itertools import combinations
 
 REPO = Path(__file__).resolve().parents[3]
 LINKED = REPO / "analysis" / "ordination" / "linked_data"
@@ -94,6 +104,27 @@ def n_complete_separations(a: np.ndarray, b: np.ndarray) -> int:
     return int(((a.min(axis=0) > b.max(axis=0)) | (a.max(axis=0) < b.min(axis=0))).sum())
 
 
+def permutation_separations(mat: np.ndarray, n_a: int) -> np.ndarray:
+    """Complete-separation counts under every distinct relabelling of the samples.
+
+    At n=5 v 5 there are C(10,5)=252 assignments, but the separation count is
+    identical for a split and its complement (separation is direction-agnostic
+    here), so 126 distinct values -- the attainable p floor is 1/127.
+    """
+    n = mat.shape[0]
+    seen, out = set(), []
+    for idx in combinations(range(n), n_a):
+        key = frozenset(idx)
+        comp_key = frozenset(set(range(n)) - set(idx))
+        if key in seen or comp_key in seen:
+            continue
+        seen.add(key)
+        mask = np.zeros(n, dtype=bool)
+        mask[list(idx)] = True
+        out.append(n_complete_separations(mat[mask], mat[~mask]))
+    return np.array(out)
+
+
 def main() -> None:
     meta = pd.read_csv(LINKED / "sample_metadata.csv")
     feat = pd.read_csv(LINKED / "feature_abundance.csv.gz")
@@ -115,7 +146,26 @@ def main() -> None:
                     obs = n_complete_separations(A, B)
                     p_min = 2 / comb(len(ia) + len(ib), len(ia))
                     exp = m * p_min
-                    bt = binomtest(obs, m, p_min, alternative="greater")
+                    # LABEL-PERMUTATION null (2026-09-02). The previous
+                    # binomial test treated features as independent Bernoulli
+                    # draws, which they emphatically are not -- that is what the
+                    # ordination measures -- and it returned p = 0.0 for 10 of
+                    # 12 contrasts, the classic tell. Enumerating every distinct
+                    # relabelling of the same samples keeps the between-feature
+                    # correlation intact, because each permuted split sees the
+                    # whole correlated matrix at once.
+                    #
+                    # Also note the analytic 2/C(n,k) expectation is
+                    # CONSERVATIVE on this data: ties from zero-inflation break
+                    # separation, so the permutation median runs well below it
+                    # and the enrichment ratios are understated, not inflated.
+                    # The enumeration INCLUDES the observed labelling, so the
+                    # exact conditional p is the plain proportion at least as
+                    # extreme -- adding one would double-count the observation
+                    # and inflate the floor from 1/126 to 2/127 (the same
+                    # error corrected in mwu_exact.mwu_permutation).
+                    null = permutation_separations(mat, len(ia))
+                    perm_p = float((null >= obs).sum()) / len(null)
                     rows.append({
                         "species": short, "matrix": matrix,
                         "stage_a": sa, "stage_b": sb,
@@ -125,12 +175,16 @@ def main() -> None:
                         "complete_separations": obs,
                         "expected_by_chance": round(exp, 1),
                         "enrichment": round(obs / exp, 2) if exp else np.nan,
-                        "binom_p": bt.pvalue,
+                        "perm_null_median": float(np.median(null)),
+                        "perm_null_max": int(null.max()),
+                        "n_perm_splits": len(null),
+                        "perm_p": perm_p,
                         "bh_can_call_any": obs >= int(np.ceil(p_min * m / 0.05)),
                     })
                     print(f"[{short}/{matrix}] {sa} vs {sb}: {obs} separations of {m} "
                           f"(exp {exp:.0f}, {obs/exp:.1f}x, BH needs "
-                          f"{int(np.ceil(p_min*m/0.05))})", file=sys.stderr)
+                          f"{int(np.ceil(p_min*m/0.05))}, perm_p={perm_p:.3f})",
+                          file=sys.stderr)
 
     df = pd.DataFrame(rows)
     OUT_DIR.mkdir(parents=True, exist_ok=True)

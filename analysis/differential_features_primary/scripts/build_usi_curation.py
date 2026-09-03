@@ -50,6 +50,49 @@ def gene_uri(feature_id: int, suffix: str) -> str:
     return f"https://metabolomics-usi.gnps2.org/{suffix}/?usi1={usi}"
 
 
+def _precursor_concordance(bagel: pd.DataFrame, tol: float = 0.01) -> dict[int, bool]:
+    """row_id -> does the MGF precursor agree with the feature table's m/z?
+
+    Added 2026-09-02 after an audit found annotations built on the wrong
+    precursor. Parsing all MGF blocks and comparing PEPMASS to `row m/z` for
+    the 6,453 has_ms2 features: 6,199 agree within 0.01, but 76 differ by
+    0.01-0.3, 57 by 0.3-0.7 (half-integer -- the signature of a 2+ ion written
+    into the table as charge=1/M+0/default-adduct, which the artifact filter
+    therefore cannot see) and 105 by ~1.0 (isotope spacing). The discordance is
+    essentially confined to the 489 SOURCE_FEATURE_ID=-1 blocks.
+
+    SIRIUS was handed those wrong precursors verbatim, which is where the
+    chemically impossible shortlist formulas come from (C10H5Cl9,
+    C16H21Br4N3O2, C21H19Br2IN6O6 -- in a fungal culture in tryptone). Those
+    are not annotations, they are the formula finder absorbing a mass error.
+    """
+    mgf = (REPO / "data" / "raw" / "gnps2_e9838293_bagel" / "nf_output"
+           / "feature_finding" / "aligned_features_filled.mgf")
+    pepmass: dict[int, float] = {}
+    cur: dict[str, str] = {}
+    with open(mgf) as fh:
+        for line in fh:
+            t = line.strip()
+            if t == "BEGIN IONS":
+                cur = {}
+            elif t == "END IONS":
+                if "SCANS" in cur and "PEPMASS" in cur:
+                    try:
+                        pepmass[int(cur["SCANS"])] = float(cur["PEPMASS"].split()[0])
+                    except ValueError:
+                        pass
+                cur = {}
+            elif "=" in t and t.split("=")[0].isupper():
+                k, v = t.split("=", 1)
+                cur[k] = v
+    out: dict[int, bool] = {}
+    for rid, mz in zip(bagel["row_id"], bagel["row_mz"]):
+        pm = pepmass.get(int(rid))
+        # No MGF block -> cannot verify; has_ms2 gates those out anyway.
+        out[int(rid)] = pm is not None and abs(pm - mz) <= tol
+    return out
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     diff = pd.read_csv(DIFF / "all_significant_features_summary.tsv", sep="\t")
@@ -71,15 +114,17 @@ def main() -> None:
     bagel = pd.read_csv(
         REPO / "data" / "raw" / "gnps2_e9838293_bagel" / "nf_output" / "feature_finding"
         / "feature_finding_results" / "aligned_features.csv",
-        low_memory=False, usecols=["row ID", "has_ms2"],
-    ).rename(columns={"row ID": "row_id"})
+        low_memory=False, usecols=["row ID", "row m/z", "has_ms2"],
+    ).rename(columns={"row ID": "row_id", "row m/z": "row_mz"})
+    bagel["mz_concordant"] = bagel["row_id"].map(_precursor_concordance(bagel))
 
     rows = diff[diff["comparison"].str.contains(r"liq_\w+_vs_spore_\w+", regex=True) & (diff["log2FC_a_over_b"] > 0)].copy()
     rows["abs_log2fc"] = rows["log2FC_a_over_b"].abs()
     libs = lib.rename(columns={"query_scan": "row_id"})
     rows = rows.merge(libs[["row_id", "NAME", "FORMULA", "cosine", "matched_peaks", "SPECTRUMID"]], on="row_id", how="left")
-    rows = rows.merge(bagel, on="row_id", how="left")
+    rows = rows.merge(bagel[["row_id", "has_ms2", "mz_concordant"]], on="row_id", how="left")
     rows["has_ms2"] = rows["has_ms2"].fillna(False).astype(bool)
+    rows["mz_concordant"] = rows["mz_concordant"].fillna(False).astype(bool)
     rows = rows.sort_values(["q_value", "abs_log2fc"], ascending=[True, False])
     rows = rows.drop_duplicates("row_id")
 
@@ -99,14 +144,20 @@ def main() -> None:
         # meaningless anyway -- q is tied at the attainable floor across the
         # whole head of the list, so |log2FC| silently decided the order, and
         # log2FC is pseudocount-bounded for on/off features.
-        df["shortlist_ready"] = df["passes_media_blank"] & df["has_ms2"]
+        # mz_concordant added 2026-09-02: an annotation built on the wrong
+        # precursor is not a weaker annotation, it is a different molecule.
+        df["shortlist_ready"] = (
+            df["passes_media_blank"] & df["has_ms2"] & df["mz_concordant"]
+        )
         df = df.sort_values(
-            ["shortlist_ready", "passes_media_blank", "has_ms2", "q_value", "prevalence_diff"],
-            ascending=[False, False, False, True, False],
+            ["shortlist_ready", "passes_media_blank", "has_ms2", "mz_concordant",
+             "q_value", "prevalence_diff"],
+            ascending=[False, False, False, False, True, False],
         )
         cols = [
             "row_id", "mz", "rt", "comparison", "log2FC_a_over_b", "q_value",
-            "shortlist_ready", "passes_media_blank", "has_ms2", "prevalence_diff",
+            "shortlist_ready", "passes_media_blank", "has_ms2", "mz_concordant",
+            "prevalence_diff",
             "is_liq_enriched", "bioactive", "annotation_origin",
             "sirius_structure_confidence",
             "sirius_structure_name", "sirius_formula", "sirius_npc_pathway", "sirius_npc_class",

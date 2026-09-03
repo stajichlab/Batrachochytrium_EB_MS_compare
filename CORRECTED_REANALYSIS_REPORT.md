@@ -24,14 +24,23 @@ numbers:
 
 **The two headline scientific outcomes:**
 
-- **"Sporangium and Mature are indistinguishable" was never true.** It was an
-  artifact of a discontinuous BH threshold at n=5. All 12 within-matrix stage
-  pairs carry ordered signal (3.0×–42.6× over the analytic null).
-- **The "secreted metabolome" in these media is dominated by proteolysis of
-  medium protein, not by secondary-metabolite biosynthesis.** The
-  blank-clearing, MS²-backed liq peptides are proline-rich at casein/gelatin
-  levels (Bd 24.3%, Bsal 16.9%), rejecting an average-proteome origin at
-  p = 5.8e-12 / 5.3e-10.
+- **"Sporangium and Mature are indistinguishable" was never true.** All 12
+  within-matrix stage pairs carry ordered signal (3.0×–42.6× over the analytic
+  null, label-permutation p ≤ 0.024). Whether a pair reports 0 or thousands of
+  BH-significant features is decided by a discontinuous threshold, not by
+  effect size.
+- **The liquid peptide pool carries a medium-substrate signature in Bsal
+  specifically.** The hydroxyproline immonium ion (86.060, collagen-specific)
+  is present in **26.3%** of Bsal liq peptide MS² spectra against **9.2%** in
+  Bd (OR 3.53, p=7.1e-16; intensity p=1.2e-18) — and Bsal's medium contains
+  gelatin hydrolysate while Bd's does not. This is a fragment-level result
+  with a built-in negative control.
+
+> **A claim from the first version of this report is retracted.** It asserted
+> that the secreted metabolome is "dominated by proteolysis of medium protein"
+> on the basis of proline composition. That test does not survive its own
+> controls — see §6.2. The Hyp result above is the surviving, and much
+> narrower, version.
 
 ---
 
@@ -111,10 +120,19 @@ So ~16% of all tested features must separate perfectly *at once*, or nothing
 is called at all. `n_significant` is therefore a **step function of the
 feature universe**, not a measure of effect size.
 
-The clearest demonstration: `dendrobatidis_spore_Sporangium_vs_spore_Mature`
-reported **5,507** significant on the 38,547-feature table and **0** on the
-artifact-filtered 25,157-feature table — while its underlying separation
-count sat at **24.0× the null in both**.
+The clearest demonstration is `dendrobatidis_spore_Sporangium_vs_spore_Mature`,
+whose reported significance moves while its actual signal does not:
+
+| feature universe / null | n significant |
+|---|---|
+| 38,547 features, scipy `method="auto"` | 5,507 |
+| 25,157 features, scipy `method="asymptotic"` (floor 1.219e-2) | **0** |
+| 25,157 features, exact permutation null (floor 7.937e-3) | **2,583** |
+
+Its complete-separation count sits at ~**24× the null throughout**. Only the
+denominator and the p-floor move. (An earlier version of this report quoted
+the middle row as though it were the corrected result; it was an intermediate
+run, and the exact-null value of 2,583 is the one that stands.)
 
 `analysis/differential_features/separation_enrichment.py` replaces the
 significance count with a threshold-free statistic: the number of features
@@ -137,10 +155,22 @@ showing complete separation, against its analytic expectation.
 | Bsal | spore | Spor–Mature | 13,478 | 715 | 107 | **6.7×** | 2,140 | **0** |
 | Bd | liq | Zoo–Spor | 17,113 | 414 | 136 | **3.0×** | 2,717 | **0** |
 
-**Every single stage pair is enriched over the null. `BH sig` is non-zero
-exactly when the separation count clears `k needed`, and 0 otherwise** — the
+**Every stage pair is enriched over the null, and `BH sig` is non-zero exactly
+when the separation count clears `k needed`** — 7 of 12 do, 5 do not. The
 significance call is fully determined by that threshold crossing, which is
-precisely why it should not be read as biology.
+precisely why it should not be read as biology. (An earlier version of this
+report claimed "not one is BH-callable"; that was wrong, and contradicted by
+the table it sat beneath.)
+
+The `enrichment` column is tested against an exact **label-permutation** null
+over all 126 distinct relabellings, not a binomial over features — features
+here are strongly correlated, which is what the ordination measures, and the
+binomial returned p = 0.0 for 10 of 12 contrasts. Eleven pairs sit at the
+attainable floor (p = 1/126 = 0.008); **Bd liq Zoospore-vs-Sporangium (3.0×)
+is the sole weak one at p = 0.024**, rank 3 of 126, and should not be leaned
+on. Note also that the analytic `2/C(n,k)` expectation is *conservative* here,
+because zero-inflation ties break separation — so these enrichment ratios are
+understated rather than inflated.
 
 ### Null distribution
 
@@ -170,10 +200,16 @@ progression is an ordinal trend: Spearman rho against stage rank
 
 | species | matrix | n | tested | monotonic (FDR<5%) | also clears media blank |
 |---|---|---|---|---|---|
-| Bd | liq | 15 | 16,586 | 3,114 | 556 |
-| Bd | spore | 15 | 11,569 | **5,027** | n/a — no spore blank exists |
-| Bsal | liq | 15 | 19,039 | 4,912 | 1,076 |
-| Bsal | spore | 15 | 12,142 | **4,534** | n/a — no spore blank exists |
+| Bd | liq | 15 | 16,586 | 2,787 | 520 |
+| Bd | spore | 15 | 11,569 | **4,599** | n/a — no spore blank exists |
+| Bsal | liq | 15 | 19,039 | 4,431 | 1,002 |
+| Bsal | spore | 15 | 12,142 | **4,180** | n/a — no spore blank exists |
+
+These use a **per-feature** permutation null (20,000 shuffles). An earlier
+version pooled the null across features, which let sparse features borrow the
+extreme tail of dense ones and inflated counts by ~9–11% (Bd spore 5,027 →
+4,599; Bd liq 3,114 → 2,787). Pooling is only valid under between-feature
+exchangeability, which zero-inflation breaks.
 
 ![Bd spore trend](analysis/differential_features_primary/lifestage_trend/trend_dendrobatidis_spore.png)
 
@@ -204,9 +240,25 @@ scores them as maximally "secreted".
 |---|---|---|
 | liq-enriched significant features | 8,421 | 4,751 |
 | …clears its own `C_liq` blank (paired, ≥4/5 plates) | 494 (5.9%) | 995 (20.9%) |
-| …**and** has an acquired MS² spectrum | **90** | **139** |
+| …**and** has an acquired MS² spectrum | 90 | 139 |
+| …**and** its MGF precursor matches the table m/z (±0.01) | **88** | **132** |
 | …of those, SIRIUS structure assigned | 62 | 103 |
 | …of those, COSMIC confidence ≥ 0.64 | **15** | **29** |
+
+The precursor-concordance gate was added after an audit found annotations
+built on the **wrong precursor mass**. Parsing all MGF blocks: of the 6,453
+`has_ms2` features, 6,199 agree with the feature table within 0.01, but 76
+differ by 0.01–0.3, 57 by 0.3–0.7 and 105 by ~1.0 — almost all confined to
+the 489 `SOURCE_FEATURE_ID=-1` blocks. The half-integer offsets are the
+signature of a 2+ ion written into the table as `charge=1 / M+0 /
+default-adduct`, which the artifact filter therefore cannot see. SIRIUS was
+handed those masses verbatim, which is where the chemically impossible
+shortlist formulas come from — `C10H5Cl9`, `C16H21Br4N3O2`,
+`C21H19Br2IN6O6`, in a fungal culture in tryptone. Those are not annotations;
+they are the formula finder absorbing a mass error. **16 of 90 (Bd) and 6 of
+139 (Bsal) pre-gate shortlist features still carry such formulas** — the
+annotation layer is not yet clean even after the gate, because a wrong
+precursor within 0.01 is still possible.
 
 The MS² gate is not cosmetic: only 6,453 of 38,547 features have an acquired
 spectrum, and the USI resolver renders the *gap-filled* MGF regardless, so an
@@ -221,45 +273,101 @@ on either side, so every pass is false):
 | unpaired group-mean, pseudocount 1.0 | 7,969 | 4,891 (**61%**) | 9,038 | 5,319 (**59%**) |
 | **paired ≥4/5 plates, LOD pseudocount** | **1,806** | **0 (0%)** | **2,959** | **1 (0%)** |
 
-### 6.2 What the survivors actually are
+### 6.2 What the survivors are — and a retracted claim about their origin
 
-The surviving shortlist is nearly single-class — 56/90 (Bd) and 102/139
-(Bsal) are "Amino acids and Peptides" — and the high-confidence structures
-are short **proline-rich** peptides:
+The surviving shortlist is nearly single-class: 56/90 (Bd) and 102/139 (Bsal)
+of the pre-gate shortlist are "Amino acids and Peptides", and the
+high-confidence structures are short **proline-rich** peptides
+(`Val-Leu-Pro-Val-Pro` conf 0.985, `Pro-Val-Val-Pro` 0.866,
+`H-Val-Val-Pro-Pro-Phe-OH` 0.945, `H-Ala-Pro-Glu-Ala-Val-OH` 0.922).
 
-| species | feature | m/z | COSMIC | structure |
-|---|---|---|---|---|
-| Bd | 836 | 524.343 | 0.985 | Val-Leu-**Pro**-Val-**Pro** |
-| Bd | 13281 | 411.720 | 0.866 | **Pro**-Val-Val-**Pro** |
-| Bsal | 4324 | 523.257 | 0.994 | Tyr-**Pro**-Phe-**Pro** |
-| Bsal | 14133 | 559.329 | 0.945 | Val-Val-**Pro**-**Pro**-Phe |
-| Bsal | 17016 | 485.758 | 0.922 | Ala-**Pro**-Glu-Ala-Val |
+Two hypotheses explain a liq-enriched, blank-clearing peptide: **H1** a
+non-ribosomal peptide from the Tier-1 NRPS; **H2** a fragment of medium
+protein released by secreted fungal proteases. Bd's medium is 1% tryptone
+(casein digest), Bsal's is 50% TGHL (tryptone/gelatin hydrolysate).
 
-Two hypotheses explain a liq-enriched, blank-clearing peptide: **H1** it is a
-non-ribosomal peptide from the Tier-1 NRPS; **H2** it is a fragment of medium
-protein released by secreted fungal proteases. β-casein is ~17% proline and
-collagen/gelatin ~22% (Pro+Hyp), against ~5% in an average proteome, so the
-hypotheses make opposite compositional predictions. `peptide_origin_test.py`
-parses residue composition from SIRIUS names — rejecting 43/62 (Bd) and
-72/103 (Bsal) names as non-peptide rather than guessing — and binomial-tests
-Pro(+Hyp) frequency:
+#### The proline-composition test is RETRACTED
 
-![Peptide proline composition](analysis/differential_features_primary/peptide_origin/peptide_composition.png)
+The first version of this report tested H2 by parsing residue composition
+from SIRIUS names and comparing Pro(+Hyp) frequency against reference
+substrates, concluding that the secreted metabolome is "dominated by
+proteolytic fragments of medium protein". **That conclusion does not survive
+its own controls and is withdrawn.** Three controls, all computable from the
+data already here, break it:
 
-| species | peptides | residues | Pro+Hyp | frequency | vs β-casein 17% | vs gelatin 22% | vs proteome 5% |
-|---|---|---|---|---|---|---|---|
-| Bd | 19 | 111 | 27 | **24.3%** | p=0.044 | p=0.57 | **p=5.8e-12 rejected** |
-| Bsal | 31 | 201 | 34 | **16.9%** | p=1.00 | p=0.088 | **p=5.3e-10 rejected** |
+| control | result |
+|---|---|
+| **Whole SIRIUS annotation table**, parsed identically | 872 peptides, 5,048 residues, Pro+Hyp **19.5%** |
+| Bd shortlist (24.3%) vs that baseline | binomial **p = 0.23** — not distinguishable |
+| Bsal shortlist (16.9%) vs that baseline | binomial **p = 0.42** — not distinguishable |
+| Bd shortlist vs Bd's own **non**-blank-clearing (i.e. medium) peptides, 19.7% | Fisher **p = 0.27** |
+| Bsal shortlist vs Bsal's medium peptides, 18.2% | Fisher **p = 0.75** |
 
-Both species land on the casein/gelatin composition and decisively reject an
-average-proteome origin. Bsal's 16.9% matches β-casein almost exactly;
-Tyr-Pro-Phe-Pro is a β-casomorphin-region fragment of β-casein.
+The ~20% proline level is a property of **which peptides SIRIUS's structure
+database can name**, not of these samples. The statistic cannot tell a
+blank-clearing peptide from a medium peptide. The only thing the original
+test established — that peptides named by a peptide database are more
+proline-rich than an average proteome — is close to content-free.
 
-**This converges with the strongest comparative-genomics result already in the
-repo:** a large MEROPS **M36 fungalysin** expansion in Bsal (233 of 247
-secreted protease candidates; 328 M36 hits vs 39 in Bd), independently
-corroborated by Yu et al. 2025 on the same Bd assembly. The genome predicts
-secreted proteolysis; the metabolome shows medium-protein digest products.
+Two further problems, for the record:
+
+- **The reference was wrong.** Tryptone is a digest of *whole* casein, not
+  β-casein. Weighted at the standard αS1/αS2/β/κ ratio the correct figure is
+  ~**11.3% Pro**, which Bd's 24.3% *rejects*. The comparison was made against
+  the one casein fraction that happened to fit.
+- **n was smaller than stated.** 19 Bd + 31 Bsal parsed rows collapse to ~15
+  and ~24 independent molecules — several are isotope or duplicate-m/z rows of
+  the same peptide — and a binomial over 111 residues treats ~6 residues per
+  molecule as independent draws.
+
+#### What survives: the hydroxyproline contrast
+
+The defensible version uses **fragment ions rather than names**, and has a
+built-in negative control. Hydroxyproline is collagen-specific, and only
+Bsal's medium contains gelatin. Measuring the Hyp immonium ion (86.0600,
+±4 mDa, cleanly resolved from Leu/Ile at 86.0964) across all liq peptide-class
+MS² spectra:
+
+| species | peptide spectra | Hyp⁺ | median rel. intensity of positives |
+|---|---|---|---|
+| Bd (1% tryptone — no collagen) | 960 | 88 = **9.2%** | 0.012 |
+| Bsal (50% TGHL — gelatin) | 426 | 112 = **26.3%** | 0.047 |
+
+Prevalence OR **3.53**, Fisher **p = 7.1e-16**; relative intensity
+Mann-Whitney **p = 1.2e-18**.
+
+So the liquid peptide pool does carry a medium-substrate signature — **in
+Bsal, and traceable to gelatin.** Stated precisely: part of Bsal's liq peptide
+pool is collagen-derived, which is what its medium supplies. It does **not**
+establish that the fungus performed the hydrolysis (TGHL is supplied
+pre-hydrolysed), and it says nothing about Bd.
+
+#### A negative result worth recording
+
+A sequence-level test is sharper than composition, and it is negative. Only
+**4 of 45** shortlist peptide sequences are substrings of the four bovine
+caseins or collagen I at all — against a residue-shuffled control whose 97.5th
+percentile is 2. If these were straightforwardly tryptone digest fragments,
+substring matching against a 4-protein substrate should light up. It does not.
+
+#### Where that leaves H1 vs H2
+
+Undecided, and the honest summary is:
+
+- the annotatable fraction of the shortlist is overwhelmingly peptide-class;
+- a medium-digest origin is plausible and genomically predicted (Bsal's M36
+  fungalysin expansion), and the Hyp contrast supports it **for Bsal**;
+- sequence-level matching does not support it;
+- these features are being actively *produced* during growth rather than
+  sitting in the medium — for shortlist features the median log2(fungal/blank)
+  rises Zoospore 0.64 → Sporangium 1.01 → Mature 2.08 (Bd) and 0.48 → 2.99 →
+  3.50 (Bsal) against flat blank means. That rules out "just medium peptides
+  sitting there" but is compatible with either hypothesis.
+
+The M36 inference also has a direction problem worth stating: Bsal carries the
+233-protein secreted M36 expansion yet shows *lower* shortlist proline (16.9%)
+than Bd (24.3%) — the wrong way round if M36 proteolysis of a Pro-rich
+substrate set the composition.
 
 ### 6.3 Molecular-family evidence does not rescue the secretion story
 
@@ -320,7 +428,56 @@ Reading: the network contains real alkyl-homolog and saturation/oxidation
 series, but they are not the dominant structure, and they are not
 preferentially fungal-derived.
 
-### 6.4 What this means for the project's goal
+### 6.4 Media consumption: the medium as signal rather than nuisance
+
+If the dominant secreted activity is proteolysis (§6.2, §6.3), then the
+*complement* of the usual analysis is informative: features **depleted**
+relative to their own plate blank are medium components the fungus consumed
+or transformed. This is the most robust liquid-fraction readout available
+here, because it does not require the feature to be fungal in origin — only
+that the fungus changed its abundance.
+
+It also yields a falsifiable prediction from the repo's own comparative
+genomics: Bsal's MEROPS **M36 fungalysin** expansion (328 hits vs 39 in Bd)
+should manifest as peptide-directed activity.
+
+![Media consumption](analysis/differential_features_primary/media_consumption/consumption.png)
+
+**Depletion grows monotonically with culture age in both species** — the
+expected signature of progressive consumption across 8 → 48 → 96 h:
+
+| species | Zoospore | Sporangium | Mature |
+|---|---|---|---|
+| Bd | 58 | 300 | **1,911** |
+| Bsal | 103 | 1,107 | **3,568** |
+
+**What is consumed is peptides.** Within each species, against that species'
+own annotated background (76.2% peptide-class — SIRIUS annotation is itself
+heavily peptide-biased, so the baseline is high):
+
+| species | set | peptide fraction | odds ratio | Fisher p |
+|---|---|---|---|---|
+| Bd | **depleted** | 227/247 = **91.9%** | 3.87 | **1.8e-11** |
+| Bd | released | 135/202 = 66.8% | 0.60 | 0.999 (n.s.) |
+| Bsal | **depleted** | 354/377 = **93.9%** | 5.64 | **1.6e-22** |
+| Bsal | **released** | 225/261 = **86.2%** | 2.07 | **1.9e-05** |
+
+Two readings, and the species difference is the interesting one:
+
+- **Both species preferentially deplete peptide-class medium features**,
+  consistent with secreted proteolysis followed by peptide uptake.
+- **Only Bsal also *releases* a peptide-enriched set** (OR 2.07, p=1.9e-05).
+  Bd's released material is, if anything, peptide-*poor* relative to its own
+  background (OR 0.60, n.s.). That asymmetry is what an expanded secreted
+  M36 protease repertoire predicts: cleave medium protein, release fragments.
+
+**Confound bound:** the media differ (Bd 1% tryptone, Bsal 50% TGHL) and were
+acquired two months apart, so the *absolute* counts above are NOT comparable
+across species. The compositional tests are within-species against each
+species' own background, so the medium confound cancels there — that is why
+the peptide-enrichment odds ratios, not the raw counts, carry the argument.
+
+### 6.5 What this means for the project's goal
 
 
 Linking secreted compounds to biosynthetic gene products is **not achievable
@@ -331,9 +488,10 @@ equally consistent with an NRPS product and with a fungus-modified medium
 peptide, and no statistic applied to this dataset separates them.
 
 What **is** delivered: a defensible ~1,800 (Bd) / ~2,900 (Bsal) blank-clearing
-feature set, of which 90/139 are MS²-verifiable and 15/29 carry a confident
-structure — plus positive evidence that the dominant secreted activity is
-proteolytic.
+feature set, of which 88/132 are MS²-verifiable with a concordant precursor
+and 15/29 carry a confident structure; a fragment-level medium-substrate
+signature in Bsal (Hyp, §6.2); and a clear statement of what this design
+cannot answer.
 
 ---
 
@@ -349,6 +507,15 @@ proteolytic.
 | The 4 named MS² priority targets in `handoff.txt` | **Retracted.** All at or below their media blank |
 | Ahpatinin Pr / Mycosubtilin D / Isopedopeptin E as identities | **Softened to class hints.** All bacterial NPs; COSMIC 0.04–0.48. CSI:FingerID's structure DB is actinomycete/*Bacillus*-dominated, so any chytrid cyclopeptide retrieves the nearest bacterial one |
 | "`liq_over_spore_log2fc` is stage-confounded" | **Understated.** Also blank- and normalization-confounded |
+| "Bd spore Sporangium-vs-Mature reads 0 on the filtered table" | **Wrong.** 2,583 under the exact null; the 0 was an intermediate asymptotic run |
+| "Not one of the 12 stage pairs is BH-callable" | **Wrong.** 7 of 12 are |
+| "The secreted metabolome is dominated by proteolysis of medium protein" (proline composition) | **Retracted** — fails its own controls (§6.2); replaced by the narrower Hyp contrast for Bsal only |
+| "Tyr-Pro-Phe-Pro is a β-casomorphin fragment in the shortlist" | **Retracted.** Every casomorphin-region feature fails the blank filter; it is a medium peptide |
+| "vs β-casein 17%" as Bd's reference | **Wrong substrate.** Tryptone is whole casein, ~11.3% Pro, which Bd's 24.3% rejects |
+| Bd liq Zoospore-vs-Sporangium "3.0× enriched" | **Softened.** Label-permutation p=0.024, rank 3/126 — the only weak pair |
+| Trend-tier counts 3,114 / 5,027 / 4,912 / 4,534 | **Superseded** by per-feature null: 2,787 / 4,599 / 4,431 / 4,180 |
+| "log2FC comparable across contrasts" | **Wrong.** The pseudocount is per-contrast, so it is comparable within a contrast only |
+| binomial p in `separation_enrichment.tsv` | **Replaced** by an exact label-permutation p (features are not independent) |
 
 ---
 
@@ -373,7 +540,26 @@ proteolytic.
    for Bd.
 6. **10v10 contrasts use a 20,000-sample null** (floor 5.0e-5) rather than the
    full 184,756 enumeration.
-7. **The genome-bioactivity linkage candidate tables were NOT regenerated and
+7. **The artifact filter over-corrects by dropping non-default adducts.**
+   `is_default_adduct == False` does not mean "redundant adduct" — it marks
+   rows that received an *explicit* adduct assignment, including 2,261
+   explicitly-called `[M+H]1+` rows. Of the 6,683 dropped non-default rows,
+   2,104 have MS² and 1,651 have a SIRIUS annotation, and only ~126 of the
+   1,052 `[M+H]1+` ones have a kept default row at the same m/z and RT. Net
+   effect: MS²-bearing features fell 6,453 → 3,389 (47%) and SIRIUS-structure
+   features 4,268 → 2,431 (43%), so **the shortlist is small partly because of
+   this filter**. The anti-pseudoreplication goal is better served by keeping
+   `isotope=="M+0" & charge==1 & !is_isf` and de-duplicating on (neutral mass,
+   RT). This is the highest-value correction still outstanding and would
+   roughly double the shortlist.
+8. **16 of 90 (Bd) and 6 of 139 (Bsal) pre-gate shortlist features carry
+   chemically implausible SIRIUS formulas** (Br₄, As₂, Cl₉, P₂S₇) traceable to
+   precursor-mass errors; the precursor gate removes the worst but the
+   annotation layer is not fully clean.
+9. **`prevalence_min = 0.10` is not a filter at n=10** — it means "present in
+   ≥1 of 10 samples". That is why the tested universe varies 11,569–21,744
+   across contrasts, and hence why `k_needed_for_BH_q05` moves.
+10. **The genome-bioactivity linkage candidate tables were NOT regenerated and
    are now stale relative to the corrected compound side.** Its compound
    filter reads `all_significant_features_summary.tsv` (regenerated) but
    `build_linkage_tables.py` also needs the BFD GenBank annotations at
@@ -386,6 +572,10 @@ proteolytic.
    `pixi run gbl-build-tables` on the HPC before any candidate-level claim is
    made. The MEROPS/M36 protease result is unaffected — it is sequence-only
    and never depended on the metabolomics side.
+11. **F-003's spore-vs-liq asymmetry is Bd-specific.** Within-species PCoA2
+    stage correlation: Bd liq rho = +0.04 (p=0.89, genuinely flat) but **Bsal
+    liq rho = −0.87 (p<1e-4)**. The pooled liq means look flat only because
+    the two species cancel. Bsal has a stage gradient in *both* fractions.
 
 ---
 
@@ -402,9 +592,9 @@ proteolytic.
 3. **MS² fragment-ladder verification** of the 90 + 139 shortlist-ready
    features, which would also convert the Pro-composition test from
    name-based to spectrum-based.
-4. **Media-consumption analysis** — features *depleted* relative to blank are
-   the complement of this report and directly test whether Bsal's M36
-   expansion predicts faster peptide turnover.
+4. ~~Media-consumption analysis~~ — **done, see §6.4.** Both species
+   preferentially deplete peptide-class medium features, and only Bsal also
+   releases a peptide-enriched set, matching its M36 expansion.
 
 ---
 
@@ -419,5 +609,6 @@ proteolytic.
 | `analysis/differential_features_primary/lifestage_trend/` | ordinal trend tier, 4 strata |
 | `analysis/differential_features_primary/peptide_origin/` | Pro-composition test |
 | `analysis/molecular_network/{components.tsv,delta_mz_ladders.tsv,component_summary.md,component_sizes.png}` | molecular-family tier (GOALS 1 & 4), validated against GNPS2 `ComponentIndex` |
+| `analysis/differential_features_primary/media_consumption/` | depleted-vs-released medium components + peptide-class enrichment |
 | `analysis/differential_features_primary/liq_enriched_curation/` | shortlist + live USI grid |
 | `analysis/differential_features_primary/all_significant_features_summary_<species>.html` | interactive rollups (4.4 / 5.0 MB) |
