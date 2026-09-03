@@ -1,13 +1,13 @@
 <!-- BEGIN QUICK REFERENCE -->
 # .living/ Index
-Last audit: 2026-09-02
+Last audit: 2026-09-03
 
 | File | Entries | Last updated | Key topics |
 |------|---------|--------------|------------|
 | conventions.md | 0 sections | 2026-08-19 | — |
 | decisions.md | 10 entries | 2026-09-02 | Port EB analysis scripts to the Everything-Bagel feature table with a schema-only adapter, 2026-08-19 — Transfer SIRIUS annotations from the EB project instead of re-running SIRIUS, 2026-08-19 — Keep one row per local feature id in the accumulated annotation table, 2026-08-19 — Native SIRIUS run: charge-1+ targets only, small per-shard jobs, pilot-first, 2026-08-20 — Collapse Sporangium+Mature into a "Developed" stage_group for the primary analysis tier |
 | learnings.md | 25 entries | 2026-09-02 | 2026-08-19 — Cross-project SIRIUS annotation transfer for the Everything-Bagel features, 2026-08-19 — Everything-Bagel merges isobaric/co-eluting EB features into single features, 2026-08-19 — Everything-Bagel feature MGF has degenerate blocks (CHARGE=0 / PEPMASS=0.0) even for has_ms2=True features, 2026-08-19 — Native SIRIUS target set reduces mainly on charge state, not sample presence, 2026-08-19 — Everything-Bagel aligned_features.csv area columns differ from the EB quant schema |
-| log/ | 8 sessions | 2026-09-02 | batrachochytrium-ms (6), batrachochytrium-eb-ms-compare (2) |
+| log/ | 12 sessions | 2026-09-03 | batrachochytrium-ms (6), batrachochytrium-eb-ms-compare (6) |
 | findings/ | 4 findings across 4 topics | 2026-09-02 | lifestage-signal-in-spore-fraction, molecular-family-evidence-negative, matrix-dominates-bagel-metabolome, bsal-overprediction-and-tier1-nrps |
 
 ## Local skills
@@ -15,7 +15,7 @@ See `.living/skills/` for project-specific skill packs.
 <!-- END QUICK REFERENCE -->
 
 <!-- BEGIN KNOWLEDGE SUMMARY -->
-Last summarized: 2026-09-02 (heuristic)
+Last summarized: 2026-09-03 (heuristic)
 
 ## Tag clusters
 
