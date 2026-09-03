@@ -32,3 +32,6 @@ analysis/rnaseq_expression/results/
 shard_*/
 *.sirius
 *.mgf
+
+# SLURM job stdout/stderr (regenerable, noisy in git status)
+logs/
