@@ -42,12 +42,29 @@ Annotated / summary outputs (analysis/differential_features_primary/):
           species' samples (stage-confounded context) -- positive = feature
           is more abundant in the liquid/supernatant among its parent stages,
           a hint it is enriched in the extracellular/secreted fraction.
-        is_secreted_candidate : liq_over_spore_log2fc >= +1.
+        is_liq_enriched : liq_over_spore_log2fc >= +1 (the raw liq/spore
+          direction, with NO media correction -- this was the pre-2026-09-02
+          definition of is_secreted_candidate).
+        passes_media_blank : feature is >= 2x its C_liq media-blank companion
+          in at least one life stage for that species (background_subtraction.
+          fungal_over_blank_ratio, the same filter the genome-bioactivity
+          linkage pipeline applies at its Stage 5).
+        is_secreted_candidate : is_liq_enriched AND passes_media_blank.
         bioactive : curated keyword hit suggesting high bioactivity.
+
   - significant_bioactive.tsv : subset of the above, bioactivity flagged;
     includes the per-species life-stage direction (up = higher in Zoospore).
   - primary_comparison_summary.tsv : one row per contrast, n per side,
     n_tested, n_significant, n_significant_annotated.
+
+CAVEAT that motivates the media-blank term (added 2026-09-02): both growth
+media are peptide-rich broths (Bd 1% tryptone = casein digest, Bsal 50%
+TGHL). Media peptides are abundant in the `liq` supernatant and absent from
+the washed `spore` pellet, so a raw liq-vs-spore contrast scores them as
+maximally "secreted" -- the single largest false-positive class for this
+goal. Requiring the feature to also exceed its own media blank removes them.
+Without this term only ~9% (Bd) / ~20% (Bsal) of liq-enriched features are
+distinguishable from medium.
 
 Bioactivity keyword list is a curated heuristic (specialized-metabolism and
 activity terms), applied to structure name + NPC pathway/class + ClassyFire
@@ -73,6 +90,39 @@ REPO = Path(__file__).resolve().parents[3]
 LINKED = REPO / "analysis" / "ordination" / "linked_data"
 OUT_ROOT = REPO / "analysis" / "differential_features_primary"
 SIRIUS = REPO / "analysis" / "sirius_annotation" / "sirius_annotations.tsv"
+
+# background_subtraction (+ its `paths` import) lives with the genome-bioactivity
+# linkage pipeline; reuse it rather than reimplementing the blank contrast, so
+# both pipelines apply an identical media-blank definition.
+sys.path.insert(0, str(REPO / "analysis" / "genome_bioactivity_linkage" / "scripts"))
+from background_subtraction import (  # noqa: E402
+    fungal_over_blank_ratio,
+    load_feature_intensities,
+    load_metadata,
+)
+
+# The three sampled life stages; a feature only has to clear its blank in ONE
+# of them to count (secretion is expected to be stage-specific).
+BLANK_STAGES = ["Zoospore", "Sporangium", "Mature"]
+BLANK_MIN_FC = 2.0
+
+
+def media_blank_pass_ids(species_full: str) -> set[int]:
+    """row_ids >= BLANK_MIN_FC x their C_liq companion blank in any life stage."""
+    features = load_feature_intensities()
+    meta = load_metadata()
+    passing: set[int] = set()
+    for stage in BLANK_STAGES:
+        ratio = fungal_over_blank_ratio(
+            features, meta, species=species_full, life_stage=stage, min_fc=BLANK_MIN_FC
+        )
+        passing |= set(ratio.loc[ratio["passes_background_filter"], "row_id"])
+    print(
+        f"[media-blank] {species_full}: {len(passing)} of {len(features)} features "
+        f"clear {BLANK_MIN_FC:g}x their C_liq blank in >=1 life stage",
+        file=sys.stderr,
+    )
+    return {int(r) for r in passing}
 
 UP_COLOR = "#D55E00"  # vermillion -- higher in group A
 DOWN_COLOR = "#0072B2"  # blue -- higher in group B
@@ -267,6 +317,9 @@ def main():
             fcs[i] = np.log2((np.median(a) + pc) / (np.median(b) + pc))
         liq_dir[species] = pd.DataFrame({"row_id": annot["row_id"], "liq_over_spore_log2fc": fcs}).set_index("row_id")
 
+    # Media-blank pass sets, keyed by the SHORT species name used in `combined`.
+    blank_pass = {s.split()[-1]: media_blank_pass_ids(s) for s in SPECIES_ORDER}
+
     summary_rows = []
     sig_rows = []
     for species in SPECIES_ORDER:
@@ -301,7 +354,6 @@ def main():
                 )
                 # Secreted-candidate hint: liq/spore direction across this species.
                 sub_sig = sub_sig.merge(liq_dir[species], on="row_id", how="left")
-                sub_sig["is_secreted_candidate"] = sub_sig["liq_over_spore_log2fc"] >= 1.0
                 sig_rows.append(sub_sig)
 
         for stage_group in ["Zoospore", "Developed"]:
@@ -335,7 +387,6 @@ def main():
             # liq_over_spore_log2fc/is_secreted_candidate are silently NaN/False
             # for every secreted_vs_cellular row, defeating the flag's purpose.)
             sub_sig = sub_sig.merge(liq_dir[species], on="row_id", how="left")
-            sub_sig["is_secreted_candidate"] = sub_sig["liq_over_spore_log2fc"] >= 1.0
             sig_rows.append(sub_sig)
 
     if sig_rows:
@@ -344,15 +395,32 @@ def main():
         sirius["row ID"] = sirius["row ID"].astype(int)
         combined = combined.merge(sirius, left_on="row_id", right_on="row ID", how="left", validate="many_to_one")
         # consolidate row_id float <-> sirius int key
-        combined["is_secreted_candidate"] = combined["liq_over_spore_log2fc"] >= 1.0
+        # Raw liq/spore direction (pre-2026-09-02 is_secreted_candidate).
+        combined["is_liq_enriched"] = combined["liq_over_spore_log2fc"] >= 1.0
+        # Media-blank term: the feature must also exceed its own C_liq blank.
+        # Keyed on the SHORT species name, which is what `combined.species` holds.
+        combined["passes_media_blank"] = [
+            rid in blank_pass[sp] for rid, sp in zip(combined["row_id"], combined["species"])
+        ]
+        combined["is_secreted_candidate"] = (
+            combined["is_liq_enriched"] & combined["passes_media_blank"]
+        )
         bio = combined.apply(flag_bioactive, axis=1)
         combined["bioactive"] = bio
         combined = combined.sort_values(["species", "q_value"])
         combined.to_csv(OUT_ROOT / "significant_annotated.tsv", sep="\t", index=False)
         combined[combined["bioactive"]].to_csv(OUT_ROOT / "significant_bioactive.tsv", sep="\t", index=False)
+        n_liq = int(combined["is_liq_enriched"].sum())
+        n_sec = int(combined["is_secreted_candidate"].sum())
         print(
             f"wrote {len(combined)} significant (FDR < {args.fdr:.0%}) feature-rows "
             f"({int(bio.sum())} bioactivity-flagged) across {len(combined['comparison'].unique())} primary contrasts",
+            file=sys.stderr,
+        )
+        print(
+            f"  liq-enriched rows: {n_liq}; also clearing the media blank "
+            f"(is_secreted_candidate): {n_sec} "
+            f"({n_sec / n_liq:.1%} of liq-enriched)" if n_liq else "  liq-enriched rows: 0",
             file=sys.stderr,
         )
 

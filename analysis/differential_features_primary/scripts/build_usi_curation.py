@@ -13,6 +13,16 @@ when a library hit exists, the node-vs-library mirror link, so each top
 candidate can be visually verified against the spectrum pulled live from the
 GNPS2 task (see data/raw/gnps2_e9838293_bagel/README_FOR_CLAUDE.md
 "metabolomics-USI resolver" for the URL scheme).
+
+MEDIA-BLANK ORDERING (2026-09-02): "liq-enriched" alone is NOT evidence of
+secretion. Both media are peptide-rich broths (Bd 1% tryptone = casein
+digest, Bsal 50% TGHL), so medium-derived peptides are abundant in `liq` and
+absent from the washed `spore` pellet and therefore score as maximally
+liq-enriched. Only ~9% (Bd) / ~20% (Bsal) of the rows here exceed their own
+C_liq blank. Rows are consequently ORDERED by `passes_media_blank` first, so
+the HTML grid -- the actual MS2 shortlist -- shows blank-clearing features.
+No rows are dropped (see MYCELIUM.md: do not subset without confirmation);
+`passes_media_blank` is a column on the TSV so the full list stays available.
 """
 from __future__ import annotations
 
@@ -63,10 +73,20 @@ def main() -> None:
     for species in ["dendrobatidis", "salamandrivorans"]:
         df = rows[rows["species"] == species].drop_duplicates(subset=["row_id"]).copy()
         df["abs_log2fc"] = df["log2FC_a_over_b"].abs()
-        df = df.sort_values(["q_value", "abs_log2fc"], ascending=[True, False])
+        if "passes_media_blank" not in df.columns:
+            raise SystemExit(
+                "all_significant_features_summary.tsv has no passes_media_blank column -- "
+                "regenerate it with `pixi run differential-features-primary && "
+                "pixi run feature-tables-primary` first (column added 2026-09-02)."
+            )
+        df["passes_media_blank"] = df["passes_media_blank"].fillna(False).astype(bool)
+        # Blank-clearing features first; the HTML grid is the MS2 shortlist.
+        df = df.sort_values(
+            ["passes_media_blank", "q_value", "abs_log2fc"], ascending=[False, True, False]
+        )
         cols = [
             "row_id", "mz", "rt", "comparison", "log2FC_a_over_b", "q_value",
-            "bioactive", "annotation_origin",
+            "passes_media_blank", "is_liq_enriched", "bioactive", "annotation_origin",
             "sirius_structure_name", "sirius_formula", "sirius_npc_pathway", "sirius_npc_class",
             "NAME", "cosine", "matched_peaks",
         ]
@@ -77,10 +97,15 @@ def main() -> None:
 
         # aggregate stats for the writeup
         n = len(df)
+        n_blank = int(df["passes_media_blank"].sum())
         n_struc = int(df["sirius_structure_name"].notna().sum())
         n_lib = int(df["NAME"].notna().sum())
         n_nprs = int(df["sirius_npc_pathway"].isin(["Amino acids and Peptides", "Alkaloids", "Polyketides", "Terpenoids"]).sum())
-        print(f"{species}: {n} unique liq-enriched features, {n_struc} SIRIUS-structure, {n_lib} GNPS-library-hit, {n_nprs} in mapped compound classes")
+        print(
+            f"{species}: {n} unique liq-enriched features "
+            f"({n_blank}, {n_blank / n:.1%}, clear the C_liq media blank), "
+            f"{n_struc} SIRIUS-structure, {n_lib} GNPS-library-hit, {n_nprs} in mapped compound classes"
+        )
 
 
 def write_html(df: pd.DataFrame, species: str) -> None:
@@ -99,24 +124,42 @@ def write_html(df: pd.DataFrame, species: str) -> None:
             lid = r["SPECTRUMID"]
             mirror = f"https://metabolomics-usi.gnps2.org/png/mirror/?usi1={USI_BASE}{fid}&usi2=mzspec:GNPS:GNPS-LIBRARY:accession:{lid}"
             lib_usi = f'<a href="{mirror}" target="_blank">&#8617;vs-library ({lid})</a>'
+        blank_ok = bool(r.get("passes_media_blank", False))
+        # Amber-tint any row that does not clear its own media blank, so a
+        # medium-derived peptide can never be mistaken for a secreted product.
+        tr_style = "" if blank_ok else ' style="background:#FFF4E5"'
+        blank_cell = "&#10003;" if blank_ok else "&#10007; media"
         rows_html.append(
-            "<tr>"
+            f"<tr{tr_style}>"
             f'<td><a href="{spec}" target="_blank">{fid}</a></td>'
             f"<td>{r['mz']:.4f}</td>"
             f"<td>{r['rt']:.2f}</td>"
             f"<td>{r['log2FC_a_over_b']:.1f}</td>"
             f"<td>{r['q_value']:.2e}</td>"
+            f"<td>{blank_cell}</td>"
             f"<td>{name}</td>"
             f"<td>{r.get('sirius_formula','') or ''}</td>"
             f'<td><a href="{img}" target="_blank"><img src="{img}" style="max-width:200px;max-height:90px"></a></td>'
             f'<td><a href="{spec}" target="_blank">view</a> / <a href="{js}" target="_blank">json</a> {lib_usi}</td>'
             "</tr>"
         )
+    n_blank_total = int(df["passes_media_blank"].sum())
+    n_blank_shown = int(top["passes_media_blank"].sum())
     html_doc = f"""<!doctype html><html><head><meta charset="utf-8"><title>{species} liq-enriched curation</title></head>
 <body><h1>{species} &mdash; top liq-vs-spore-enriched features with live USI spectra</h1>
-<p>Top {n} of {len(df)} unique liq-enriched significant features, ranked by q_value then |log2FC|.</p>
+<p>Top {n} of {len(df)} unique liq-enriched significant features, ranked by
+media-blank status, then q_value, then |log2FC|.
+<b>{n_blank_shown} of the {n} shown</b> (and {n_blank_total} of {len(df)} overall)
+clear the C_liq media blank at &ge;2&times;.</p>
+<p style="background:#FFF4E5;padding:6px;border:1px solid #E8C48A">
+<b>Read the blank column first.</b> Both media are peptide-rich broths
+(Bd 1% tryptone = casein digest, Bsal 50% TGHL). Medium-derived peptides are
+abundant in <code>liq</code> and absent from the washed <code>spore</code>
+pellet, so they score as maximally &quot;liq-enriched&quot; without being
+secreted at all. Amber rows (&#10007; media) do <em>not</em> exceed their own
+media blank and are not evidence of secretion.</p>
 <table border="1" cellspacing="0" cellpadding="4">
-<tr><th>feature</th><th>m/z</th><th>RT(min)</th><th>log2FC</th><th>q</th><th>structure</th><th>formula</th><th>spectrum</th><th>actions</th></tr>
+<tr><th>feature</th><th>m/z</th><th>RT(min)</th><th>log2FC</th><th>q</th><th>&gt;2&times; blank</th><th>structure</th><th>formula</th><th>spectrum</th><th>actions</th></tr>
 {''.join(rows_html)}
 </table></body></html>"""
     (OUT / f"{species}_liq_enriched_usi.html").write_text(html_doc)

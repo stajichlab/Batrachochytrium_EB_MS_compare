@@ -135,13 +135,82 @@ contrasts (full-resolution `.pdf` alongside each `.png`):
 | Bsal Zoospore | ![](salamandrivorans_liq_Zoospore_vs_spore_Zoospore/volcano.png) | ![](salamandrivorans_liq_Zoospore_vs_spore_Zoospore/top_features.png) |
 | Bsal Developed | ![](salamandrivorans_liq_Developed_vs_spore_Developed/volcano.png) | ![](salamandrivorans_liq_Developed_vs_spore_Developed/top_features.png) |
 
+## Media-blank correction to `is_secreted_candidate` (2026-09-02)
+
+`is_secreted_candidate` previously meant only `liq_over_spore_log2fc >= +1`,
+with no media correction. That is not evidence of secretion. Both growth
+media are peptide-rich broths (Bd 1% tryptone = casein digest, Bsal 50%
+TGHL), so medium-derived peptides are abundant in the `liq` supernatant and
+absent from the washed `spore` pellet — a raw liq-vs-spore contrast scores
+them as maximally "secreted". This was the single largest false-positive
+class for the secreted-compound goal.
+
+The flag now carries a media-blank term, using the same
+`background_subtraction.fungal_over_blank_ratio` (fungal vs its `C_liq`
+companion well, ≥2×) that the genome-bioactivity linkage pipeline already
+applied at its Stage 5:
+
+| column | meaning |
+|---|---|
+| `liq_over_spore_log2fc` | unchanged; stage-confounded liq/spore direction |
+| `is_liq_enriched` | `liq_over_spore_log2fc >= +1` — the OLD `is_secreted_candidate` |
+| `passes_media_blank` | ≥2× its `C_liq` blank in ≥1 life stage |
+| `is_secreted_candidate` | `is_liq_enriched AND passes_media_blank` |
+
+Effect: 62,771 liq-enriched significant rows → **5,691** secreted candidates
+(9.1%). Per-species blank-clearing feature counts: Bd 7,969 / Bsal 9,038 of
+38,547. Contrast statistics are unchanged — only the flag semantics moved.
+
+The USI curation grid (`liq_enriched_curation/`) now orders by
+`passes_media_blank` first, so the top-100 MS² shortlist went from **2/100
+(Bd) and 7/100 (Bsal)** blank-clearing to **100/100**. No rows are dropped;
+non-clearing rows are amber-tinted and marked `✗ media` in the HTML. The
+four MS² priority targets previously named in `handoff.txt` (Bd 473/884,
+Bsal 2953/975) are all at or below their media blank and are **not**
+secretion evidence.
+
+## Ordinal life-stage trend tier — `pixi run lifestage-trend`
+
+The `Zoospore | Developed` collapse was justified by the claim that every
+within-matrix Sporangium-vs-Mature contrast was 0-significant. That is false
+for Bd's spore fraction (`dendrobatidis_spore_Sporangium_vs_spore_Mature` =
+5,507 of 21,816 tested); it holds only for Bsal spore and both liq
+fractions. Bd spore is a genuine 3-state trajectory; Bsal spore is 2-state.
+
+`scripts/lifestage_trend.py` adds the test the collapse destroys: Spearman
+rho of TSS-normalized abundance against stage rank (Zoospore=0,
+Sporangium=1, Mature=2 — the real 8/48/96 h axis), BH-FDR per stratum.
+Stage *pairs* are not re-run here; the 30-way scan already covers them.
+
+| species | matrix | n | tested | monotonic FDR<5% | also blank-clearing | collapsed contrast |
+|---|---|---|---|---|---|---|
+| Bd | liq | 30 | 25,313 | 1,684 | 272 | 536 |
+| Bd | spore | 15 | 18,926 | 8,266 | 1,415 | 5,638 |
+| Bsal | liq | 30 | 29,315 | 316 | 124 | 54 |
+| Bsal | spore | 15 | 20,214 | 7,694 | 1,445 | 7,211 |
+
+The trend test recovers 3–6× more signal in the liq strata than the
+collapsed contrast, confirming the collapse was costing real power there.
+Outputs: `lifestage_trend/{<species>_<matrix>_trend.tsv, trend_summary.tsv,
+trend_<species>_<matrix>.png}`.
+
 ## Caveats
 - The bioactivity keyword regex is a filter, not an annotation of record;
   confirm hits against the underlying MS/MS (see `sirius_annotation/`).
 - `liq_over_spore_log2fc` is stage-confounded by construction (computed over
   all samples of the species, not within a stage) — use it as a hint, not a
   test; the `secreted_vs_cellular` family is the rigorous test.
+- `passes_media_blank` uses a **union** across the three life stages (a
+  feature need clear its blank in only one), which is deliberately permissive
+  — secretion is expected to be stage-specific — but means the flag is not a
+  per-stage statement.
+- Trend-tier n=15 (spore strata) bounds the attainable Spearman p-value, and
+  with only three distinct rank values ties are common; treat spore-stratum
+  q-values as screening. Trend hits share samples with the pairwise tiers, so
+  they are a different question on the same data, not independent replication.
 
 ## Key inputs
 - `analysis/ordination/linked_data/{sample_metadata.csv, feature_abundance.csv.gz}`
 - `analysis/sirius_annotation/sirius_annotations.tsv`
+- `analysis/genome_bioactivity_linkage/scripts/background_subtraction.py`
+  (media-blank term; imported, not duplicated)
