@@ -261,7 +261,67 @@ secreted protease candidates; 328 M36 hits vs 39 in Bd), independently
 corroborated by Yu et al. 2025 on the same Bd assembly. The genome predicts
 secreted proteolysis; the metabolome shows medium-protein digest products.
 
-### 6.3 What this means for the project's goal
+### 6.3 Molecular-family evidence does not rescue the secretion story
+
+GOALS.md goals 1 and 4 had never been attempted. They were the strongest
+remaining hope for the secreted-compound question: a homologous series that
+is *entirely* blank-clearing is far harder to dismiss as medium background
+than any single feature, because the medium would have to supply the whole
+series. `analysis/molecular_network/scripts/component_analysis.py` tests
+exactly that (`pixi run network-components`).
+
+The component traversal was validated against GNPS2's own `ComponentIndex`
+column — 0 edges spanning our components, and a 1:1 partition in both
+directions.
+
+![Component sizes](analysis/molecular_network/component_sizes.png)
+
+**Molecular families were substantially inflated by artifact rows.** The raw
+network is 9,600 edges / 4,423 nodes / 659 components, largest 97. Restricted
+to the artifact-filtered analysis matrix it is **551 components, largest 47**,
+226 with ≥3 members. Much of what looked like a "molecular family" was
+isotope/adduct/ISF copies of one molecule cosine-matching itself.
+
+**The result is negative for the secretion hypothesis.** Against background
+blank-clearing rates of 4.16% (Bd) and 7.28% (Bsal), only **5 (Bd) and 8
+(Bsal)** components are significantly blank-enriched (Fisher, BH q<0.05, ≥3
+members), and only **2** components — both Bsal, 3 members each — are
+*entirely* blank-clearing. There is no population of clean fungal-derived
+homologous series in this data.
+
+What the blank-enriched families do show is a clear **species split that
+independently reproduces §6.2**:
+
+| species | dominant class of blank-enriched components | example members |
+|---|---|---|
+| Bd | **Fatty acids** (3 of 5) | glycerophospholipids / phosphoethanolamine esters, `[(2R)-3-[2-aminoethoxy(hydroxy)phosphoryl]oxy-2-nonanoyloxypropyl]...` |
+| Bsal | **Amino acids and Peptides** (6 of 8) | `H-Val-Val-Pro-Pro-Phe-OH`, `H-Ala-Pro-Glu-Ala-Val-OH`, `Gln-Glu-Pro-Val-Leu`, `H-Pro-Ser-Pro-Ser-Pro-Ser-al` |
+
+Bsal's blank-enriched families are proline-rich peptides — the same signature
+the composition test found, arrived at through a completely independent route
+(network topology rather than residue counting). Bd's are membrane
+glycerophospholipids and ceramides, which are more plausibly cell-derived
+carryover than secreted products.
+
+**DeltaMZ ladders exist but are a minority of the network:** only 237 of
+2,781 intra-matrix edges (8.5%) classify to a common homologous step.
+
+| step | edges | median cosine |
+|---|---|---|
+| CH2 (homolog) | 68 | 0.884 |
+| 2×CH2 | 49 | 0.885 |
+| H2 (saturation) | 49 | 0.877 |
+| O (oxidation) | 44 | 0.887 |
+| C2H2 | 13 | 0.842 |
+| H2O | 11 | 0.863 |
+| NH | 3 | 0.866 |
+
+Reading: the network contains real alkyl-homolog and saturation/oxidation
+series, but they are not the dominant structure, and they are not
+preferentially fungal-derived.
+
+### 6.4 What this means for the project's goal
+
 
 Linking secreted compounds to biosynthetic gene products is **not achievable
 at compound-identity level with this design**, for a reason that is
@@ -335,10 +395,10 @@ proteolytic.
    §6.3. ¹³C/¹⁵N-labelled medium would separate fungal-derived carbon from
    medium-derived by isotope pattern, and a spore-pellet process blank would
    close limitation 1. This is an experimental fix; no analysis substitutes.
-2. **Molecular-network / component-level analysis** (GOALS.md goals 1 and 4,
-   still untouched): 9,600 edges, 4,423 nodes, 659 components. A homologous
-   series that is *entirely* blank-clearing is far stronger secretion evidence
-   than any single feature, and it is the natural next analysis on existing data.
+2. ~~Molecular-network / component-level analysis~~ — **done, see §6.3.**
+   Result was negative for the secretion hypothesis (only 2 entirely
+   blank-clearing components in the whole dataset), so it removes this from
+   the list rather than advancing it.
 3. **MS² fragment-ladder verification** of the 90 + 139 shortlist-ready
    features, which would also convert the Pro-composition test from
    name-based to spectrum-based.
@@ -358,5 +418,6 @@ proteolytic.
 | `analysis/differential_features/scripts/mwu_exact.py` | exact conditional permutation null |
 | `analysis/differential_features_primary/lifestage_trend/` | ordinal trend tier, 4 strata |
 | `analysis/differential_features_primary/peptide_origin/` | Pro-composition test |
+| `analysis/molecular_network/{components.tsv,delta_mz_ladders.tsv,component_summary.md,component_sizes.png}` | molecular-family tier (GOALS 1 & 4), validated against GNPS2 `ComponentIndex` |
 | `analysis/differential_features_primary/liq_enriched_curation/` | shortlist + live USI grid |
 | `analysis/differential_features_primary/all_significant_features_summary_<species>.html` | interactive rollups (4.4 / 5.0 MB) |

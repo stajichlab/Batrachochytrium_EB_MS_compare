@@ -1,0 +1,17 @@
+## F-005: Molecular-family evidence does not support fungal secretion; the blank-enriched families are proline-rich peptides (Bsal) and membrane lipids (Bd)
+**Status:** supported (negative result)
+**Claim:** First analysis of the FBMN molecular network for this project (GOALS.md goals 1 and 4). Component traversal validated against GNPS2's own `ComponentIndex` (0 edges spanning components, 1:1 partition). The raw network — 9,600 edges / 4,423 nodes / **659 components**, largest 97 — collapses to **551 components, largest 47** once isotope/adduct/ISF rows are removed, showing that "molecular families" were substantially inflated by non-independent copies of the same molecule cosine-matching itself. Against background blank-clearing rates of 4.16% (Bd) and 7.28% (Bsal), only **5 (Bd) and 8 (Bsal)** components are significantly blank-enriched (Fisher exact, BH q<0.05, >=3 members), and only **2** components in the entire dataset (both Bsal, 3 members each) are *entirely* blank-clearing. The dominant class among blank-enriched families splits by species: Bd **Fatty acids** (3/5; glycerophospholipids and phosphoethanolamine esters), Bsal **Amino acids and Peptides** (6/8; `H-Val-Val-Pro-Pro-Phe-OH`, `H-Ala-Pro-Glu-Ala-Val-OH`, `Gln-Glu-Pro-Val-Leu`, `H-Pro-Ser-Pro-Ser-Pro-Ser-al`). DeltaMZ homologous ladders are real but a minority: 237 of 2,781 intra-matrix edges (8.5%) classify — CH2 68, 2xCH2 49, H2 49, O 44, C2H2 13, H2O 11, NH 3.
+**Implications:** Family-level evidence was the strongest remaining route to the secreted-compound goal, because a homologous series that is entirely blank-clearing is far harder to attribute to medium background than any single feature. It does not deliver: there is no population of clean fungal-derived series in this dataset. Instead it independently corroborates F-006/the peptide-origin result via a completely different route (network topology rather than residue composition) — Bsal's fungal-attributable chemistry is proline-rich peptide families, consistent with secreted proteolysis of the tryptone/gelatin medium, while Bd's is membrane glycerophospholipid families more plausibly explained as cell-derived carryover than secretion. Any future claim of a secreted secondary metabolite in this system needs a defined or isotope-labelled medium, not more analysis of these data.
+**Tags:** metabolomics, molecular-network, fbmn, component-analysis, deltamz, secreted-compounds, negative-result, proteolysis, everything-bagel
+
+### Evidence Ledger
+| Date | Run/Session | Dataset | Project | Result | Direction |
+|------|-------------|---------|---------|--------|-----------|
+| 2026-09-02 | corrected-reanalysis-2026-09-02 | filtered_pairs.tsv (9,600 edges) + 25,157-feature analysis matrix + paired blank rule | Batrachochytrium_EB_MS_compare | 659 -> 551 components after artifact filter (largest 97 -> 47); blank-enriched 5 (Bd) / 8 (Bsal); entirely blank-clearing 0 / 2; Bd families Fatty acids, Bsal families proline-rich peptides; 8.5% of edges classify to a homologous step | supports (negative) |
+
+### Open Questions
+- Do the two entirely-blank-clearing Bsal components (3 members each) survive MS2 fragment-ladder inspection, and are they peptides or something else?
+- Would a defined/isotope-labelled medium convert any of the 13 blank-enriched families into a defensible secreted-metabolite claim?
+- Are Bd's blank-enriched glycerophospholipid families genuine secretion (extracellular vesicles?) or pellet carryover into the supernatant?
+
+---

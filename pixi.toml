@@ -28,3 +28,4 @@ gbl-protease-candidates = "python analysis/genome_bioactivity_linkage/scripts/bu
 rna-expression-evidence = "python analysis/rnaseq_expression/scripts/build_expression_evidence.py"
 usi-curation = "python analysis/differential_features_primary/scripts/build_usi_curation.py"
 peptide-origin = "python analysis/differential_features_primary/scripts/peptide_origin_test.py"
+network-components = "python analysis/molecular_network/scripts/component_analysis.py"
