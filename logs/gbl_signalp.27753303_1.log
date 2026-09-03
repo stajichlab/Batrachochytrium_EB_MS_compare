@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/opt/linux/centos/8.x/x86_64/pkgs/signalp/6.0i/env/lib/python3.9/site-packages/signalp/predict.py", line 231, in main
+    model = torch.jit.load(fast_model_path)
+  File "/rhome/jstajich/.local/lib/python3.9/site-packages/torch/jit/_serialization.py", line 158, in load
+    raise ValueError(f"The provided filename {f} does not exist")
+ValueError: The provided filename /opt/linux/centos/8.x/x86_64/pkgs/signalp/6.0i/env/lib/python3.9/site-packages/signalp/model_weights/distilled_model_signalp6.pt does not exist
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/linux/rocky/8.x/x86_64/pkgs/signalp/6.0i/env/bin/signalp6", line 7, in <module>
+    sys.exit(predict())
+  File "/opt/linux/centos/8.x/x86_64/pkgs/signalp/6.0i/env/lib/python3.9/site-packages/signalp/__init__.py", line 6, in predict
+    main()
+  File "/opt/linux/centos/8.x/x86_64/pkgs/signalp/6.0i/env/lib/python3.9/site-packages/signalp/predict.py", line 235, in main
+    raise FileNotFoundError(f"Fast mode requires model to be installed at {fast_model_path}. Missing from this installation.")
+FileNotFoundError: Fast mode requires model to be installed at /opt/linux/centos/8.x/x86_64/pkgs/signalp/6.0i/env/lib/python3.9/site-packages/signalp/model_weights/distilled_model_signalp6.pt. Missing from this installation.

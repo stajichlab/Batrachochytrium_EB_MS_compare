@@ -1,0 +1,15 @@
+=== SRR27683879 (dendrobatidis rep3) ===
+2026-08-25T21:43:29 prefetch.3.2.0: 1) Resolving 'SRR27683879'...
+2026-08-25T21:43:31 prefetch.3.2.0: Current preference is set to retrieve SRA Normalized Format files with full base quality scores
+2026-08-25T21:43:31 prefetch.3.2.0: 1) Downloading 'SRR27683879'...
+2026-08-25T21:43:31 prefetch.3.2.0:  SRA Normalized Format file is being retrieved
+2026-08-25T21:43:31 prefetch.3.2.0:  Downloading via HTTPS...
+2026-08-25T21:45:54 prefetch.3.2.0:  HTTPS download succeed
+2026-08-25T21:45:58 prefetch.3.2.0:  'SRR27683879' is valid: 2374227513 bytes were streamed from 2374226443
+2026-08-25T21:45:58 prefetch.3.2.0: 1) 'SRR27683879' was downloaded successfully
+2026-08-25T21:45:58 prefetch.3.2.0: 1) Resolving 'SRR27683879's dependencies...
+2026-08-25T21:45:58 prefetch.3.2.0: 'SRR27683879' has 0 unresolved dependencies
+spots read      : 24,680,143
+reads read      : 49,360,286
+reads written   : 49,360,286
+DONE SRR27683879: 2 fastq.gz file(s)

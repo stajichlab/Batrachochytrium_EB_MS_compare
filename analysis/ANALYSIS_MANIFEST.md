@@ -1,5 +1,13 @@
 # Analysis Manifest
 
+> **2026-09-02: all quantitative entries below were re-run after five defects were
+> fixed** (media blanks inside the analysis matrix, unused artifact columns,
+> per-feature log2FC pseudocount, unpaired blank rule, mixed null distributions).
+> Analysis matrix is now **60 fungal samples x 25,157 features** (was 90 x 38,547).
+> Read `CORRECTED_REANALYSIS_REPORT.md` first — several previously reported
+> numbers and two sub-claims are retracted there.
+
+
 <!-- Add entries below using the appropriate manifest entry template. -->
 
 ## sirius-annotation
@@ -12,7 +20,7 @@
 
 ## ordination
 
-- **Status**: complete (bagel feature table) — all-samples + per-species Bray-Curtis PCoA outputs present (`figures/pcoa_all.{pdf,png}`, `figures/pcoa_condition.{pdf,png}`, `figures/pcoa_stagegroup.{pdf,png}`, `figures/pcoa_axes_all.csv`, `figures/by_species/pcoa_{dendrobatidis,salamandrivorans}.{png,pdf}`); replicates EB F-001 (matrix dominance: all axis1 62.9%, Bd 75.9%, Bsal 70.6% of positive-eigenvalue variance). Pipeline is fully reproducible via `pixi run pcoa-ordination`. New figures color by the sampled condition (6-state `matrix_life_stage`) and by the collapsed life-stage `stage_group` (Zoospore vs Developed).
+- **Status**: complete (bagel feature table) — all-samples + per-species Bray-Curtis PCoA outputs present (`figures/pcoa_all.{pdf,png}`, `figures/pcoa_condition.{pdf,png}`, `figures/pcoa_stagegroup.{pdf,png}`, `figures/pcoa_axes_all.csv`, `figures/by_species/pcoa_{dendrobatidis,salamandrivorans}.{png,pdf}`); replicates EB F-001 (matrix dominance). **Re-run 2026-09-02 on 60 fungal samples x 25,157 features**: axis1 **57.5%** all / **68.6%** Bd / **64.8%** Bsal (previously 62.9/75.9/70.6 — inflated by the 30 media blanks). Matrix separates COMPLETELY on PCoA1 (liq [+0.207,+0.320], spore [-0.370,-0.126], no overlap), and PCoA2 now resolves a monotonic spore stage gradient (Zoo +0.246 / Spor -0.074 / Mat -0.172) against a flat liq fraction. Pipeline is fully reproducible via `pixi run pcoa-ordination`. New figures color by the sampled condition (6-state `matrix_life_stage`) and by the collapsed life-stage `stage_group` (Zoospore vs Developed).
 - **Purpose**: Bray-Curtis PCoA of the feature table across species x matrix (liq/spore) x life_stage (Zoospore/Sporangium/Mature) (GOALS.md goal 3), the Everything-Bagel port of the EB/Rhodotorula pattern.
 - **Key inputs**: `data/raw/gnps2_e9838293_bagel/nf_output/feature_finding/feature_finding_results/aligned_features.csv`, `data/metdata/curated_gnps_metadata.tsv` → `analysis/ordination/linked_data/` (built by `scripts/build_ordination_table.py`).
 - **Key outputs**: `analysis/ordination/{linked_data/{sample_metadata.csv,feature_abundance.csv.gz},figures/{pcoa_axes_all.csv,pcoa_all.png,pcoa_all.pdf,pcoa_condition.png,pcoa_stagegroup.png,by_species/*}}`.
@@ -20,14 +28,14 @@
 
 ## differential_features
 
-- **Status**: complete (bagel feature table) — all 30 pairwise contrasts (15 per species) with differential_features.csv.gz + volcano + top_features figures + `comparison_summary.csv`; rank-order concordant with EB (Spearman rho 0.985 Bd / 0.996 Bsal); SIRIUS identity join not yet applied (EB pattern)
+- **Status**: complete (bagel feature table) — all 30 pairwise contrasts (15 per species), **re-run 2026-09-02** on 60 fungal samples x 25,157 features with an exact permutation null. Read the counts alongside `separation_enrichment.tsv`: 5 of the 12 within-matrix stage pairs report 0 significant yet are 3.0x-16.3x enriched over the null — `n_significant` is a step function of the feature universe at n=5v5 (see the separation-enrichment entry). SIRIUS identity join not applied at this tier (EB pattern)
 - **Purpose**: Feature-level pairwise differential abundance between every (matrix, life_stage) state pair, within each species (GOALS.md goal 2), the Everything-Bagel port of the sibling projects' scripts.
 - **Key inputs**: `analysis/ordination/linked_data/` tables (built from the bagel `aligned_features.csv` + curated metadata), `analysis/sirius_annotation/sirius_annotations.tsv` (not yet joined).
 - **Key outputs**: `analysis/differential_features/{comparison_summary.csv,<species>_<condA>_vs_<condB>/{differential_features.csv.gz,volcano.png/.pdf,top_features.png/.pdf,top_features.tsv}}`. Repro: `pixi run differential-features`.
 
 ## differential_features_primary
 
-- **Status**: complete; **`is_secreted_candidate` media-blank-corrected 2026-09-02** — 8 primary contrasts with volcano/top_features + SIRIUS-annotated significant-features tables. 4 collapsed life-stage contrasts (Zoospore vs Developed, within species x matrix: liq n=10 vs 20, spore 5 vs 10 per species) + 4 secreted-vs-cellular contrasts (liq vs spore, within species x stage_group). SIRIUS annotation join applied to the merged annotation table (see sirius-annotation, now the full native run); significant feature-rows flagged for liq-vs-spore enrichment and curated bioactivity keywords → 103,637 significant rows, 2,639 bioactivity-flagged. As of 2026-09-02 `is_secreted_candidate` = `is_liq_enriched AND passes_media_blank` (>=2x its `C_liq` companion blank in >=1 life stage, via `background_subtraction.fungal_over_blank_ratio`); the old raw definition is retained as `is_liq_enriched`. This cuts 62,771 liq-enriched rows to **5,691** secreted candidates (9.1%) — both media are peptide-rich broths, so medium peptides were scoring as maximally 'secreted'. Contrast statistics unchanged.
+- **Status**: complete; **`is_secreted_candidate` media-blank-corrected 2026-09-02** — 8 primary contrasts with volcano/top_features + SIRIUS-annotated significant-features tables. 4 collapsed life-stage contrasts (Zoospore vs Developed, within species x matrix: n=5 vs 10 per matrix per species after the media-blank removal) + 4 secreted-vs-cellular contrasts (liq vs spore, within species x stage_group). SIRIUS annotation join applied to the merged annotation table (see sirius-annotation, now the full native run); significant feature-rows flagged for liq-vs-spore enrichment and curated bioactivity keywords → **56,145 significant rows, 1,129 bioactivity-flagged** (2026-09-02 corrected re-run). As of 2026-09-02 `is_secreted_candidate` = `is_liq_enriched AND passes_media_blank` (>=2x its `C_liq` companion blank in >=1 life stage, via `background_subtraction.fungal_over_blank_ratio`); the old raw definition is retained as `is_liq_enriched`. With the paired-by-plate blank rule this cuts 34,077 liq-enriched rows to **2,631** secreted candidates (7.7%) — both media are peptide-rich broths, so medium peptides were scoring as maximally 'secreted'. Corrected per-contrast counts: Bd liq Zoo-vs-Dev 365, Bd spore 3,219, Bsal liq 2,300, Bsal spore 3,896, liq-vs-spore 8,378-15,029.
 - **Purpose**: Hypothesis tier on the collapsed life-stage vocabulary (F-002: matrix stratification is required; Sporangium+Mature collapse is power-motivated). Answers "zoospore vs the rest" (life stage) and "secreted fraction vs cell-associated" (matrix) questions behind GOALS.md goals 2-4.
 - **Key inputs**: `analysis/ordination/linked_data/` tables, `analysis/sirius_annotation/sirius_annotations.tsv`.
 - **Key outputs**: `analysis/differential_features_primary/{primary_comparison_summary.tsv,significant_annotated.tsv,significant_bioactive.tsv,feature_tables_index.html,all_significant_features_summary.tsv,all_significant_features_summary_<species>.html,...}` — note the interactive rollup HTML is chunked per species (dendrobatidis/salamandrivorans) to stay under GitHub's 100 MB per-file limit. Repro: `pixi run differential-features-primary` then `pixi run feature-tables-primary` (sortable/filterable feature-table HTML per contrast + per-species rollups, Rhodotorula strategy).
@@ -65,3 +73,17 @@
 - **Key inputs**: `differential_features_primary/all_significant_features_summary.tsv`, `data/raw/gnps2_e9838293_bagel/nf_output/feature_library_search/merged_feature_library_search_results.tsv`.
 - **Key outputs**: `differential_features_primary/liq_enriched_curation/{dendrobatidis,salamandrivorans}_liq_enriched_top.tsv` + `_liq_enriched_usi.html`. Repro: `pixi run usi-curation`.
 - **Readme**: [GENOME_BIOACTIVITY_LINKAGE.md](genome_bioactivity_linkage/GENOME_BIOACTIVITY_LINKAGE.md)
+
+## differential_features (separation enrichment)
+
+- **Status**: complete (2026-09-02). Threshold-free replacement for `n_significant` as the stage-pair summary statistic. At n=5v5 the minimum attainable two-sided Mann-Whitney p is `2/C(10,5)=7.94e-3`, so BH can call nothing unless `k >= p_min*m/q` ~ 16% of features separate perfectly at once — making `n_significant` a step function of the feature universe. Reports complete-separation counts vs the analytic null plus the per-contrast BH-callability threshold. Result: **all 12 within-matrix stage pairs are enriched 3.0x-42.6x over the null and not one is BH-callable**; `BH_sig` is non-zero exactly when the separation count clears `k_needed`. This refutes the "Sporangium and Mature are indistinguishable" premise behind the stage collapse.
+- **Key outputs**: `analysis/differential_features/separation_enrichment.{tsv,png,pdf}`. Repro: `pixi run separation-enrichment`.
+
+## differential_features (exact permutation null)
+
+- **Status**: complete (2026-09-02). `scripts/mwu_exact.py` enumerates the full conditional Mann-Whitney null (252 assignments at 5v5, 3,003 at 5v10; 20,000 sampled at 10v10), used by both differential tiers. Replaces scipy `mannwhitneyu`, whose `method="auto"` mixes exact and asymptotic nulls (letting tie-heavy features beat perfectly separated ones) and whose `method="asymptotic"` is 1.5x conservative at 5v5 (floor 1.219e-2 vs exact 7.937e-3 — enough alone to drive one contrast from 5,507 significant to 0). Validated: max |perm p - scipy exact p| = **0.0** on 500 tie-free 5v5 features and 1.1e-16 at 5v10; floors reproduce 7.937e-3 / 6.660e-4 exactly; handles the ties scipy's exact method refuses.
+
+## differential_features_primary (peptide origin test)
+
+- **Status**: complete (2026-09-02). Tests whether the blank-clearing, MS2-backed liq peptides are medium-protein digest products (H2) or NRPS products (H1), by parsing residue composition from SIRIUS structure names (rejecting 43/62 Bd and 72/103 Bsal names as non-peptide rather than guessing) and binomial-testing Pro(+Hyp) frequency against beta-casein (~17%), collagen/gelatin (~22%) and an average proteome (~5%). Result: **Bd 24.3% (27/111 residues), Bsal 16.9% (34/201)** — both consistent with casein/gelatin, both rejecting the proteome baseline at **p=5.8e-12 / 5.3e-10**. Supports H2, converging with the MEROPS M36 fungalysin expansion in Bsal. Caveat: composition is inferred from names, not MS2 fragment ladders, and SIRIUS's DB is peptide-biased — this tests the class, not any single feature.
+- **Key outputs**: `analysis/differential_features_primary/peptide_origin/{peptide_origin.tsv,peptide_composition.png/.pdf}`. Repro: `pixi run peptide-origin`.

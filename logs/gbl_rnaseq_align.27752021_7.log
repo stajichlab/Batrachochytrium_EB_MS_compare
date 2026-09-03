@@ -1,0 +1,11 @@
+Loading samtools/1.19.2
+  Loading requirement: libdeflate/1.17 htslib/1.19.1
+	STAR --runMode alignReads --genomeDir /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS/analysis/rnaseq_expression/results/star_index/salamandrivorans --readFilesIn /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS/data/raw/rnaseq_srp291769/SRR13012129/SRR13012129_1.fastq.gz /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS/data/raw/rnaseq_srp291769/SRR13012129/SRR13012129_2.fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --outFileNamePrefix /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS/analysis/rnaseq_expression/results/star_align/SRR13012129/ --runThreadN 8
+	STAR version: 2.7.11b   compiled: 2024-01-25T16:12:02-05:00 :/home/dobin/data/STAR/STARcode/STAR.master/source
+Aug 25 15:20:19 ..... started STAR run
+Aug 25 15:20:19 ..... loading genome
+Aug 25 15:20:19 ..... started mapping
+Aug 25 15:39:47 ..... finished mapping
+Aug 25 15:39:47 ..... started sorting BAM
+Aug 25 15:40:43 ..... finished successfully
+DONE SRR13012129 (salamandrivorans rep5): /bigdata/stajichlab/shared/projects/Chytrid/Bd_massspec/Batrachochytrium_MS/analysis/rnaseq_expression/results/star_align/SRR13012129/Aligned.sortedByCoord.out.bam

@@ -12,10 +12,19 @@ the exploratory tier; this is the hypothesis tier with two contrast families
 Tryptone vs Bsal 50% TGHL, so species are never merged):
 
   1. Life-stage (stage_group): within each species x matrix, Zoospore vs
-     Developed -- the "zoospore vs the rest of the stages" question. Mature
-     and Sporangium were near-identical (0 significant features in the
-     within-matrix scan), so collapsing them buys power: liq n=10 vs 20,
-     spore n=5 vs 10 per species.
+     Developed -- the "zoospore vs the rest of the stages" question.
+     Collapsing Sporangium+Mature buys power (liq n=5 vs 10, spore n=5 vs 10
+     per species after the 2026-09-02 removal of media blanks).
+     NOTE the original justification -- "Sporangium and Mature are
+     near-identical, 0 significant in the within-matrix scan" -- does NOT
+     hold. At n=5v5 a BH call requires ~16% of features to separate
+     perfectly at once, so "0 significant" is a threshold artifact. All 12
+     within-matrix stage pairs are enriched 3.0x-42.5x over the analytic
+     null for complete separation (see analysis/differential_features/
+     separation_enrichment.tsv). Sporangium-vs-Mature is enriched 24.0x (Bd
+     spore) and 6.7x (Bsal spore): both real, neither BH-callable. Read this
+     collapsed tier alongside the ordinal trend tier (lifestage_trend.py),
+     which is the powered test of stage progression.
         dendrobatidis {liq,spore} Zoospore_vs_Developed
         salamandrivorans {liq,spore} Zoospore_vs_Developed      (4 contrasts)
 
@@ -84,7 +93,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.stats import mannwhitneyu
 
 REPO = Path(__file__).resolve().parents[3]
 LINKED = REPO / "analysis" / "ordination" / "linked_data"
@@ -94,6 +102,9 @@ SIRIUS = REPO / "analysis" / "sirius_annotation" / "sirius_annotations.tsv"
 # background_subtraction (+ its `paths` import) lives with the genome-bioactivity
 # linkage pipeline; reuse it rather than reimplementing the blank contrast, so
 # both pipelines apply an identical media-blank definition.
+sys.path.insert(0, str(REPO / "analysis" / "differential_features" / "scripts"))
+from mwu_exact import mwu_permutation  # noqa: E402
+
 sys.path.insert(0, str(REPO / "analysis" / "genome_bioactivity_linkage" / "scripts"))
 from background_subtraction import (  # noqa: E402
     fungal_over_blank_ratio,
@@ -166,6 +177,37 @@ def tss_normalize(feat: pd.DataFrame, sample_ids: list[str], prevalence_min: flo
 
 
 def test_features(mat_a: np.ndarray, mat_b: np.ndarray) -> pd.DataFrame:
+    """Mann-Whitney U + BH-FDR, with a FIXED LOD-scale pseudocount.
+
+    Pseudocount (corrected 2026-09-02): previously
+    `min(smallest positive value in either group) / 2`, recomputed PER FEATURE
+    PER CONTRAST. When one group's median was 0 -- roughly half of all
+    significant features in the liq-vs-spore contrasts -- log2FC collapsed to
+    `log2(median_a / pseudocount)`, i.e. it was set by the smallest nonzero
+    value anywhere in that contrast rather than by any property of the
+    feature. That produced |log2FC| up to ~29.5, made the value incomparable
+    across features AND across contrasts, and -- because q-values are tied at
+    the attainable floor across the top of every ranked list -- meant
+    |log2FC| alone silently ordered every shortlist this project produced.
+
+    Now a single LOD-scale constant (half the smallest positive value in the
+    whole normalized matrix) is shared by all features in the contrast, so
+    fold-changes are mutually comparable and bounded by real detection limits.
+
+    `prevalence_diff` (detection rate in A minus detection rate in B) is added
+    as the honest effect size for on/off features: rank on it, not on a
+    fold-change whose denominator is a detection floor.
+
+    P-VALUES use an exact conditional permutation null (`mwu_exact.
+    mwu_permutation`), not scipy's `mannwhitneyu`. scipy's default "auto"
+    mixes nulls -- exact when a feature is tie-free, asymptotic otherwise --
+    so zero-inflated features could attain SMALLER p than perfectly separated
+    dense ones, biasing rankings toward sparsity. Forcing "asymptotic"
+    removes that inconsistency but is 1.5x conservative at 5v5 (floor 1.22e-2
+    vs the exact 7.94e-3), which costs real BH power. Enumerating all
+    C(n1+n2,n1) label assignments (252 at 5v5, 3,003 at 5v10) is both exact
+    and tie-correct; 10v10 falls back to 20,000 sampled assignments.
+    """
     n_features = mat_a.shape[1]
     pvals = np.empty(n_features)
     log2fc = np.empty(n_features)
@@ -173,17 +215,27 @@ def test_features(mat_a: np.ndarray, mat_b: np.ndarray) -> pd.DataFrame:
     median_b = np.empty(n_features)
     ustat = np.empty(n_features)
 
+    both = np.concatenate([mat_a, mat_b], axis=0)
+    positive = both[both > 0]
+    pseudocount = (positive.min() / 2) if positive.size else 1e-12
+
+    prev_a = (mat_a > 0).mean(axis=0)
+    prev_b = (mat_b > 0).mean(axis=0)
+
+    # Exact conditional permutation null (see mwu_exact); at 5v5 / 5v10 the
+    # whole reference set is enumerated, so p matches scipy's exact test while
+    # also handling the ties scipy's exact method refuses.
+    pvals, ustat, is_exact = mwu_permutation(mat_a, mat_b)
     for i in range(n_features):
         a, b = mat_a[:, i], mat_b[:, i]
         median_a[i], median_b[i] = np.median(a), np.median(b)
-        u, p = mannwhitneyu(a, b, alternative="two-sided")
-        ustat[i], pvals[i] = u, p
-        pseudocount = min(x[x > 0].min() if (x > 0).any() else 1e-12 for x in (a, b)) / 2
         log2fc[i] = np.log2((median_a[i] + pseudocount) / (median_b[i] + pseudocount))
 
     qvals = bh_fdr(pvals)
     return pd.DataFrame({
         "median_a": median_a, "median_b": median_b, "log2FC_a_over_b": log2fc,
+        "prevalence_a": prev_a, "prevalence_b": prev_b,
+        "prevalence_diff": prev_a - prev_b,
         "U_stat": ustat, "p_value": pvals, "q_value": qvals,
     })
 
@@ -310,10 +362,14 @@ def main():
         ids_spore = sp_meta.loc[sp_meta["matrix"] == "spore", "sample_id"].tolist()
         annot, mat = tss_normalize(feat, ids_liq + ids_spore, args.prevalence_min)
         ml, ms = mat[:len(ids_liq)], mat[len(ids_liq):]
+        # Same fixed LOD-scale pseudocount as test_features (see its docstring)
+        # rather than a per-feature one, so liq_over_spore_log2fc is comparable
+        # across features instead of being set by each feature's own floor.
+        positive = mat[mat > 0]
+        pc = (positive.min() / 2) if positive.size else 1e-12
         fcs = np.empty(mat.shape[1])
         for i in range(mat.shape[1]):
             a, b = ml[:, i], ms[:, i]
-            pc = min(x[x > 0].min() if (x > 0).any() else 1e-12 for x in (a, b)) / 2
             fcs[i] = np.log2((np.median(a) + pc) / (np.median(b) + pc))
         liq_dir[species] = pd.DataFrame({"row_id": annot["row_id"], "liq_over_spore_log2fc": fcs}).set_index("row_id")
 

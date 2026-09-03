@@ -8,10 +8,15 @@ Sporangium+Mature into a single `Developed` stage. That collapse was
 justified by the claim that "every within-matrix Sporangium-vs-Mature
 contrast was 0-significant" -- which is FALSE for Bd's spore fraction:
 `dendrobatidis_spore_Sporangium_vs_spore_Mature` = 5,507 significant of
-21,816 tested in the 30-way scan. It holds only for Bsal spore (0) and for
-both species' liq fractions. Bd's spore fraction is a genuine three-state
-trajectory (Zoo-vs-Spor 3,396; Spor-vs-Mature 5,507; Zoo-vs-Mature 7,566);
-Bsal's is 2-state.
+21,816 tested in the 30-way scan, against 0 for Bsal spore.
+
+Note the "Bsal spore is 2-state" reading of that 0 does NOT hold up. At
+n=5v5 the minimum attainable two-sided Mann-Whitney p is 2/C(10,5)=0.0079,
+so BH at q<0.05 needs ~16% of features at the floor simultaneously. Bsal's
+Sporangium-vs-Mature separation is enriched 8.8x over the analytic null and
+Bd's 26.6x -- both are real; only Bd's clears a discontinuous threshold.
+Both species have a 3-state spore trajectory; the collapse loses signal in
+both, which is the whole reason this trend tier exists.
 
 Collapsing therefore discards real Bd signal. The 30-way pairwise scan in
 `analysis/differential_features/` already covers every stage PAIR, so
@@ -31,10 +36,14 @@ TSS-normalized matrix the other tiers use:
   Spearman rho between each feature's normalized abundance and stage rank,
   two-sided, BH-FDR across features within the stratum.
 
-Spearman (not Jonckheere-Terpstra) because it is rank-based, gives a signed
-effect size (rho: + = rises toward Mature, - = falls toward Zoospore), and
-needs no extra dependency. n = 15 for spore strata (5 per stage) and n = 30
-for liq strata (10 per stage).
+Spearman (not Jonckheere-Terpstra) because with 3 x-levels the two are
+equivalent up to a monotone transform; it is rank-based and gives a signed
+effect size (rho: + = rises toward Mature, - = falls toward Zoospore).
+Significance uses a LABEL-PERMUTATION null (see spearman_permutation), not
+scipy's t-approximation, which is invalid under 3 tied x-levels.
+n = 15 for spore strata (5 per stage) and n = 30 for liq strata (10 per
+stage) -- ALL FUNGAL as of 2026-09-02; the liq strata previously contained
+15 fungal + 15 sterile media blanks, which diluted every liq result.
 
 Outputs (analysis/differential_features_primary/lifestage_trend/):
   <species>_<matrix>_trend.tsv  : every tested feature, rho/p/q, direction,
@@ -49,8 +58,13 @@ Caveats
 - These are the SAME samples the pairwise tiers use, so trend hits are not
   independent evidence from the pairwise hits -- this is a different
   question (monotonic progression) on shared data, not a replication.
-- `passes_media_blank` is carried through so a liq trend that is really the
-  medium being consumed can be told apart from fungal production.
+- `liq_blank_status` is meaningful ONLY in the liq strata, where it tells a
+  medium being consumed apart from fungal production. There is NO spore-pellet
+  process blank in this design, so in the spore strata the column is written as
+  "n/a (no spore blank exists)" rather than silently reusing the supernatant
+  blank. Doing the latter asks whether a cell-associated compound exceeds a
+  supernatant blank, and would have discarded the most unambiguously fungal
+  features -- those never detected in any liq sample at all.
 
 Usage:
     python3 scripts/lifestage_trend.py [--fdr 0.05] [--prevalence-min 0.10] [--top-n 12]
@@ -67,7 +81,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.stats import spearmanr
+from scipy.stats import rankdata
 
 REPO = Path(__file__).resolve().parents[3]
 LINKED = REPO / "analysis" / "ordination" / "linked_data"
@@ -89,6 +103,61 @@ BLANK_MIN_FC = 2.0
 
 UP_COLOR = "#D55E00"
 DOWN_COLOR = "#0072B2"
+
+
+def spearman_permutation(mat: np.ndarray, ranks: np.ndarray, n_perm: int, seed: int):
+    """Spearman rho with a LABEL-PERMUTATION null instead of scipy's t-approximation.
+
+    Why (corrected 2026-09-02): with only 3 distinct x-levels and heavy ties,
+    scipy's asymptotic t-approximation is invalid and strongly
+    anti-conservative -- for a perfectly ordered feature it returns 1.13e-7
+    (n=15) and 6.09e-15 (n=30) against exact permutation floors of 2.64e-6 and
+    3.60e-13, i.e. 23x and 59x too small. The first version of this script
+    emitted ~1,500 p-values BELOW the exact attainable floor, which cannot
+    exist. Discovery sets survived a 5-shuffle check, so the sets were real,
+    but the q-values were not interpretable as FDR.
+
+    Spearman itself is kept: with 3 x-levels it is equivalent to
+    Jonckheere-Terpstra up to a monotone transform, so the test statistic was
+    never the problem -- only its null distribution.
+
+    Implementation: feature ranks are invariant under label permutation, so
+    rho reduces to a Pearson correlation between standardized feature ranks
+    and the standardized stage vector, and each permutation is a single
+    matrix-vector product. The null is pooled across features (all features
+    see the same shuffled labels), giving n_perm x n_features null values for
+    empirical p resolution far finer than n_perm alone.
+    """
+    n_samp, n_feat = mat.shape
+    # Rank within each feature (ties -> average), then standardize.
+    fr = np.apply_along_axis(rankdata, 0, mat)
+    fr -= fr.mean(axis=0)
+    denom = np.sqrt((fr ** 2).sum(axis=0))
+    constant = denom == 0
+    denom[constant] = 1.0
+    fr /= denom
+
+    def rho_for(x: np.ndarray) -> np.ndarray:
+        xs = x - x.mean()
+        nrm = np.sqrt((xs ** 2).sum())
+        return fr.T @ (xs / nrm)
+
+    rho = rho_for(ranks)
+    rho[constant] = 0.0
+
+    rng = np.random.default_rng(seed)
+    perm = ranks.copy()
+    null = np.empty(n_perm * n_feat, dtype=np.float32)
+    for k in range(n_perm):
+        rng.shuffle(perm)
+        null[k * n_feat:(k + 1) * n_feat] = np.abs(rho_for(perm))
+    null.sort()
+
+    # Empirical two-sided p: fraction of the pooled null at least as extreme.
+    exceed = len(null) - np.searchsorted(null, np.abs(rho), side="left")
+    pval = (exceed + 1) / (len(null) + 1)
+    pval[constant] = 1.0
+    return rho, pval, int(constant.sum())
 
 
 def bh_fdr(pvals: np.ndarray) -> np.ndarray:
@@ -164,6 +233,9 @@ def main() -> None:
     ap.add_argument("--fdr", type=float, default=0.05)
     ap.add_argument("--prevalence-min", type=float, default=0.10)
     ap.add_argument("--top-n", type=int, default=12)
+    ap.add_argument("--n-perm", type=int, default=1000,
+                    help="label permutations for the null (default 1000)")
+    ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
 
     OUT.mkdir(parents=True, exist_ok=True)
@@ -191,15 +263,12 @@ def main() -> None:
 
             annot, mat = tss_normalize(feat, ids, args.prevalence_min)
             n_feat = mat.shape[1]
-            rho = np.empty(n_feat)
-            pval = np.empty(n_feat)
-            for i in range(n_feat):
-                r, p = spearmanr(mat[:, i], ranks)
-                # A feature constant within this stratum yields nan; treat as
-                # no trend rather than letting nan poison the FDR ranking.
-                rho[i] = 0.0 if np.isnan(r) else r
-                pval[i] = 1.0 if np.isnan(p) else p
+            rho, pval, n_const = spearman_permutation(
+                mat, ranks, n_perm=args.n_perm, seed=args.seed
+            )
             q = bh_fdr(pval)
+            print(f"  ({n_const} features constant within stratum -> rho=0, p=1)",
+                  file=sys.stderr)
 
             df = annot.copy()
             df["_col"] = np.arange(n_feat)
@@ -211,13 +280,20 @@ def main() -> None:
             df["matrix"] = matrix
             df["n_samples"] = len(ids)
             df["row_id"] = df["row_id"].astype(int)
-            df["passes_media_blank"] = df["row_id"].isin(blank_ok)
+            # Only meaningful for liq; no spore-pellet process blank exists.
+            df["liq_blank_status"] = (
+                df["row_id"].isin(blank_ok).map({True: "clears_blank", False: "at_or_below_blank"})
+                if matrix == "liq" else "n/a (no spore blank exists)"
+            )
             df = df.merge(sirius, left_on="row_id", right_on="row ID",
                           how="left", validate="many_to_one")
             df = df.sort_values(["q_value", "rho"], key=lambda s: s if s.name == "q_value" else -s.abs())
 
             n_sig = int((df["q_value"] < args.fdr).sum())
-            n_sig_blank = int(((df["q_value"] < args.fdr) & df["passes_media_blank"]).sum())
+            n_sig_blank = (
+                int(((df["q_value"] < args.fdr) & (df["liq_blank_status"] == "clears_blank")).sum())
+                if matrix == "liq" else -1
+            )
             df.drop(columns=["_col"]).to_csv(OUT / f"{short}_{matrix}_trend.tsv",
                                              sep="\t", index=False)
             plot_top(df[df["q_value"] < args.fdr], mat, ranks, short, matrix,
@@ -226,13 +302,15 @@ def main() -> None:
             summary.append({
                 "species": short, "matrix": matrix, "n_samples": len(ids),
                 "n_tested": n_feat, "n_significant": n_sig,
-                "n_significant_blank_clearing": n_sig_blank,
+                "n_significant_blank_clearing": n_sig_blank,  # -1 = n/a (spore)
                 "n_rises_to_Mature": int(((df["q_value"] < args.fdr) & (df["rho"] > 0)).sum()),
                 "n_falls_to_Mature": int(((df["q_value"] < args.fdr) & (df["rho"] < 0)).sum()),
             })
+            blank_note = (f"{n_sig_blank} also clear the media blank"
+                          if matrix == "liq" else "no spore blank exists")
             print(f"[{short}/{matrix}] n={len(ids)}, {n_feat} tested, "
-                  f"{n_sig} monotonic at FDR<{args.fdr:.0%} "
-                  f"({n_sig_blank} also clear the media blank)", file=sys.stderr)
+                  f"{n_sig} monotonic at FDR<{args.fdr:.0%} ({blank_note})",
+                  file=sys.stderr)
 
     pd.DataFrame(summary).to_csv(OUT / "trend_summary.tsv", sep="\t", index=False)
     print(f"wrote {len(summary)} strata to {OUT}", file=sys.stderr)

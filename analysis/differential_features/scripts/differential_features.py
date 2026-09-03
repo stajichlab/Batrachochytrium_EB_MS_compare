@@ -49,13 +49,15 @@ import itertools
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.stats import mannwhitneyu
+from mwu_exact import mwu_permutation
 
 REPO = Path(__file__).resolve().parents[3]
 LINKED = REPO / "analysis" / "ordination" / "linked_data"
@@ -106,17 +108,28 @@ def test_features(mat_a: np.ndarray, mat_b: np.ndarray) -> pd.DataFrame:
     median_b = np.empty(n_features)
     ustat = np.empty(n_features)
 
+    # Fixed LOD-scale pseudocount shared by every feature in the contrast, and
+    # method="asymptotic" for uniformity -- see the extended rationale in
+    # differential_features_primary.test_features (corrected 2026-09-02).
+    both = np.concatenate([mat_a, mat_b], axis=0)
+    positive = both[both > 0]
+    pseudocount = (positive.min() / 2) if positive.size else 1e-12
+    prev_a = (mat_a > 0).mean(axis=0)
+    prev_b = (mat_b > 0).mean(axis=0)
+
+    # Exact conditional permutation null -- see mwu_exact.mwu_permutation and
+    # the rationale in differential_features_primary.test_features.
+    pvals, ustat, is_exact = mwu_permutation(mat_a, mat_b)
     for i in range(n_features):
         a, b = mat_a[:, i], mat_b[:, i]
         median_a[i], median_b[i] = np.median(a), np.median(b)
-        u, p = mannwhitneyu(a, b, alternative="two-sided")
-        ustat[i], pvals[i] = u, p
-        pseudocount = min(x[x > 0].min() if (x > 0).any() else 1e-12 for x in (a, b)) / 2
         log2fc[i] = np.log2((median_a[i] + pseudocount) / (median_b[i] + pseudocount))
 
     qvals = bh_fdr(pvals)
     return pd.DataFrame({
         "median_a": median_a, "median_b": median_b, "log2FC_a_over_b": log2fc,
+        "prevalence_a": prev_a, "prevalence_b": prev_b,
+        "prevalence_diff": prev_a - prev_b,
         "U_stat": ustat, "p_value": pvals, "q_value": qvals,
     })
 

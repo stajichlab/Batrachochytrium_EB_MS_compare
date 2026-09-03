@@ -1,0 +1,15 @@
+=== SRR13012113 (salamandrivorans rep1) ===
+2026-08-25T21:43:29 prefetch.3.2.0: 1) Resolving 'SRR13012113'...
+2026-08-25T21:43:31 prefetch.3.2.0: Current preference is set to retrieve SRA Normalized Format files with full base quality scores
+2026-08-25T21:43:31 prefetch.3.2.0: 1) Downloading 'SRR13012113'...
+2026-08-25T21:43:31 prefetch.3.2.0:  SRA Normalized Format file is being retrieved
+2026-08-25T21:43:31 prefetch.3.2.0:  Downloading via HTTPS...
+2026-08-25T21:45:02 prefetch.3.2.0:  HTTPS download succeed
+2026-08-25T21:45:05 prefetch.3.2.0:  'SRR13012113' is valid: 1270854158 bytes were streamed from 1270841645
+2026-08-25T21:45:05 prefetch.3.2.0: 1) 'SRR13012113' was downloaded successfully
+2026-08-25T21:45:05 prefetch.3.2.0: 1) Resolving 'SRR13012113's dependencies...
+2026-08-25T21:45:05 prefetch.3.2.0: 'SRR13012113' has 0 unresolved dependencies
+spots read      : 13,574,960
+reads read      : 27,149,920
+reads written   : 27,149,920
+DONE SRR13012113: 2 fastq.gz file(s)

@@ -63,10 +63,23 @@ def main() -> None:
     # (sirius_structure_name/formula/npc_pathway/npc_class, annotation_origin,
     # bioactive flag) joined by differential-features-primary -- do NOT merge
     # sirius_annotations.tsv again here or the columns get _x/_y suffixed.
+    # has_ms2 is NOT in linked_data; pull it from the bagel table. Without it
+    # the "MS2 verification shortlist" is largely unverifiable -- only 6,453 of
+    # 38,547 features have an acquired MS2 spectrum, and the USI resolver
+    # renders the GAP-FILLED mgf regardless, so a no-MS2 row still returns a
+    # picture. 73% of the pre-2026-09-02 top-100 grid had no MS2 at all.
+    bagel = pd.read_csv(
+        REPO / "data" / "raw" / "gnps2_e9838293_bagel" / "nf_output" / "feature_finding"
+        / "feature_finding_results" / "aligned_features.csv",
+        low_memory=False, usecols=["row ID", "has_ms2"],
+    ).rename(columns={"row ID": "row_id"})
+
     rows = diff[diff["comparison"].str.contains(r"liq_\w+_vs_spore_\w+", regex=True) & (diff["log2FC_a_over_b"] > 0)].copy()
     rows["abs_log2fc"] = rows["log2FC_a_over_b"].abs()
     libs = lib.rename(columns={"query_scan": "row_id"})
     rows = rows.merge(libs[["row_id", "NAME", "FORMULA", "cosine", "matched_peaks", "SPECTRUMID"]], on="row_id", how="left")
+    rows = rows.merge(bagel, on="row_id", how="left")
+    rows["has_ms2"] = rows["has_ms2"].fillna(False).astype(bool)
     rows = rows.sort_values(["q_value", "abs_log2fc"], ascending=[True, False])
     rows = rows.drop_duplicates("row_id")
 
@@ -81,12 +94,21 @@ def main() -> None:
             )
         df["passes_media_blank"] = df["passes_media_blank"].fillna(False).astype(bool)
         # Blank-clearing features first; the HTML grid is the MS2 shortlist.
+        # Shortlist order: must clear the media blank AND have an acquired MS2
+        # before q-value matters. Ranking within the top by |log2FC| would be
+        # meaningless anyway -- q is tied at the attainable floor across the
+        # whole head of the list, so |log2FC| silently decided the order, and
+        # log2FC is pseudocount-bounded for on/off features.
+        df["shortlist_ready"] = df["passes_media_blank"] & df["has_ms2"]
         df = df.sort_values(
-            ["passes_media_blank", "q_value", "abs_log2fc"], ascending=[False, True, False]
+            ["shortlist_ready", "passes_media_blank", "has_ms2", "q_value", "prevalence_diff"],
+            ascending=[False, False, False, True, False],
         )
         cols = [
             "row_id", "mz", "rt", "comparison", "log2FC_a_over_b", "q_value",
-            "passes_media_blank", "is_liq_enriched", "bioactive", "annotation_origin",
+            "shortlist_ready", "passes_media_blank", "has_ms2", "prevalence_diff",
+            "is_liq_enriched", "bioactive", "annotation_origin",
+            "sirius_structure_confidence",
             "sirius_structure_name", "sirius_formula", "sirius_npc_pathway", "sirius_npc_class",
             "NAME", "cosine", "matched_peaks",
         ]
@@ -98,12 +120,14 @@ def main() -> None:
         # aggregate stats for the writeup
         n = len(df)
         n_blank = int(df["passes_media_blank"].sum())
+        n_ready = int(df["shortlist_ready"].sum())
         n_struc = int(df["sirius_structure_name"].notna().sum())
         n_lib = int(df["NAME"].notna().sum())
         n_nprs = int(df["sirius_npc_pathway"].isin(["Amino acids and Peptides", "Alkaloids", "Polyketides", "Terpenoids"]).sum())
         print(
             f"{species}: {n} unique liq-enriched features "
-            f"({n_blank}, {n_blank / n:.1%}, clear the C_liq media blank), "
+            f"({n_blank}, {n_blank / n:.1%}, clear the C_liq media blank; "
+            f"{n_ready} ALSO have acquired MS2 = shortlist-ready), "
             f"{n_struc} SIRIUS-structure, {n_lib} GNPS-library-hit, {n_nprs} in mapped compound classes"
         )
 
