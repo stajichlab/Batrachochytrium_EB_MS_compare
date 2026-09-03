@@ -313,6 +313,19 @@ proteolytic.
    for Bd.
 6. **10v10 contrasts use a 20,000-sample null** (floor 5.0e-5) rather than the
    full 184,756 enumeration.
+7. **The genome-bioactivity linkage candidate tables were NOT regenerated and
+   are now stale relative to the corrected compound side.** Its compound
+   filter reads `all_significant_features_summary.tsv` (regenerated) but
+   `build_linkage_tables.py` also needs the BFD GenBank annotations at
+   `/bigdata/stajichlab/shared/projects/BFD/...`, which are not reachable from
+   the machine this re-analysis ran on:
+   `FileNotFoundError: .../Batrachochytrium_dendrobatidis_JEL423.gbk`.
+   **`results/{dendrobatidis,salamandrivorans}_candidate_table.tsv` therefore
+   still reflect the pre-correction feature universe** (38,547 features, blanks
+   included, unpaired blank rule) and must be re-run with
+   `pixi run gbl-build-tables` on the HPC before any candidate-level claim is
+   made. The MEROPS/M36 protease result is unaffected — it is sequence-only
+   and never depended on the metabolomics side.
 
 ---
 
