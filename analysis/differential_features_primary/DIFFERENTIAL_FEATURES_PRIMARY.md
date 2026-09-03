@@ -73,8 +73,8 @@ significant features. Data embedded as JSON; no CDN/no server needed.
 - `all_significant_features_summary.tsv` — rollup of every significant row
   across all 8 contrasts with `comparison` + `species` columns.
 - `all_significant_features_summary_<species>.html` — rollup split into one
-  sortable/filterable view per species (`dendrobatidis` 48,867 rows / 8.1 MB;
-  `salamandrivorans` 54,770 rows / 9.0 MB, after the 2026-09-02 payload
+  sortable/filterable view per species (`dendrobatidis` 26,542 rows / 4.4 MB;
+  `salamandrivorans` 29,603 rows / 5.0 MB, after the 2026-09-02 payload
   compression below). The per-species split originally existed only to stay
   under GitHub's 100 MB per-file limit; with compression a single combined
   rollup would now be ~17 MB, so the split is retained for browsing
@@ -89,7 +89,7 @@ columns in a click-to-expand row panel; filters in priority order = click
 sort, q-value `<=` / `|log2FC| >=` numeric thresholds, identity-source chips,
 `bioact`/`secreted` checkboxes (the curated flags), free-text search.
 
-Caveat: the per-species rollups embed ~49k–55k rows (8.1–9.0 MB HTML since
+Caveat: the per-species rollups embed ~27k–30k rows (4.4–5.0 MB HTML since
 the 2026-09-02 compression) and the two largest per-contrast tables ~25–28k
 rows; they open fine but render slower than Rhodotorula's ~6k-row tables —
 prefer filtering or a per-contrast table when browsing. Note the decoder
@@ -99,32 +99,38 @@ HTMLs are stale otherwise).
 
 Run: `pixi run feature-tables-primary`
 
-## Results (2026-08-20)
-8 contrasts, n = 25k-34k features tested each.
+## Results (2026-09-02, corrected)
+8 contrasts on 60 fungal samples x 25,157 features; 11.6k-21.7k tested each
+(the tested count varies because `prevalence_min = 0.10` means "present in >=1
+of 10" at n=10 and ">=2" at n=15/20 — which is also why the BH denominator,
+and therefore `k_needed_for_BH_q05`, moves between contrasts).
 
 | family | contrast (species, groups) | n (a vs b) | n significant |
 |---|---|---|---|
-| life_stage | Bd liq Zoospore vs Developed | 10 vs 20 | 536 |
-| life_stage | Bd spore Zoospore vs Developed | 5 vs 10 | 5,638 |
-| life_stage | Bsal liq Zoospore vs Developed | 10 vs 20 | 54 |
-| life_stage | Bsal spore Zoospore vs Developed | 5 vs 10 | 7,211 |
-| secreted_vs_cellular | Bd liq vs spore (Zoospore) | 10 vs 5 | 17,642 |
-| secreted_vs_cellular | Bd liq vs spore (Developed) | 20 vs 10 | 25,051 |
-| secreted_vs_cellular | Bsal liq vs spore (Zoospore) | 10 vs 5 | 19,575 |
-| secreted_vs_cellular | Bsal liq vs spore (Developed) | 20 vs 10 | 27,930 |
+| life_stage | Bd liq Zoospore vs Developed | 5 vs 10 | 365 |
+| life_stage | Bd spore Zoospore vs Developed | 5 vs 10 | 3,219 |
+| life_stage | Bsal liq Zoospore vs Developed | 5 vs 10 | 2,300 |
+| life_stage | Bsal spore Zoospore vs Developed | 5 vs 10 | 3,896 |
+| secreted_vs_cellular | Bd liq vs spore (Zoospore) | 5 vs 5 | 8,507 |
+| secreted_vs_cellular | Bd liq vs spore (Developed) | 10 vs 10 | 14,451 |
+| secreted_vs_cellular | Bsal liq vs spore (Zoospore) | 5 vs 5 | 8,378 |
+| secreted_vs_cellular | Bsal liq vs spore (Developed) | 10 vs 10 | 15,029 |
 
 Reads:
-- The secreted/cellular matrix is far larger than the life-stage signal in
-  the liquid fraction: within liq, only 54-536 features distinguish
-  Zoospore from Developed, whereas in the spore fraction 5.6k-7.2k do —
-  consistent with F-002 (matrix dominates; the supernatant is compositionally
-  dominated by shared media/secreted chemistry).
-- 103,637 significant feature-rows cover 33,066 unique features; 15,791 have
-  an NPC class annotation (full native SIRIUS run, 2026-08-25); 62,771
-  flagged as secreted candidates, 2,639 as bioactivity-flagged.
-- Bsal (salamandrivorans), which secretes rapidly in culture, shows the
-  spore-fraction zoospore-to-developed signal skew (7,211 vs 54 in liq) most
-  strongly.
+- The secreted/cellular (matrix) contrast is still far larger than any
+  life-stage contrast, consistent with F-002.
+- **The pre-correction reading of the life-stage asymmetry does not hold.**
+  It rested on liq counts of 536 (Bd) and 54 (Bsal), both produced by groups
+  that were 50% sterile media blanks. Corrected, Bsal liq is 2,300 — a 43x
+  increase — so "life stage barely registers in the supernatant" is a
+  Bd-specific statement, not a general one. Bsal's liq PCoA2-vs-stage
+  correlation is rho = -0.87 (p<1e-4).
+- 56,145 significant feature-rows over 20,158 unique features; 1,129
+  bioactivity-flagged; `is_secreted_candidate` = 2,631 rows.
+- Do not read any single "n significant" as an effect size at these n. See
+  `analysis/differential_features/separation_enrichment.tsv`: 5 of the 12
+  within-matrix stage pairs report 0 while being 3.0x-16.3x enriched over the
+  null, because BH needs ~16% of features at the p-floor simultaneously.
 
 ## Figures
 
