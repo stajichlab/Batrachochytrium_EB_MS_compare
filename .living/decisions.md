@@ -20,34 +20,36 @@ Append-only log of non-obvious decisions and their rationale.
 
 **Tags**: porting, everything-bagel, ordination, differential-abundance, reproducibility, standalone-repo
 
-## 2026-08-19 — Transfer SIRIUS annotations from the EB project instead of re-running SIRIUS
+### 2026-08-19 — Transfer SIRIUS annotations from the EB project instead of re-running SIRIUS
 
 - **Context**: Ba/Bsal Everything-Bagel features (38,547) need formula/structure/compound-class annotations. A completed SIRIUS 6.3.12 run already exists in the sibling EB project on the MZmine3 feature table sharing the same MassIVE deposit.
 - **Decision**: Do not re-run SIRIUS now; transfer the 2,860 EB annotations via m/z + RT + MS2-cosine matching into a project-owned `sirius_annotations.tsv`, and hard-code a `--native-merged` merge path so a future native SIRIUS run upgrades rows in place.
 - **Alternatives considered**: (1) Re-run SIRIUS on the Everything-Bagel features now (most correct, but expensive and the user wanted an interim annotation set); (2) try to reuse EB feature IDs directly (impossible — different feature finders, ids do not correspond); (3) m/z+RT-only transfer (insufficient — many isobars within ppm/RT window).
 - **Rationale**: The transfer covers 76% of EB's annotated features and is < 15 min to run; native SIRIUS remains the end-state and can overwrite transferred rows since native > transferred by precedence.
 - **Consequences**: 1,773 local features annotated interim; 69 `merged_conflict` features require manual review; documentation added at `analysis/sirius_annotation/SIRIUS_ANNOTATION.md`.
-- **Tags**: `metabolomics`, `sirius`, `decision`, `annotation`
+**Tags**: metabolomics, sirius, decision, annotation
 
-## 2026-08-19 — Keep one row per local feature id in the accumulated annotation table
+### 2026-08-19 — Keep one row per local feature id in the accumulated annotation table
 
 - **Context**: The transfer maps multiple EB features onto single local features (296 multi-hit, 69 formula-conflicting). Generating one row per (local feature, EB hit) would fan out joins and double-count abundances.
 - **Decision**: `sirius_annotations.tsv` keeps exactly one row per `row ID` (the highest-priority hit by native>transferred, structure-hit, confidence), while `sirius_transfer_map.tsv` audits every EB hit; conflicts are flagged (`merged_conflict`, `n_sirius_hits`, `sirius_hit_ids/formulas`).
 - **Alternatives considered**: Wide multi-hit rows; keeping all hits as separate rows.
 - **Rationale**: A joinable-by-id table is the cleanest contract for downstream ordination/differential analysis; no information is destroyed because the map retains the full detail.
 - **Consequences**: Downstream users must respect `merged_conflict`; the map must not be deleted.
-- **Tags**: `metabolomics`, `data-model`, `decision`, `annotation`
+**Tags**: metabolomics, data-model, decision, annotation
 
-## 2026-08-19 — Native SIRIUS run: charge-1+ targets only, small per-shard jobs, pilot-first
+### 2026-08-19 — Native SIRIUS run: charge-1+ targets only, small per-shard jobs, pilot-first
 
 - **Context**: The transfer left 4,680 un-annotated features with MS2. User worried the full set was too many; the practical reducers differ from intuition.
 - **Decision**: Target the **3,927 singly-charged** (`charge == 1`) un-annotated features (dropping the 753 multi-charged that SIRIUS 6.3.12 cannot process anyway); split into shards of ~30 spectra for fine-grained failure handling/restarts; run a **pilot first** (150 targets, 149 usable, 5 shards) to benchmark per-feature runtime before scaling; keep the array strictly serial (%1) since SIRIUS 6.3.12 serializes login tokens.
 - **Alternatives considered**: all 4,680 features (would submit unrunnable multi-charged spectra); 1+ with [M+H]+ only (3,316 — cleaner but 611 fewer); sample-presence filtering (∅, effectively a no-op on this dataset).
 - **Rationale**: Charge is the only meaningful reducer here; per-shard independent output project spaces make failures re-submittable without touching other shards; the pilot validates merge/import before the ~3.9k-feature full run.
 - **Consequences**: Scripts `select_native_targets.py` / `export_native_mgf.py` / `run_sirius_native.sh`(+`.sbatch`) added; degenerate MGF blocks are dropped with a report. Cost is bounded and restartable.
-- **Tags**: `metabolomics`, `sirius`, `decision`, `native-run`, `sharding`
+**Tags**: metabolomics, sirius, decision, native-run, sharding
 
-## 2026-08-20 — Collapse Sporangium+Mature into a "Developed" stage_group for the primary analysis tier
+### 2026-08-20 — Collapse Sporangium+Mature into a "Developed" stage_group for the primary analysis tier
+
+> **CORRECTION (2026-09-02)**: the premise below — "every within-matrix Sporangium-vs-Mature contrast is 0-significant" — is wrong for Bd spore (5,507 significant). The collapse remains justified for Bsal but not for Bd; see the amended F-003. Decision retained as the historical record.
 
 **Context**: The user's main question is Zoospore vs the later stages. The 30-way scan showed every within-matrix Sporangium-vs-Mature pairwise contrast to be 0-significant (F-002), and the user explicitly noted sporangia and mature look very similar — a collapse into two groups buys statistical power (liq 10 vs 20, spore 5 vs 10 per species) for the primary hypothesis tier.
 
@@ -59,9 +61,9 @@ Append-only log of non-obvious decisions and their rationale.
 
 **Consequences**: Life-stage signal is now read per-fraction: spore fraction carries 5.6k/7.2k FDR-significant features vs 54–536 in liq (F-003); secreted/bioactive targeting uses the liq-vs-spore family plus `is_secreted_candidate` flags on life-stage hits.
 
-**Tags**: `analytical-design`, `life-stage`, `collapse`, `differential-abundance`, `decision`, `power`
+**Tags**: analytical-design, life-stage, collapse, differential-abundance, decision, power
 
-## 2026-08-20 — Flag significant features with SIRIUS annotations + curated bioactivity keywords, kept as separate joined tables
+### 2026-08-20 — Flag significant features with SIRIUS annotations + curated bioactivity keywords, kept as separate joined tables
 
 **Context**: Downstream goal is to find stage-distinguishing features suggesting secreted or high-bioactivity compounds. The scan tier did not apply the SIRIUS identity join yet (EB pattern).
 
@@ -73,9 +75,9 @@ Append-only log of non-obvious decisions and their rationale.
 
 **Consequences**: 103,637 significant feature-rows (33,066 unique features); 6,688 NPC-annotated; 3,003 secreted candidates; 1,041 bioactivity-flagged. Users must treat `bioactive` as reviewing-prompt, and `liq_over_spore_log2fc` as a hint (stage-confounded), not a test.
 
-**Tags**: `metabolomics`, `sirius`, `bioactivity`, `secreted-compounds`, `decision`, `annotation-join`
+**Tags**: metabolomics, sirius, bioactivity, secreted-compounds, decision, annotation-join
 
-## 2026-08-20 — Defer the full native SIRIUS run while the Herptile project occupies the `short` queue
+### 2026-08-20 — Defer the full native SIRIUS run while the Herptile project occupies the `short` queue
 
 **Context**: The 149-spectra pilot (job 27605104, 5 shards × 30, `%1`) validated the full native path (112 formula / 99 structure / 99 NPC / 99 ClassyFire rows merged and folded in). The approved full run (3,921 remaining charge-1+ targets → ~131 shards, ~22–28 h serial on `short`) was ready to launch. But `squeue` shows a sibling project actively running SIRIUS on the same partition: Herptile array `27671478 sirius-herptile-full` (172 remaining serial shards, `%1`) + `27671479 sirius-herptile-full-merge` pending on `afterok:27671478_*`. Herptile's own task logs show SIRIUS login-token (`JOB_WATCHER`) transient failures under load (`Request to Server failed! Try again in 16.0s`).
 
@@ -87,9 +89,9 @@ Append-only log of non-obvious decisions and their rationale.
 
 **Consequences**: `SIRIUS_ANNOTATION.md` and `ANALYSIS_MANIFEST.md` marked full-run **deferred (2026-08-20)**; exact launch command recorded. No compute wasted; pilot pipeline stays as the validated template. The 6 duplicate features can later be collapsed in favor of their `native-EB97X` rows.
 
-**Tags**: `metabolomics`, `sirius`, `decision`, `native-run`, `queue-management`, `deferral`
+**Tags**: metabolomics, sirius, decision, native-run, queue-management, deferral
 
-## 2026-08-25 — Confirmed genome-bioactivity-linkage remains blocked on BFD PFAM/antiSMASH, independent of DeepTMHMM completion
+### 2026-08-25 — Confirmed genome-bioactivity-linkage remains blocked on BFD PFAM/antiSMASH, independent of DeepTMHMM completion
 
 **Context**: User reported both the full native SIRIUS run and the DeepTMHMM run as "done" and asked to integrate results. DeepTMHMM output (`TMRs.gff3`, `predicted_topologies.3line`) is genuinely complete and clean for both `dendrobatidis` and `salamandrivorans` (no crash, matches the `set -euo pipefail` fail-loudly fix from 63fa2b3). Ran `pixi run python analysis/genome_bioactivity_linkage/scripts/build_linkage_tables.py` live to check whether the full linkage pipeline could now run end-to-end.
 
@@ -99,9 +101,9 @@ Append-only log of non-obvious decisions and their rationale.
 
 **Consequences**: `GENOME_BIOACTIVITY_LINKAGE.md`'s existing "Blocked on: the BFD ... run" status still accurately describes reality as of 2026-08-25; no doc change needed there. Re-run `build_linkage_tables.py` once BFD PFAM/antiSMASH output appears under `results/function/pfam_hmmscan/` and `genome_annotation/<out>/antismash_local/` for both species.
 
-**Tags**: `genome-bioactivity-linkage`, `deeptmhmm`, `sirius`, `bfd`, `blocker`, `pipeline-status`
+**Tags**: genome-bioactivity-linkage, deeptmhmm, sirius, bfd, blocker, pipeline-status
 
-## 2026-08-25 — Superseded: ran genome-bioactivity-linkage end-to-end via local fallback instead of waiting on BFD's own PFAM/antiSMASH/SignalP/PredGPI run
+### 2026-08-25 — Superseded: ran genome-bioactivity-linkage end-to-end via local fallback instead of waiting on BFD's own PFAM/antiSMASH/SignalP/PredGPI run
 
 **Context**: The morning's decision (above) held off running `build_linkage_tables.py` because BFD's own shared functional-annotation run had not produced `pfam_hmmscan`/`antismash_local` output for either `Batrachochytrium` locustag. Re-checking disk state found this project already has local fallback results in `analysis/genome_bioactivity_linkage/results/{pfam_hmmscan,antismash_ncbi,predgpi,deeptmhmm,rbh}/<species>/` for both species (from the separate `run_pfam.sh`/`run_signalp.sh`/`run_predgpi.sh` work, commit 413c490) — `find_bfd_output`'s fallback search root (`GBL_ROOT/results/<kind>/<species>`) satisfies the same contract BFD's own run would. Only `signalp/salamandrivorans` was missing (its CPU pass, job `27753328_1`, had `TIMEOUT`'d at 92%).
 
@@ -113,9 +115,9 @@ Append-only log of non-obvious decisions and their rationale.
 
 **Consequences**: `results/{dendrobatidis,salamandrivorans}_candidate_table.tsv` now exist with real content (0 and 2 candidate rows respectively — see `.living/learnings.md` 2026-08-25 entry on the `is_extracellular` gate for why Bd's count is 0 and not a bug). `GENOME_BIOACTIVITY_LINKAGE.md` and `ANALYSIS_MANIFEST.md` updated to reflect completed-run status; `run_signalp.sh` now defaults to the GPU build for any future rerun (e.g. if BFD's own SignalP output should later supersede the local one, `find_bfd_output`'s search-root order already prefers BFD's path with no code change needed).
 
-**Tags**: `genome-bioactivity-linkage`, `signalp`, `gpu`, `bfd`, `unblocked`, `pipeline-status`
+**Tags**: genome-bioactivity-linkage, signalp, gpu, bfd, unblocked, pipeline-status
 
-## 2026-08-25 — Relax genome-bioactivity-linkage's `is_extracellular` gate from a hard filter to an informational column
+### 2026-08-25 — Relax genome-bioactivity-linkage's `is_extracellular` gate from a hard filter to an informational column
 
 **Context**: The completed end-to-end run (previous decision, same day) confirmed the original strict design — a candidate gene must be `is_extracellular` (SignalP/DeepTMHMM/PredGPI-predicted secreted) to appear in the candidate table at all — produced only 0 (dendrobatidis) and 2 (salamandrivorans) candidate rows on real data, because the domain-hit protein sets (NRPS/PKS/P450/terpene synthase) have essentially zero overlap with the extracellular-scored protein sets. This is biologically expected (these enzymes are cytoplasmic; the metabolite, not the enzyme, is exported), but it meant the pipeline's practical output was almost empty. User asked to relax the gate to surface more candidates for now, with documentation.
 
@@ -127,4 +129,4 @@ Append-only log of non-obvious decisions and their rationale.
 
 **Consequences**: `results/{dendrobatidis,salamandrivorans}_candidate_table.tsv` now have substantially more rows; **`tier` alone no longer implies a secreted-pathway gene** — check `is_extracellular` per row if that distinction matters for a given compound (of the current 2,634 + 8,322 rows, only 2 total are `is_extracellular=True`). `GENOME_BIOACTIVITY_LINKAGE.md` (Method step 6, Known caveat #5, Status section) and `ANALYSIS_MANIFEST.md` updated with both the strict and relaxed counts so the before/after is traceable.
 
-**Tags**: `genome-bioactivity-linkage`, `is_extracellular`, `secretion-prediction`, `analytical-design`, `decision`, `candidate-recovery`
+**Tags**: genome-bioactivity-linkage, is_extracellular, secretion-prediction, analytical-design, decision, candidate-recovery
