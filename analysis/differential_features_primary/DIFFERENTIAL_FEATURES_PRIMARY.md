@@ -63,10 +63,12 @@ significant features. Data embedded as JSON; no CDN/no server needed.
 - `all_significant_features_summary.tsv` — rollup of every significant row
   across all 8 contrasts with `comparison` + `species` columns.
 - `all_significant_features_summary_<species>.html` — rollup split into one
-  sortable/filterable view per species (`dendrobatidis` 48,867 rows / 59 MB;
-  `salamandrivorans` 54,770 rows / 66 MB). Chunked by species so each file
-  stays under GitHub's 100 MB per-file hard limit (a single combined rollup
-  would be ~125 MB and reject `git push`).
+  sortable/filterable view per species (`dendrobatidis` 48,867 rows / 8.1 MB;
+  `salamandrivorans` 54,770 rows / 9.0 MB, after the 2026-09-02 payload
+  compression below). The per-species split originally existed only to stay
+  under GitHub's 100 MB per-file limit; with compression a single combined
+  rollup would now be ~17 MB, so the split is retained for browsing
+  convenience rather than necessity.
 - `feature_tables_index.html` — navigation hub linking all 9 tables.
 
 Design (Rhodotorula-informed): numeric columns sort numerically (not
@@ -77,10 +79,12 @@ columns in a click-to-expand row panel; filters in priority order = click
 sort, q-value `<=` / `|log2FC| >=` numeric thresholds, identity-source chips,
 `bioact`/`secreted` checkboxes (the curated flags), free-text search.
 
-Caveat: the per-species rollups embed ~49k–55k rows (~59–66 MB HTML) and the
-two largest per-contrast tables ~25–28k rows; they open fine but render slower
-than Rhodotorula's ~6k-row tables — prefer filtering or a per-contrast table
-when browsing. Regenerate after re-running `differential-features-primary` (the
+Caveat: the per-species rollups embed ~49k–55k rows (8.1–9.0 MB HTML since
+the 2026-09-02 compression) and the two largest per-contrast tables ~25–28k
+rows; they open fine but render slower than Rhodotorula's ~6k-row tables —
+prefer filtering or a per-contrast table when browsing. Note the decoder
+rebuilds the row objects at load, so parse time now scales with row count
+rather than file size. Regenerate after re-running `differential-features-primary` (the
 HTMLs are stale otherwise).
 
 Run: `pixi run feature-tables-primary`
