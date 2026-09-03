@@ -194,6 +194,38 @@ collapsed contrast, confirming the collapse was costing real power there.
 Outputs: `lifestage_trend/{<species>_<matrix>_trend.tsv, trend_summary.tsv,
 trend_<species>_<matrix>.png}`.
 
+## Rollup HTML payload compression (2026-09-02)
+
+The embedded payload was an array-of-objects, repeating every column *name*
+on every row — at 46 columns x 54,770 rows that was ~31 MB of pure key text
+in the Bsal rollup, over half the file. Two transforms in
+`generate_feature_tables.py` fix it with no runtime dependency and no change
+to the consuming JS (`DECODER_JS` rebuilds the identical array-of-objects
+in the browser before any other code runs):
+
+1. **Columnar layout** — one array per column, so each key appears once.
+2. **Dictionary coding** — low-cardinality columns become
+   `{values, integer indices}`. 44 of 48 columns qualify; `comparison` has
+   4 distinct values across 54,770 rows, `species` has 1.
+3. **Float rounding** to 7 significant digits. This is a *view* artifact —
+   the table renders at `.4f` (m/z), `.2f` (RT), `.2e` (q) — and the TSVs
+   beside it remain the full-precision record.
+
+| file | before | after |
+|---|---|---|
+| `all_significant_features_summary_dendrobatidis.html` | 63.0 MB | **8.1 MB** |
+| `all_significant_features_summary_salamandrivorans.html` | 70.8 MB | **9.0 MB** |
+| largest per-contrast `compound_summary.html` | ~32 MB | **4.8 MB** |
+
+87% reduction, which retires the GitHub 100 MB per-file pressure recorded in
+learnings L-11 (the rollup had previously been split per species purely to
+stay under that limit; it now has ~11x headroom).
+
+Verified: all 46 source columns round-trip byte-identical through the
+decoder, and executing the emitted `<script>` in node reproduces 54,770 rows
+x 48 keys with `is_secreted_candidate`=3,368 and `bioactive`=1,294, matching
+the source TSV exactly.
+
 ## Caveats
 - The bioactivity keyword regex is a filter, not an annotation of record;
   confirm hits against the underlying MS/MS (see `sirius_annotation/`).

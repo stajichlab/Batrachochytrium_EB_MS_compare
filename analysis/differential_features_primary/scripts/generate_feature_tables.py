@@ -138,6 +138,78 @@ def clean_value(v):
     return v
 
 
+# --- payload compression -------------------------------------------------
+# The embedded payload was an array-of-objects, which repeats every column
+# NAME on every row: at 46 columns x 54,770 rows that is ~31 MB of key text
+# in the salamandrivorans rollup alone, over half the file. Two lossless-for-
+# display transforms shrink it with no runtime dependency and no change to
+# the consuming JS (the decoder rebuilds the identical array-of-objects):
+#
+#   1. columnar layout    -- one array per column; each key appears once.
+#   2. dictionary coding  -- low-cardinality columns (comparison, direction,
+#                            family, species, group_a/b, npc_pathway, ...)
+#                            become {values, integer indices}. `comparison`
+#                            alone has 4 distinct values across 54,770 rows.
+#
+# Floats are rounded to FLOAT_SIG_DIGITS significant digits. This is a VIEW
+# artifact -- the table renders at .4f (m/z), .2f (RT) and .2e (q) -- and the
+# TSVs beside it remain the full-precision record.
+FLOAT_SIG_DIGITS = 7
+# Dictionary-encode only when the dictionary is a real win: the column must
+# repeat substantially, or the indices cost more than the values they replace.
+DICT_MAX_RATIO = 0.5
+
+
+def _round_sig(v: float, sig: int = FLOAT_SIG_DIGITS):
+    if v == 0 or not math.isfinite(v):
+        return v
+    r = round(v, sig - 1 - math.floor(math.log10(abs(v))))
+    # Collapse 3.0 -> 3 so ints don't carry a redundant ".0" in the JSON.
+    return int(r) if r == int(r) and abs(r) < 1e15 else r
+
+
+def encode_columnar(df: pd.DataFrame, columns: list[str]) -> dict:
+    """Column-oriented, dictionary-coded payload. Decoded by DECODER_JS."""
+    out: dict[str, dict] = {}
+    n = len(df)
+    for key in columns:
+        vals = [clean_value(v) for v in df[key]]
+        vals = [_round_sig(v) if isinstance(v, float) else v for v in vals]
+        # `None` participates in the dictionary like any other value.
+        uniq = list(dict.fromkeys(map(_hashable, vals)))
+        if n and len(uniq) <= max(1, int(n * DICT_MAX_RATIO)):
+            index = {u: i for i, u in enumerate(uniq)}
+            out[key] = {"t": "d", "v": uniq, "i": [index[_hashable(v)] for v in vals]}
+        else:
+            out[key] = {"t": "r", "v": vals}
+    return {"n": n, "cols": out}
+
+
+def _hashable(v):
+    # Every value we emit is already a JSON scalar; this guards against a
+    # stray list/dict silently becoming unhashable during dict-coding.
+    return v if isinstance(v, (str, int, float, bool, type(None))) else str(v)
+
+
+DECODER_JS = """
+const DATA = (() => {
+  const n = PAYLOAD.n, cols = PAYLOAD.cols, out = new Array(n);
+  for (let r = 0; r < n; r++) out[r] = {};
+  for (const key in cols) {
+    const c = cols[key];
+    if (c.t === 'd') {
+      const v = c.v, ix = c.i;
+      for (let r = 0; r < n; r++) out[r][key] = v[ix[r]];
+    } else {
+      const v = c.v;
+      for (let r = 0; r < n; r++) out[r][key] = v[r];
+    }
+  }
+  return out;
+})();
+"""
+
+
 def identity_source(row):
     if pd.notna(row.get("sirius_structure_name")):
         return "sirius_structure"
@@ -164,14 +236,19 @@ def build_html(df: pd.DataFrame, title: str, is_rollup: bool = False) -> str:
     all_json_cols = list(df.columns)
     secondary_cols = [c for c in all_json_cols if c not in {c0 for c0, *_ in PRIMARY_COLS}]
 
-    records = []
-    for _, row in df.iterrows():
-        records.append({k: clean_value(row[k]) for k in all_json_cols})
+    payload = encode_columnar(df, all_json_cols)
 
-    n_total = len(records)
-    n_identified = sum(1 for r in records if r.get("best_identity_source") not in (None, "unidentified"))
-    n_bioactive = sum(1 for r in records if r.get("bioactive") is True)
-    n_secreted = sum(1 for r in records if r.get("is_secreted_candidate") is True)
+    n_total = len(df)
+
+    def _count_true(col: str) -> int:
+        return int(df[col].fillna(False).astype(bool).sum()) if col in df.columns else 0
+
+    n_identified = (
+        int((~df["best_identity_source"].isin([None, "unidentified"]) & df["best_identity_source"].notna()).sum())
+        if "best_identity_source" in df.columns else 0
+    )
+    n_bioactive = _count_true("bioactive")
+    n_secreted = _count_true("is_secreted_candidate")
 
     primary_cols_json = [{"key": k, "label": lbl, "kind": kind} for k, lbl, kind in cols_present]
     secondary_labels_json = {k: SECONDARY_LABELS.get(k, k) for k in secondary_cols}
@@ -182,7 +259,8 @@ def build_html(df: pd.DataFrame, title: str, is_rollup: bool = False) -> str:
         n_identified=n_identified,
         n_bioactive=n_bioactive,
         n_secreted=n_secreted,
-        data_json=json.dumps(records),
+        data_json=json.dumps(payload, separators=(",", ":")),
+        decoder_js=DECODER_JS,
         primary_cols_json=json.dumps(primary_cols_json),
         secondary_cols_json=json.dumps(secondary_cols),
         secondary_labels_json=json.dumps(secondary_labels_json),
@@ -279,7 +357,8 @@ TEMPLATE = r"""<!DOCTYPE html>
 </table>
 
 <script>
-const DATA = {data_json};
+const PAYLOAD = {data_json};
+{decoder_js}
 const PRIMARY_COLS = {primary_cols_json};
 const SECONDARY_COLS = {secondary_cols_json};
 const SECONDARY_LABELS = {secondary_labels_json};
