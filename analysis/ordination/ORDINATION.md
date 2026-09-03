@@ -27,7 +27,7 @@ sibling EB/Rhodotorula ordination pattern.
 Run: `pixi run build-ordination-table && pixi run pcoa-ordination`
 
 ## Results (2026-08-19/20)
-- All samples: axis1 = 62.9% (matrix), axis2 = 10.7%.
+- All samples: axis1 = 57.5% (corrected 2026-09-02; was 62.9% when 30 media blanks were still included) (matrix), axis2 = 10.7%.
 - By species: Bd axis1 75.9%, Bsal axis1 70.6% (positive-eigenvalue variance).
 - Consistent with sibling EB finding F-001: matrix dominates; life stage within
   liq is visibly weaker. See `.living/findings/matrix-dominates-bagel-metabolome.md`.

@@ -18,22 +18,30 @@ artifact. Fungal-only, with the artifact filter and an exact permutation null,
 the liq contrasts are **Bd 365** and **Bsal 2,300** significant, not 536/54 --
 Bsal's went UP 43x. The asymmetry is therefore much weaker than reported.
 
-*What holds.* The spore fraction still carries more life-stage signal
-(Bd 3,219 / Bsal 3,896 vs liq 365 / 2,300), and the ordination gives
-independent support: PCoA2 resolves a clean monotonic stage gradient in spore
-(Zoospore +0.246 -> Sporangium -0.074 -> Mature -0.172) against a flat liq
-fraction (+0.009 / -0.003 / -0.005). The direction of F-003 is intact.
+*What holds, and how narrowly.* The spore fraction still carries more
+life-stage signal (Bd 3,219 / Bsal 3,896 vs liq 365 / 2,300). But the
+"flat liq fraction" reading is **Bd-specific**: the pooled liq PCoA2 means
+(+0.009 / -0.003 / -0.005) are flat only because the two species cancel.
+Within species, Bd liq PCoA2-vs-stage rho = +0.04 (p=0.89, genuinely flat) but
+**Bsal liq rho = -0.87 (p<1e-4)** -- Bsal has a monotonic stage gradient in
+BOTH fractions, consistent with its 2,300 significant liq features and 4,431
+liq trend hits. F-003's headline asymmetry is a Bd statement, not a general one.
 
 *What is retracted.* The "Bsal spore is genuinely 2-state, Bd is 3-state"
 reading is withdrawn entirely. At n=5v5 a BH call needs ~16% of features to
 separate perfectly at once, so "0 significant" was never evidence of no
-signal. Threshold-free complete-separation enrichment shows **all 12
-within-matrix stage pairs carry ordered signal and not one is BH-callable**:
+signal. Threshold-free complete-separation enrichment shows **all 12 within-matrix
+stage pairs carry ordered signal** (label-permutation p<=0.024; 11 of 12 at the
+1/126 floor, Bd liq Zoo-vs-Spor the sole weak one at p=0.024). **7 of the 12
+ARE BH-callable and 5 are not** -- an earlier version of this amendment said
+"not one", which was wrong. Enrichments:
 Bd liq 3.0x/20.3x/16.3x, Bd spore 23.8x/42.5x/24.0x, Bsal liq 7.3x/22.6x/11.8x,
-Bsal spore 25.5x/35.1x/6.7x. Bd spore Sporangium-vs-Mature -- the 5,507 that
-the previous amendment treated as the key datum -- reads 0 on the
-artifact-filtered table and 5,507 on the unfiltered one while sitting at 24.0x
-enrichment in both. Both species have a 3-state spore trajectory. Use the
+Bsal spore 25.5x/35.1x/6.7x. Bd spore Sporangium-vs-Mature -- the 5,507 that the
+previous amendment treated as the key datum -- reads 5,507 on the unfiltered
+table, **2,583 on the corrected one under the exact null**, and 0 only in an
+intermediate run that used scipy's asymptotic null (whose 5v5 floor of 1.219e-2
+raises the required simultaneous-separation count by 1.5x). Its separation count
+sits at ~24x the null in all three. Both species have a 3-state spore trajectory. Use the
 ordinal trend tier, not the pairwise BH counts, for any stage claim.
 
 ### Evidence Ledger

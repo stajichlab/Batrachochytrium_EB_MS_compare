@@ -1,5 +1,15 @@
 # DIFFERENTIAL_FEATURES_PRIMARY
 
+> **2026-09-02 — READ `CORRECTED_REANALYSIS_REPORT.md` FIRST.** Numbers below
+> that predate that report are superseded. The analysis matrix is now **60
+> fungal samples x 25,157 features** (was 90 x 38,547: 30 rows were uninoculated
+> media blanks and 22% of "features" were isotope peaks). Corrected per-contrast
+> counts: Bd liq 365, Bd spore 3,219, Bsal liq 2,300, Bsal spore 3,896,
+> liq-vs-spore 8,378-15,029; 56,145 significant rows; `is_secreted_candidate`
+> 2,631. Trend tier (per-feature permutation null): 2,787 / 4,599 / 4,431 /
+> 4,180. Shortlist 88 (Bd) / 132 (Bsal). The proline-composition finding is
+> **retracted**.
+
 ## Purpose
 Hypothesis tier of the differential analysis, built on the collapsed
 life-stage vocabulary established by
@@ -188,10 +198,10 @@ Stage *pairs* are not re-run here; the 30-way scan already covers them.
 
 | species | matrix | n | tested | monotonic FDR<5% | also blank-clearing | collapsed contrast |
 |---|---|---|---|---|---|---|
-| Bd | liq | 30 | 25,313 | 1,684 | 272 | 536 |
-| Bd | spore | 15 | 18,926 | 8,266 | 1,415 | 5,638 |
-| Bsal | liq | 30 | 29,315 | 316 | 124 | 54 |
-| Bsal | spore | 15 | 20,214 | 7,694 | 1,445 | 7,211 |
+| Bd | liq | 15 | 16,586 | 2,787 | 520 | 365 |
+| Bd | spore | 15 | 11,569 | 4,599 | n/a (no spore blank) | 3,219 |
+| Bsal | liq | 15 | 19,039 | 4,431 | 1,002 | 2,300 |
+| Bsal | spore | 15 | 12,142 | 4,180 | n/a (no spore blank) | 3,896 |
 
 The trend test recovers 3–6× more signal in the liq strata than the
 collapsed contrast, confirming the collapse was costing real power there.
