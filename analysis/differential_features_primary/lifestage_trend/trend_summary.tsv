@@ -1,5 +1,5 @@
 species	matrix	n_samples	n_tested	n_significant	n_significant_blank_clearing	n_rises_to_Mature	n_falls_to_Mature
-dendrobatidis	liq	15	16586	2787	520	1158	1629
-dendrobatidis	spore	15	11569	4599	-1	3108	1491
-salamandrivorans	liq	15	19039	4431	1002	1438	2993
-salamandrivorans	spore	15	12142	4180	-1	2465	1715
+dendrobatidis	liq	15	17629	3139	595	1348	1791
+dendrobatidis	spore	15	12651	4542	-1	2322	2220
+salamandrivorans	liq	15	20191	4747	1102	1673	3074
+salamandrivorans	spore	15	13284	3943	-1	1388	2555

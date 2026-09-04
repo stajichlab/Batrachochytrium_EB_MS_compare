@@ -51,18 +51,35 @@ to a separate blank matrix, so they remain available for blank-contrast work
 FEATURE SELECTION (added 2026-09-02).
 
 The bagel table's own artifact columns were previously unused, so isotope
-peaks, multiply-charged rows, non-default adducts and in-source fragments
-were all tested as if they were independent compounds -- inflating feature
-counts and padding the BH denominator with non-independent duplicate tests
-of the same molecule. Of 38,547 rows: 8,521 (22.1%) are M+1..M+5 isotope
-peaks, 3,627 are charge>1, 6,683 are non-default adducts, 471 are ISF. We
-keep M+0 & charge==1 & is_default_adduct & !is_isf -> 25,157 features.
-Pass --no-artifact-filter to reproduce the pre-2026-09-02 feature universe.
+peaks, multiply-charged rows and in-source fragments were all tested as if
+they were independent compounds -- inflating feature counts and padding the
+BH denominator with non-independent duplicate tests of the same molecule. Of
+38,547 rows: 8,521 (22.1%) are M+1..M+5 isotope peaks, 3,627 are charge>1,
+471 are ISF.
+
+`is_default_adduct` was ALSO used as a filter term until 2026-09-02, and that
+was a mistake. The column does not mean "redundant adduct": it marks rows
+that received an EXPLICIT adduct assignment, which includes 2,261 explicitly
+called `[M+H]1+` rows -- the same ion as the default set. Requiring it
+therefore discarded 6,683 rows carrying 2,104 MS2 spectra and 1,651 SIRIUS
+annotations, most of them NOT redundant with anything kept: of the 1,052
+non-default M+0/charge-1 `[M+H]1+` rows, only ~126 have a kept default row at
+the same m/z and RT. Net effect on the old filter was MS2-bearing features
+6,453 -> 3,389 (47% loss) and SIRIUS-structure features 4,268 -> 2,431.
+
+The anti-pseudoreplication goal is real, but it is served by DEDUPLICATION,
+not exclusion. We now keep M+0 & charge==1 & !is_isf (28,196 rows) and then
+collapse adduct families on (workflow `feature_group`, neutral mass), keeping
+the MS2-bearing / protonated / best-detected representative of each (see
+`deduplicate_adducts` -- feature_group alone is too coarse, since 12% of its
+multi-member groups contain chemically distinct co-eluting molecules). Pass --no-artifact-filter to reproduce the
+pre-2026-09-02 universe, or --no-adduct-dedup to skip only the collapse.
 """
 import argparse
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
@@ -79,19 +96,66 @@ AREA_SUFFIX = " Peak area"
 
 
 def artifact_mask(quant: pd.DataFrame) -> pd.Series:
-    """M+0 monoisotopic, singly charged, default adduct, not an in-source fragment."""
+    """M+0 monoisotopic, singly charged, not an in-source fragment.
+
+    `is_default_adduct` is deliberately NOT part of this mask (corrected
+    2026-09-02) -- see the FEATURE SELECTION section of the module docstring.
+    Adduct redundancy is handled by `deduplicate_adducts` instead.
+    """
     isotope = quant["isotope"].astype("string").fillna("M+0")
     return (
         isotope.isin(["M+0"])
         & (quant["charge"] == 1)
-        & (quant["is_default_adduct"] == True)  # noqa: E712
         & (quant["is_isf"] != True)  # noqa: E712
     )
+
+
+def deduplicate_adducts(quant: pd.DataFrame) -> pd.DataFrame:
+    """Keep one representative row per GNPS2 `feature_group` (adduct family).
+
+    This is the anti-pseudoreplication step that `is_default_adduct` was
+    wrongly being used for. `feature_group` is the workflow's OWN adduct /
+    correlation grouping, populated for every row, so we defer to it rather
+    than re-deriving clusters from (neutral mass, RT) ourselves.
+
+    Representative preference, in order: has an acquired MS2 spectrum (so the
+    kept row is the annotatable one); then the protonated/default form (the
+    canonical, most interpretable ion); then the most-detected row; then the
+    lowest row id purely for determinism.
+    """
+    d = quant.copy()
+    # `feature_group` alone is too coarse to be the whole key: it is a
+    # correlation group, and 12.1% of its multi-member groups contain members
+    # whose inferred neutral masses differ by >0.02 Da (95th pct 320 Da) --
+    # i.e. co-eluting but chemically DISTINCT molecules. Collapsing those
+    # would silently delete real compounds. So the key is
+    # (feature_group, neutral mass), which keeps distinct molecules apart
+    # while still folding together the adduct/multimer series of one molecule
+    # (e.g. row 1 [M+H]+, 268 [2M+H]+, 499 [M+Na]+, 694 [2M+Na]+, 3372
+    # [3M+Na]+, 11259 [M+K]+ -- all neutral 499.3863 at RT 7.42).
+    #
+    # `parent_mass` is the neutral mass and is populated for exactly the rows
+    # with an explicit adduct call; the default rows are all [M+H]1+ at
+    # charge 1, so m/z - proton recovers theirs.
+    proton = 1.007276
+    neutral = np.where(d["parent_mass"].notna(),
+                       d["parent_mass"], d["row m/z"] - proton)
+    d["_nm"] = np.round(neutral.astype(float), 2)
+    d["_ms2"] = (d["has_ms2"] == True).astype(int)  # noqa: E712
+    d["_def"] = (d["is_default_adduct"] == True).astype(int)  # noqa: E712
+    d["_det"] = pd.to_numeric(d.get("detection_count"), errors="coerce").fillna(0)
+    d = d.sort_values(["_ms2", "_def", "_det", "row ID"],
+                      ascending=[False, False, False, True])
+    kept = d.drop_duplicates(subset=["feature_group", "_nm"], keep="first")
+    return kept.drop(columns=["_ms2", "_def", "_det", "_nm"]).sort_values("row ID")
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--no-adduct-dedup", action="store_true",
+                    help="keep every adduct row instead of collapsing each "
+                         "feature_group to one representative")
     ap.add_argument("--no-artifact-filter", action="store_true",
                     help="keep isotopes/multi-charge/non-default-adduct/ISF rows "
                          "(reproduces the pre-2026-09-02 38,547-feature universe)")
@@ -124,11 +188,22 @@ def main():
             f"features: {n_all} -> {int(keep.sum())} after dropping "
             f"{int((quant['isotope'].astype('string').fillna('M+0') != 'M+0').sum())} isotope, "
             f"{int((quant['charge'] != 1).sum())} multi-charge, "
-            f"{int((quant['is_default_adduct'] != True).sum())} non-default-adduct, "  # noqa: E712
-            f"{int((quant['is_isf'] == True).sum())} ISF rows (overlapping counts)",  # noqa: E712
+            f"{int((quant['is_isf'] == True).sum())} ISF rows (overlapping counts). "  # noqa: E712
+            f"MS2-bearing kept: {int((quant.loc[keep, 'has_ms2'] == True).sum())}",  # noqa: E712
             file=sys.stderr,
         )
         quant = quant[keep].copy()
+        if not args.no_adduct_dedup:
+            before = len(quant)
+            ms2_before = int((quant["has_ms2"] == True).sum())  # noqa: E712
+            quant = deduplicate_adducts(quant)
+            print(
+                f"adduct dedup: {before} -> {len(quant)} rows "
+                f"({before - len(quant)} collapsed into a same-feature_group "
+                f"representative); MS2-bearing {ms2_before} -> "
+                f"{int((quant['has_ms2'] == True).sum())}",  # noqa: E712
+                file=sys.stderr,
+            )
 
     area_cols = {
         c: c[: -len(AREA_SUFFIX)].replace(".mzML", "")

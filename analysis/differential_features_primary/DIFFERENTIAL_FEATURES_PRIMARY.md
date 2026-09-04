@@ -2,12 +2,13 @@
 
 > **2026-09-02 — READ `CORRECTED_REANALYSIS_REPORT.md` FIRST.** Numbers below
 > that predate that report are superseded. The analysis matrix is now **60
-> fungal samples x 25,157 features** (was 90 x 38,547: 30 rows were uninoculated
-> media blanks and 22% of "features" were isotope peaks). Corrected per-contrast
-> counts: Bd liq 365, Bd spore 3,219, Bsal liq 2,300, Bsal spore 3,896,
-> liq-vs-spore 8,378-15,029; 56,145 significant rows; `is_secreted_candidate`
-> 2,631. Trend tier (per-feature permutation null): 2,787 / 4,599 / 4,431 /
-> 4,180. Shortlist 88 (Bd) / 132 (Bsal). The proline-composition finding is
+> fungal samples x 26,574 features** (was 90 x 38,547: 30 rows were uninoculated
+> media blanks and 22% of "features" were isotope peaks; the adduct term of the
+> filter was itself over-aggressive and was corrected 2026-09-03). Corrected
+> per-contrast counts: Bd liq 505, Bd spore 3,733, Bsal liq 2,384, Bsal spore
+> 4,381, liq-vs-spore 9,327-16,263; 61,613 significant rows;
+> `is_secreted_candidate` 3,071. Trend tier (per-feature permutation null):
+> 3,139 / 4,542 / 4,747 / 3,943. Shortlist 120 (Bd) / 147 (Bsal). The proline-composition finding is
 > **retracted**.
 
 ## Purpose
@@ -73,8 +74,8 @@ significant features. Data embedded as JSON; no CDN/no server needed.
 - `all_significant_features_summary.tsv` — rollup of every significant row
   across all 8 contrasts with `comparison` + `species` columns.
 - `all_significant_features_summary_<species>.html` — rollup split into one
-  sortable/filterable view per species (`dendrobatidis` 26,542 rows / 4.4 MB;
-  `salamandrivorans` 29,603 rows / 5.0 MB, after the 2026-09-02 payload
+  sortable/filterable view per species (`dendrobatidis` 29,250 rows / ~4.9 MB;
+  `salamandrivorans` 32,363 rows / ~5.5 MB, after the 2026-09-02 payload
   compression below). The per-species split originally existed only to stay
   under GitHub's 100 MB per-file limit; with compression a single combined
   rollup would now be ~17 MB, so the split is retained for browsing
@@ -100,36 +101,36 @@ HTMLs are stale otherwise).
 Run: `pixi run feature-tables-primary`
 
 ## Results (2026-09-02, corrected)
-8 contrasts on 60 fungal samples x 25,157 features; 11.6k-21.7k tested each
+8 contrasts on 60 fungal samples x 26,574 features; 12.7k-23.1k tested each
 (the tested count varies because `prevalence_min = 0.10` means "present in >=1
 of 10" at n=10 and ">=2" at n=15/20 — which is also why the BH denominator,
 and therefore `k_needed_for_BH_q05`, moves between contrasts).
 
 | family | contrast (species, groups) | n (a vs b) | n significant |
 |---|---|---|---|
-| life_stage | Bd liq Zoospore vs Developed | 5 vs 10 | 365 |
-| life_stage | Bd spore Zoospore vs Developed | 5 vs 10 | 3,219 |
-| life_stage | Bsal liq Zoospore vs Developed | 5 vs 10 | 2,300 |
-| life_stage | Bsal spore Zoospore vs Developed | 5 vs 10 | 3,896 |
-| secreted_vs_cellular | Bd liq vs spore (Zoospore) | 5 vs 5 | 8,507 |
-| secreted_vs_cellular | Bd liq vs spore (Developed) | 10 vs 10 | 14,451 |
-| secreted_vs_cellular | Bsal liq vs spore (Zoospore) | 5 vs 5 | 8,378 |
-| secreted_vs_cellular | Bsal liq vs spore (Developed) | 10 vs 10 | 15,029 |
+| life_stage | Bd liq Zoospore vs Developed | 5 vs 10 | 505 |
+| life_stage | Bd spore Zoospore vs Developed | 5 vs 10 | 3,733 |
+| life_stage | Bsal liq Zoospore vs Developed | 5 vs 10 | 2,384 |
+| life_stage | Bsal spore Zoospore vs Developed | 5 vs 10 | 4,381 |
+| secreted_vs_cellular | Bd liq vs spore (Zoospore) | 5 vs 5 | 9,327 |
+| secreted_vs_cellular | Bd liq vs spore (Developed) | 10 vs 10 | 15,685 |
+| secreted_vs_cellular | Bsal liq vs spore (Zoospore) | 5 vs 5 | 9,335 |
+| secreted_vs_cellular | Bsal liq vs spore (Developed) | 10 vs 10 | 16,263 |
 
 Reads:
 - The secreted/cellular (matrix) contrast is still far larger than any
   life-stage contrast, consistent with F-002.
 - **The pre-correction reading of the life-stage asymmetry does not hold.**
   It rested on liq counts of 536 (Bd) and 54 (Bsal), both produced by groups
-  that were 50% sterile media blanks. Corrected, Bsal liq is 2,300 — a 43x
+  that were 50% sterile media blanks. Corrected, Bsal liq is 2,384 — a 44x
   increase — so "life stage barely registers in the supernatant" is a
   Bd-specific statement, not a general one. Bsal's liq PCoA2-vs-stage
   correlation is rho = -0.87 (p<1e-4).
-- 56,145 significant feature-rows over 20,158 unique features; 1,129
-  bioactivity-flagged; `is_secreted_candidate` = 2,631 rows.
+- 61,613 significant feature-rows; 1,750 bioactivity-flagged;
+  `is_secreted_candidate` = 3,071 rows.
 - Do not read any single "n significant" as an effect size at these n. See
   `analysis/differential_features/separation_enrichment.tsv`: 5 of the 12
-  within-matrix stage pairs report 0 while being 3.0x-16.3x enriched over the
+  within-matrix stage pairs report 0 while being 3.4x-17.0x enriched over the
   null, because BH needs ~16% of features at the p-floor simultaneously.
 
 ## Figures
@@ -204,10 +205,10 @@ Stage *pairs* are not re-run here; the 30-way scan already covers them.
 
 | species | matrix | n | tested | monotonic FDR<5% | also blank-clearing | collapsed contrast |
 |---|---|---|---|---|---|---|
-| Bd | liq | 15 | 16,586 | 2,787 | 520 | 365 |
-| Bd | spore | 15 | 11,569 | 4,599 | n/a (no spore blank) | 3,219 |
-| Bsal | liq | 15 | 19,039 | 4,431 | 1,002 | 2,300 |
-| Bsal | spore | 15 | 12,142 | 4,180 | n/a (no spore blank) | 3,896 |
+| Bd | liq | 15 | 17,629 | 3,139 | 595 | 505 |
+| Bd | spore | 15 | 12,651 | 4,542 | n/a (no spore blank) | 3,733 |
+| Bsal | liq | 15 | 20,191 | 4,747 | 1,102 | 2,384 |
+| Bsal | spore | 15 | 13,284 | 3,943 | n/a (no spore blank) | 4,381 |
 
 The trend test recovers 3–6× more signal in the liq strata than the
 collapsed contrast, confirming the collapse was costing real power there.

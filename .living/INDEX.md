@@ -6,7 +6,7 @@ Last audit: 2026-09-03
 |------|---------|--------------|------------|
 | conventions.md | 0 sections | 2026-08-19 | — |
 | decisions.md | 10 entries | 2026-09-02 | Port EB analysis scripts to the Everything-Bagel feature table with a schema-only adapter, 2026-08-19 — Transfer SIRIUS annotations from the EB project instead of re-running SIRIUS, 2026-08-19 — Keep one row per local feature id in the accumulated annotation table, 2026-08-19 — Native SIRIUS run: charge-1+ targets only, small per-shard jobs, pilot-first, 2026-08-20 — Collapse Sporangium+Mature into a "Developed" stage_group for the primary analysis tier |
-| learnings.md | 25 entries | 2026-09-02 | 2026-08-19 — Cross-project SIRIUS annotation transfer for the Everything-Bagel features, 2026-08-19 — Everything-Bagel merges isobaric/co-eluting EB features into single features, 2026-08-19 — Everything-Bagel feature MGF has degenerate blocks (CHARGE=0 / PEPMASS=0.0) even for has_ms2=True features, 2026-08-19 — Native SIRIUS target set reduces mainly on charge state, not sample presence, 2026-08-19 — Everything-Bagel aligned_features.csv area columns differ from the EB quant schema |
+| learnings.md | 26 entries | 2026-09-03 | 2026-08-19 — Cross-project SIRIUS annotation transfer for the Everything-Bagel features, 2026-08-19 — Everything-Bagel merges isobaric/co-eluting EB features into single features, 2026-08-19 — Everything-Bagel feature MGF has degenerate blocks (CHARGE=0 / PEPMASS=0.0) even for has_ms2=True features, 2026-08-19 — Native SIRIUS target set reduces mainly on charge state, not sample presence, 2026-08-19 — Everything-Bagel aligned_features.csv area columns differ from the EB quant schema |
 | log/ | 12 sessions | 2026-09-03 | batrachochytrium-ms (6), batrachochytrium-eb-ms-compare (6) |
 | findings/ | 4 findings across 4 topics | 2026-09-02 | lifestage-signal-in-spore-fraction, molecular-family-evidence-negative, matrix-dominates-bagel-metabolome, bsal-overprediction-and-tier1-nrps |
 
@@ -28,6 +28,7 @@ Last summarized: 2026-09-03 (heuristic)
 
 ## Most recent (10)
 
+- [2026-09-03] L-26: `is_default_adduct` marks an EXPLICIT adduct call, not a redundant one; using it as a filter cost 47% of the MS2 content
 - [2026-09-02] L-25: Mycelium's Stop hook and init_repo require Python 3.11 (`datetime.UTC`) but invoke bare `python3`; on a 3.10 box Stop blocks with a message that hides the real error
 - [2026-09-02] L-24: RETRACTED: the proline-composition test for medium-peptide origin fails its own controls; the surviving signal is a hydroxyproline contrast in Bsal only
 - [2026-09-02] L-23: Media blanks were 50% of every liq group; and at n=5 "n_significant" is a step function of the feature universe, not an effect size
@@ -37,7 +38,6 @@ Last summarized: 2026-09-03 (heuristic)
 - [2026-08-26] L-19: Bsal BFD proteome over-prediction quantified: 30.7% self-BLAST near-duplicates (Bd 14.7%) + heavy short-protein tail; the DeepTMHMM outlier is real in NCBI too
 - [2026-08-26] L-18: SRR id prefixes are not clean glob families: a sloppy ls pattern silently dropped 3 of 8 samples from featureCounts
 - [2026-08-26] L-17: STAR --quantMode GeneCounts produced zero gene counts: NCBI GFF3 exons carry no gene_id; fix is gffread GTF + featureCounts on existing BAMs
-- [2026-08-25] D-10: Relax genome-bioactivity-linkage's `is_extracellular` gate from a hard filter to an informational column
 
 ## By tag
 

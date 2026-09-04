@@ -1,8 +1,8 @@
 delta_step	n_edges	median_cosine
-CH2 (homolog)	68	0.8838
-2xCH2	49	0.8855
-H2 (saturation)	49	0.8772
-O (oxidation)	44	0.8869499999999999
-C2H2	13	0.842
-H2O	11	0.8634
-NH	3	0.8661
+2xCH2	156	0.9140999999999999
+CH2 (homolog)	152	0.90545
+H2 (saturation)	126	0.8758
+O (oxidation)	97	0.886
+H2O	44	0.86345
+C2H2	40	0.86215
+NH	4	0.8064

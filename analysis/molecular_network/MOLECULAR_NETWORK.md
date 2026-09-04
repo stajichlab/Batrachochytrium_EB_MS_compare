@@ -29,10 +29,10 @@ attribute to medium background than any single feature.
 
 ## Results (2026-09-02)
 - Raw network: 9,600 edges / 4,423 nodes / **659 components**, largest 97.
-- Artifact-filtered analysis matrix: **551 components**, largest **47**, 226
-  with ≥3 members. Families were substantially inflated by isotope/adduct/ISF
+- Artifact-filtered analysis matrix: **599 components** (re-run 2026-09-03
+  after the adduct-filter correction; was 551 under the over-aggressive filter). Families were substantially inflated by isotope/adduct/ISF
   copies of the same molecule cosine-matching itself.
-- Background blank-clearing rate: Bd 4.16%, Bsal 7.28%.
+- Background blank-clearing rate: Bd 4.39%, Bsal 7.40%.
 - **Blank-enriched components (q<0.05, ≥3 members): 5 (Bd), 8 (Bsal).**
 - **Entirely blank-clearing components (≥3 members): 0 (Bd), 2 (Bsal).**
 

@@ -1,5 +1,5 @@
 species	set	n_annotated_in_set	n_peptide_in_set	frac_peptide_in_set	background_frac_peptide	odds_ratio	fisher_p
-dendrobatidis	depleted	247	227	0.919	0.7624	3.874	1.8373431076369337e-11
-dendrobatidis	enriched	202	135	0.6683	0.7624	0.6	0.9994281602415556
-salamandrivorans	depleted	377	354	0.939	0.7624	5.644	1.5735582233269248e-22
-salamandrivorans	enriched	261	225	0.8621	0.7624	2.072	1.9352999691059473e-05
+dendrobatidis	depleted	299	275	0.9197	0.7382	4.447	1.1012351397858011e-16
+dendrobatidis	enriched	292	182	0.6233	0.7382	0.554	0.9999977725545738
+salamandrivorans	depleted	456	431	0.9452	0.7382	7.193	2.1628635767940284e-34
+salamandrivorans	enriched	359	287	0.7994	0.7382	1.468	0.0026479301247537687

@@ -1,7 +1,7 @@
 # Corrected Re-analysis — *Batrachochytrium* Everything-Bagel Metabolomics
 
 **Date:** 2026-09-02
-**Scope:** full re-analysis after five defects were found in the existing pipeline.
+**Scope:** full re-analysis after six defects were found in the existing pipeline (the sixth, an over-aggressive adduct filter, was introduced by the fifth's fix and corrected 2026-09-03).
 **Reproduce:** `pixi run build-ordination-table && pixi run pcoa-ordination && pixi run differential-features && pixi run separation-enrichment && pixi run differential-features-primary && pixi run feature-tables-primary && pixi run lifestage-trend && pixi run usi-curation && pixi run peptide-origin`
 
 Every number below was produced by running the committed scripts against the
@@ -17,7 +17,7 @@ numbers:
 | # | Defect | Consequence |
 |---|---|---|
 | 1 | **30 uninoculated media blanks were inside the analysis matrix** — 50% of every `liq` group | Every liq result was a diluted comparison. Bd liq Zoospore-vs-Developed 536 → 0 → **365**; Bsal **54 → 2,300** (43×) |
-| 2 | **Artifact columns unused** — 22% of "features" were isotope peaks | 38,547 → **25,157** features; the BH denominator was padded with non-independent duplicate tests of the same molecule |
+| 2 | **Artifact columns unused** — 22% of "features" were isotope peaks | 38,547 → **26,574** features. A first pass also excluded non-default adducts, which was itself wrong (§8.7) and cost 47% of the MS² content; adduct redundancy is now handled by de-duplication, not exclusion |
 | 3 | **Per-feature pseudocount** in the log2FC | Produced \|log2FC\| up to 29.5 and silently ordered every shortlist, because q-values tie at the attainable floor |
 | 4 | **Unpaired mean-based blank filter** | ~60% false-pass measured against a blank-vs-blank null; now **0%** |
 | 5 | **Mixed/invalid null distributions** | `method="auto"` let tie-heavy features beat perfectly separated ones; the trend test emitted ~1,500 p-values below the exact attainable floor |
@@ -76,8 +76,8 @@ removed.
 
 ![PCoA, all fungal samples](analysis/ordination/figures/pcoa_all.png)
 
-On the 60 fungal samples with the artifact filter, **matrix separates
-completely on PCoA1 with no overlap**:
+On the 60 fungal samples over 26,574 features, **matrix separates completely
+on PCoA1 with no overlap**:
 
 | matrix | PCoA1 mean | min | max | n |
 |---|---|---|---|---|
@@ -86,8 +86,8 @@ completely on PCoA1 with no overlap**:
 
 Both species behave identically (Bd liq +0.303 / spore −0.278; Bsal +0.271 /
 −0.297). Variance shares are **lower** than originally reported, because the
-blanks were inflating them: axis1 **57.5%** (was 62.9%) all samples, **68.6%**
-Bd (was 75.9%), **64.8%** Bsal (was 70.6%). Finding F-002 stands, amended.
+blanks were inflating them: axis1 **58.5%** (was 62.9%) all samples, **69.9%**
+Bd (was 75.9%), **65.7%** Bsal (was 70.6%). Finding F-002 stands, amended.
 
 New and only visible after blank removal — **PCoA2 resolves a clean monotonic
 stage gradient in the spore fraction against a flat liquid fraction:**
@@ -127,9 +127,10 @@ whose reported significance moves while its actual signal does not:
 |---|---|
 | 38,547 features, scipy `method="auto"` | 5,507 |
 | 25,157 features, scipy `method="asymptotic"` (floor 1.219e-2) | **0** |
-| 25,157 features, exact permutation null (floor 7.937e-3) | **2,583** |
+| 25,157 features, exact permutation null (floor 7.937e-3) | 2,583 |
+| 26,574 features (adduct filter corrected), exact null | **3,638** |
 
-Its complete-separation count sits at ~**24× the null throughout**. Only the
+Its complete-separation count sits at **24–31× the null throughout**. Only the
 denominator and the p-floor move. (An earlier version of this report quoted
 the middle row as though it were the corrected result; it was an intermediate
 run, and the exact-null value of 2,583 is the one that stands.)
@@ -142,21 +143,22 @@ showing complete separation, against its analytic expectation.
 
 | species | matrix | A vs B | tested | complete sep. | expected | **enrichment** | k needed for BH | BH sig |
 |---|---|---|---|---|---|---|---|---|
-| Bd | spore | Zoo–Mature | 12,026 | 4,061 | 95 | **42.6×** | 1,909 | 4,259 |
-| Bsal | spore | Zoo–Mature | 13,093 | 3,647 | 104 | **35.1×** | 2,079 | 3,647 |
-| Bsal | spore | Zoo–Spor | 12,630 | 2,555 | 100 | **25.5×** | 2,005 | 2,555 |
-| Bd | spore | Spor–Mature | 13,558 | 2,583 | 108 | **24.0×** | 2,153 | 2,583 |
-| Bd | spore | Zoo–Spor | 12,014 | 2,266 | 95 | **23.8×** | 1,907 | 2,266 |
-| Bsal | liq | Zoo–Mature | 19,792 | 3,546 | 157 | **22.6×** | 3,142 | 3,546 |
-| Bd | liq | Zoo–Mature | 17,400 | 2,798 | 138 | **20.3×** | 2,762 | 2,798 |
-| Bd | liq | Spor–Mature | 17,266 | 2,231 | 137 | **16.3×** | 2,741 | **0** |
-| Bsal | liq | Spor–Mature | 19,335 | 1,807 | 154 | **11.8×** | 3,070 | **0** |
-| Bsal | liq | Zoo–Spor | 19,380 | 1,118 | 154 | **7.3×** | 3,077 | **0** |
-| Bsal | spore | Spor–Mature | 13,478 | 715 | 107 | **6.7×** | 2,140 | **0** |
-| Bd | liq | Zoo–Spor | 17,113 | 414 | 136 | **3.0×** | 2,717 | **0** |
+| Bd | spore | Zoo–Mature | 13,116 | 4,657 | 104 | **44.7×** | 2,082 | ✓ |
+| Bsal | spore | Zoo–Mature | 14,262 | 4,149 | 113 | **36.7×** | 2,264 | ✓ |
+| Bd | spore | Spor–Mature | 14,690 | 3,638 | 117 | **31.2×** | 2,332 | ✓ |
+| Bsal | spore | Zoo–Spor | 13,786 | 3,009 | 109 | **27.5×** | 2,189 | ✓ |
+| Bd | spore | Zoo–Spor | 13,131 | 2,554 | 104 | **24.5×** | 2,085 | ✓ |
+| Bsal | liq | Zoo–Mature | 20,979 | 3,792 | 166 | **22.8×** | 3,330 | ✓ |
+| Bd | liq | Zoo–Mature | 18,484 | 3,069 | 147 | **20.9×** | 2,934 | ✓ |
+| Bd | liq | Spor–Mature | 18,335 | 2,469 | 146 | **17.0×** | 2,911 | **0** |
+| Bsal | liq | Spor–Mature | 20,495 | 2,031 | 163 | **12.5×** | 3,254 | **0** |
+| Bsal | spore | Spor–Mature | 14,637 | 1,439 | 116 | **12.4×** | 2,324 | **0** |
+| Bsal | liq | Zoo–Spor | 20,540 | 1,221 | 163 | **7.5×** | 3,261 | **0** |
+| Bd | liq | Zoo–Spor | 18,174 | 489 | 144 | **3.4×** | 2,885 | **0** |
 
-**Every stage pair is enriched over the null, and `BH sig` is non-zero exactly
-when the separation count clears `k needed`** — 7 of 12 do, 5 do not. The
+**Every stage pair is enriched over the null (3.4×–44.7×), and `BH sig` is
+non-zero exactly when the separation count clears `k needed`** — 7 of 12 do,
+5 do not. The
 significance call is fully determined by that threshold crossing, which is
 precisely why it should not be read as biology. (An earlier version of this
 report claimed "not one is BH-callable"; that was wrong, and contradicted by
@@ -200,10 +202,10 @@ progression is an ordinal trend: Spearman rho against stage rank
 
 | species | matrix | n | tested | monotonic (FDR<5%) | also clears media blank |
 |---|---|---|---|---|---|
-| Bd | liq | 15 | 16,586 | 2,787 | 520 |
-| Bd | spore | 15 | 11,569 | **4,599** | n/a — no spore blank exists |
-| Bsal | liq | 15 | 19,039 | 4,431 | 1,002 |
-| Bsal | spore | 15 | 12,142 | **4,180** | n/a — no spore blank exists |
+| Bd | liq | 15 | 17,629 | 3,139 | 595 |
+| Bd | spore | 15 | 12,651 | **4,542** | n/a — no spore blank exists |
+| Bsal | liq | 15 | 20,191 | 4,747 | 1,102 |
+| Bsal | spore | 15 | 13,284 | **3,943** | n/a — no spore blank exists |
 
 These use a **per-feature** permutation null (20,000 shuffles). An earlier
 version pooled the null across features, which let sparse features borrow the
@@ -238,12 +240,9 @@ scores them as maximally "secreted".
 
 | gate | Bd | Bsal |
 |---|---|---|
-| liq-enriched significant features | 8,421 | 4,751 |
-| …clears its own `C_liq` blank (paired, ≥4/5 plates) | 494 (5.9%) | 995 (20.9%) |
-| …**and** has an acquired MS² spectrum | 90 | 139 |
-| …**and** its MGF precursor matches the table m/z (±0.01) | **88** | **132** |
-| …of those, SIRIUS structure assigned | 62 | 103 |
-| …of those, COSMIC confidence ≥ 0.64 | **15** | **29** |
+| liq-enriched significant features | 9,342 | 4,878 |
+| …clears its own `C_liq` blank (paired, ≥4/5 plates) | 546 (5.8%) | 1,049 (21.5%) |
+| …**and** has an acquired MS² spectrum + concordant precursor | **120** | **147** |
 
 The precursor-concordance gate was added after an audit found annotations
 built on the **wrong precursor mass**. Parsing all MGF blocks: of the 6,453
@@ -386,13 +385,13 @@ directions.
 
 **Molecular families were substantially inflated by artifact rows.** The raw
 network is 9,600 edges / 4,423 nodes / 659 components, largest 97. Restricted
-to the artifact-filtered analysis matrix it is **551 components, largest 47**,
-226 with ≥3 members. Much of what looked like a "molecular family" was
+to the artifact-filtered analysis matrix it is **599 components**, with the
+adduct-corrected filter in place. Much of what looked like a "molecular family" was
 isotope/adduct/ISF copies of one molecule cosine-matching itself.
 
 **The result is negative for the secretion hypothesis.** Against background
-blank-clearing rates of 4.16% (Bd) and 7.28% (Bsal), only **5 (Bd) and 8
-(Bsal)** components are significantly blank-enriched (Fisher, BH q<0.05, ≥3
+blank-clearing rates of 4.39% (Bd) and 7.40% (Bsal), only a handful of
+components are significantly blank-enriched (Fisher, BH q<0.05, ≥3
 members), and only **2** components — both Bsal, 3 members each — are
 *entirely* blank-clearing. There is no population of clean fungal-derived
 homologous series in this data.
@@ -448,19 +447,19 @@ expected signature of progressive consumption across 8 → 48 → 96 h:
 
 | species | Zoospore | Sporangium | Mature |
 |---|---|---|---|
-| Bd | 58 | 300 | **1,911** |
-| Bsal | 103 | 1,107 | **3,568** |
+| Bd | 61 | 314 | **1,981** |
+| Bsal | 104 | 1,158 | **3,729** |
 
 **What is consumed is peptides.** Within each species, against that species'
-own annotated background (76.2% peptide-class — SIRIUS annotation is itself
+own annotated background (73.8% peptide-class — SIRIUS annotation is itself
 heavily peptide-biased, so the baseline is high):
 
 | species | set | peptide fraction | odds ratio | Fisher p |
 |---|---|---|---|---|
-| Bd | **depleted** | 227/247 = **91.9%** | 3.87 | **1.8e-11** |
-| Bd | released | 135/202 = 66.8% | 0.60 | 0.999 (n.s.) |
-| Bsal | **depleted** | 354/377 = **93.9%** | 5.64 | **1.6e-22** |
-| Bsal | **released** | 225/261 = **86.2%** | 2.07 | **1.9e-05** |
+| Bd | **depleted** | 275/299 = **92.0%** | 4.45 | **1.1e-16** |
+| Bd | released | 182/292 = 62.3% | 0.55 | 1.00 (n.s.) |
+| Bsal | **depleted** | 431/456 = **94.5%** | 7.19 | **2.2e-34** |
+| Bsal | **released** | 287/359 = **79.9%** | 1.47 | **2.7e-03** |
 
 Two readings, and the species difference is the interesting one:
 
@@ -488,8 +487,7 @@ equally consistent with an NRPS product and with a fungus-modified medium
 peptide, and no statistic applied to this dataset separates them.
 
 What **is** delivered: a defensible ~1,800 (Bd) / ~2,900 (Bsal) blank-clearing
-feature set, of which 88/132 are MS²-verifiable with a concordant precursor
-and 15/29 carry a confident structure; a fragment-level medium-substrate
+feature set, of which 120/147 are MS²-verifiable with a concordant precursor; a fragment-level medium-substrate
 signature in Bsal (Hyp, §6.2); and a clear statement of what this design
 cannot answer.
 
@@ -540,18 +538,23 @@ cannot answer.
    for Bd.
 6. **10v10 contrasts use a 20,000-sample null** (floor 5.0e-5) rather than the
    full 184,756 enumeration.
-7. **The artifact filter over-corrects by dropping non-default adducts.**
-   `is_default_adduct == False` does not mean "redundant adduct" — it marks
-   rows that received an *explicit* adduct assignment, including 2,261
-   explicitly-called `[M+H]1+` rows. Of the 6,683 dropped non-default rows,
-   2,104 have MS² and 1,651 have a SIRIUS annotation, and only ~126 of the
-   1,052 `[M+H]1+` ones have a kept default row at the same m/z and RT. Net
-   effect: MS²-bearing features fell 6,453 → 3,389 (47%) and SIRIUS-structure
-   features 4,268 → 2,431 (43%), so **the shortlist is small partly because of
-   this filter**. The anti-pseudoreplication goal is better served by keeping
-   `isotope=="M+0" & charge==1 & !is_isf` and de-duplicating on (neutral mass,
-   RT). This is the highest-value correction still outstanding and would
-   roughly double the shortlist.
+7. ~~The artifact filter over-corrects by dropping non-default adducts.~~
+   **FIXED 2026-09-03.** `is_default_adduct == False` marks rows with an
+   *explicit* adduct call, including 2,261 explicitly-called `[M+H]1+` rows —
+   not "redundant adduct". Requiring it discarded 6,683 rows carrying 2,104
+   MS² spectra and 1,651 SIRIUS annotations. The filter is now
+   `M+0 & charge==1 & !is_isf` (28,196 rows), with adduct redundancy handled
+   by **de-duplication** on (GNPS2 `feature_group`, neutral mass) rather than
+   exclusion → **26,574 features**. Recovered: MS²-bearing 3,389 → **4,333**
+   (+28%), SIRIUS annotations 2,431 → **3,729** (+53%), GNPS library hits →
+   171, and the MS² shortlist Bd 88 → **120** / Bsal 132 → **147**.
+   `feature_group` alone was too coarse a key — 12.1% of its multi-member
+   groups contain co-eluting but chemically distinct molecules — so the
+   neutral mass is part of the key. Verified on a worked example: one molecule
+   (neutral 499.3863, RT 7.42) appearing as [M+H]⁺, [2M+H]⁺, [M+Na]⁺,
+   [2M+Na]⁺, [3M+Na]⁺, [3M+H]⁺ and [M+K]⁺ collapses to one row.
+   **Every conclusion in this report survived the re-run**; several
+   strengthened (e.g. Bsal spore Sporangium-vs-Mature 6.7× → 12.4×).
 8. **16 of 90 (Bd) and 6 of 139 (Bsal) pre-gate shortlist features carry
    chemically implausible SIRIUS formulas** (Br₄, As₂, Cl₉, P₂S₇) traceable to
    precursor-mass errors; the precursor gate removes the worst but the
@@ -602,7 +605,7 @@ cannot answer.
 
 | Path | Contents |
 |---|---|
-| `analysis/ordination/linked_data/{sample_metadata,feature_abundance}` | 60 fungal samples × 25,157 features |
+| `analysis/ordination/linked_data/{sample_metadata,feature_abundance}` | 60 fungal samples × 26,574 features |
 | `analysis/ordination/linked_data/blank_*` | the 30 held-out media blanks |
 | `analysis/differential_features/separation_enrichment.{tsv,png,pdf}` | threshold-free stage-pair statistic |
 | `analysis/differential_features/scripts/mwu_exact.py` | exact conditional permutation null |
