@@ -1,0 +1,47 @@
+species	row_id	mz	n_tags	n_unique_tags	hits_real	hits_decoy_mean	hits_decoy_p95	enrichment	perm_p	sirius_structure_name	sirius_structure_confidence
+salamandrivorans	1331	726.3802	311	116	24	13.416	20.0	1.7889087656529516	0.001996007984031936		
+salamandrivorans	5339	651.3511	318	20	6	1.476	3.0499999999999545	4.065040650406504	0.003992015968063872		0.436
+salamandrivorans	13123	500.6966	55	25	3	0.856	2.0	3.504672897196262	0.03592814371257485		
+salamandrivorans	943	655.3416	108	102	12	7.046	11.0	1.7030939540164631	0.041916167664670656	H-Pro-Leu-Glu-Pro-Ser-Gly-Gly-NH2	0.623
+salamandrivorans	2490	653.3651	471	45	6	3.008	6.0	1.9946808510638299	0.06387225548902195	2-[18-(1-hydroxyethyl)-12-methyl-6-(2-methylpropyl)-1,4,7,10,13,16,19-heptaoxo-15-(propan-2-yl)-docosahydro-1H-pyrrolo[1,2-a]1,4,7,10,13,16,19-heptaazacyclohenicosan-9-yl]acetamide	0.439
+dendrobatidis	603	724.4064	20	12	2	0.65	2.0	3.0769230769230766	0.1377245508982036	H-Pro-Val-Lys-Val-Tyr-Pro-OH	0.366
+salamandrivorans	3993	795.3983	61	3	1	0.274	1.0	3.64963503649635	0.2634730538922156		0.179
+salamandrivorans	1775	667.3416	30	6	1	0.38	1.0	2.6315789473684212	0.3333333333333333	Desferrioxamine X4	0.289
+salamandrivorans	4610	992.4791	2	2	1	0.382	1.0	2.6178010471204187	0.3393213572854291		
+salamandrivorans	589	693.3226	390	153	3	2.08	4.0	1.4423076923076923	0.3532934131736527	Actinosynneptide A	0.21
+salamandrivorans	886	531.2772	254	226	5	3.97	7.0	1.2594458438287153	0.3772455089820359	((R)-3-Methyl-1-((S)-3-phenyl-2-((R)-3-phenyl-2-(pyrazine-2-carboxamido)propanamido)propanamido)butyl)boronic acid	0.133
+salamandrivorans	1342	728.3986	186	34	1	0.584	2.0	1.7123287671232879	0.47305389221556887	Citrusin Iii	0.414
+dendrobatidis	1267	741.3985	9	9	1	0.658	2.0	1.519756838905775	0.5069860279441117	cyclo[Sar-Phe-Leu-Pro-Tyr-N(Me)Leu]	0.747
+dendrobatidis	430	983.5547	212	167	1	0.884	3.0	1.1312217194570136	0.592814371257485	H-Ser-Leu-Phe-Asn-Thr-Ile-Ala-Val-Leu-al	0.382
+dendrobatidis	2531	428.2517	255	47	1	1.134	3.0	0.8818342151675486	0.7105788423153693	H-DL-Val-DL-Pro-Gly-DL-Val-Gly-OH	0.545
+salamandrivorans	1847	491.2578	33	19	1	1.268	3.0	0.7886435331230284	0.7245508982035929		0.019
+dendrobatidis	6121	741.4183	154	104	3	3.85	7.0	0.7792207792207793	0.7704590818363274	(2S,9S,12S,15R,18S,21S)-9-(tert-Butyloxycarbonylamino)-10,13,16,19,22-pentaoxo-14,15:17,18-dipropano-12,21-hexano-1,11,14,17,20-pentaazacyclodocosane-2-carboxylic acid methyl ester	0.1
+dendrobatidis	1761	516.2835	21	21	0	0.39	2.0	0.0	1.0	Mullinamide A	0.481
+dendrobatidis	1792	493.7715	8	4	0	0.3	1.0	0.0	1.0		
+dendrobatidis	2900	635.3269	8	2	0	0.0	0.0	0.0	1.0	H-DL-Gln-DL-Pro-DL-Lys-DL-Lys-DL-Pro-OH	0.715
+dendrobatidis	1140	896.5233	110	12	0	0.046	0.0	0.0	1.0	H-Val-Ile-Phe-Pro-Ala-Lys-Ser-Leu-OH	0.895
+dendrobatidis	1343	836.4871	118	58	0	0.0	0.0	0.0	1.0	(2S)-2-[[(2S,3R)-2-[[(2S)-2-[[(2S,3S)-2-[[2-[[(2S,3S)-2-[[2-[[(2S)-2-[[(2S)-2-azaniumylpropanoyl]amino]propanoyl]amino]acetyl]amino]-3-methylpentanoyl]amino]acetyl]amino]-3-methylpentanoyl]amino]-4-methylpentanoyl]amino]-3-hydroxybutanoyl]amino]-3-methylbutanoate	0.769
+dendrobatidis	323	855.4949	4	3	0	0.0	0.0	0.0	1.0	6-amino-2-[2-(2-{2-[2-(2-{[1-(2-aminoacetyl)pyrrolidin-2-yl]formamido}-3-phenylpropanamido)acetamido]-3-hydroxybutanamido}-3-(1H-imidazol-4-yl)propanamido)-3-methylpentanamido]hexanamide	0.197
+dendrobatidis	628	926.4958	3	3	0	0.038	0.0	0.0	1.0	H-Val-Pro-Pro-Phe-Ile-Gln-Pro-Glu-OH	0.968
+dendrobatidis	843	540.3412	8	8	0	0.062	1.0	0.0	1.0	Ile-Pro-Pro-Leu-Thr	0.789
+dendrobatidis	1657	318.164	1	1	0	0.256	1.0	0.0	1.0	4-Amino-5-[[1-(1-carboxyethylamino)-3-methyl-1-oxobutan-2-yl]amino]-5-oxopentanoic acid	0.164
+dendrobatidis	4358	502.2516	1	1	0	0.0	0.0	0.0	1.0	Ac-Glu-Val-Glu-Ala-NHMe	0.474
+dendrobatidis	4868	399.7328	8	2	0	0.022	0.0	0.0	1.0		
+dendrobatidis	644	757.3718	61	20	0	0.174	1.0	0.0	1.0	cyclo[Sar-Phe-Leu-Pro-Tyr-N(Me)Leu]	0.94
+salamandrivorans	4419	577.2238	3	3	0	0.016	0.0	0.0	1.0		
+salamandrivorans	1703	800.3782	100	15	0	0.0	0.0	0.0	1.0		
+salamandrivorans	2041	776.364	5	5	0	0.0	0.0	0.0	1.0		
+salamandrivorans	6825	699.3386	7	1	0	0.136	1.0	0.0	1.0	H-Leu-Glu-Ser-Ser-Ile-Ile-OH	0.176
+salamandrivorans	1199	529.2977	1	1	0	0.212	1.0	0.0	1.0	H-DL-xiIle-DL-Leu-DL-Val-DL-Tyr-OH	0.075
+salamandrivorans	1208	560.3275	2	2	0	0.0	0.0	0.0	1.0	H-DL-Glu-DL-Leu-DL-Val-DL-xiIle-DL-Ser-OH	0.336
+salamandrivorans	2520	644.3274	14	14	0	0.19	1.0	0.0	1.0		
+salamandrivorans	1027	705.32	2	2	0	0.0	0.0	0.0	1.0	12-benzyl-3,15-bis(1-hydroxyethyl)-6-[(4-hydroxyphenyl)methyl]-9-(2-methylpropyl)-1,4,7,10,13,16-hexaazacyclooctadecane-2,5,8,11,14,17-hexone	0.678
+salamandrivorans	1268	683.3371	52	12	0	0.078	1.0	0.0	1.0	12-benzyl-3,15-bis(1-hydroxyethyl)-6-[(4-hydroxyphenyl)methyl]-9-(2-methylpropyl)-1,4,7,10,13,16-hexaazacyclooctadecane-2,5,8,11,14,17-hexone	0.918
+salamandrivorans	441	603.3178	15	3	0	0.0	0.0	0.0	1.0	Trapoxin A	0.103
+salamandrivorans	1497	708.4301	8	2	0	0.0	0.0	0.0	1.0	5-hydroxy-6-{3-hydroxy-6-[4-(2-pentylphenyl)butyl]cyclohexa-2,4-dien-1-yl}-1-{3-[(6-hydroxynaphthalen-2-yl)methoxy]-4-methoxyphenyl}hexan-3-one	0.025
+salamandrivorans	992	565.2595	5	1	0	0.0	0.0	0.0	1.0	H-Ala-N(Me)Leu-Tyr-Tyr-OH	0.213
+salamandrivorans	3118	378.7034	5	5	0	0.186	1.0	0.0	1.0		
+salamandrivorans	2309	891.5302	20	4	0	0.0	0.0	0.0	1.0	H-Leu-Pro-Gln-Asn-Ile-Pro-Pro-Leu-OH	0.477
+salamandrivorans	17700	574.3209	26	26	0	0.17	1.0	0.0	1.0	Desmethyldestruxin B2	0.487
+salamandrivorans	539	765.4826	8	4	0	0.094	1.0	0.0	1.0	Almiramide A	0.085
+salamandrivorans	17331	529.7657	104	24	0	1.836	4.0	0.0	1.0		

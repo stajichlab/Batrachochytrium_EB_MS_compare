@@ -341,13 +341,43 @@ pool is collagen-derived, which is what its medium supplies. It does **not**
 establish that the fungus performed the hydrolysis (TGHL is supplied
 pre-hydrolysed), and it says nothing about Bd.
 
-#### A negative result worth recording
+#### The sequence-level test, done properly — also negative
 
-A sequence-level test is sharper than composition, and it is negative. Only
-**4 of 45** shortlist peptide sequences are substrings of the four bovine
-caseins or collagen I at all — against a residue-shuffled control whose 97.5th
-percentile is 2. If these were straightforwardly tryptone digest fragments,
-substring matching against a 4-protein substrate should light up. It does not.
+Name-based substring matching was negative (4 of 45 shortlist sequences match
+casein/collagen, against a shuffled-control 97.5th percentile of 2), but names
+are database guesses. **De novo fragment-tag matching on the spectra
+themselves** now settles it (`analysis/peptide_provenance/`, F-006):
+
+| quantity | value |
+|---|---|
+| shortlist spectra yielding 5-residue tags | 46 / 267 |
+| tag hits, real substrates | 72 |
+| tag hits, composition-matched decoy | 46.1 |
+| **aggregate enrichment** | **1.56×** |
+| Wilcoxon real > decoy | **p = 0.15** |
+| spectra at p<0.05 | 4/46 (2.3 expected), **binomial p = 0.20** |
+
+The test is not blind: a synthetic b/y spectrum of β-casein 60–68
+(`LQDKLHPFA`) plus 50 noise peaks scores **55.2× (p<0.001)**, a random 9-mer
+scores **0.0×**, and tag extraction recovers 6 of 7 contiguous 3-mers of the
+control. Against a 55× positive control, an observed **1.56× that fails both
+aggregate tests is an absence of signal.**
+
+Three design choices were forced by controls, each the opposite of the obvious
+one — worth recording because each would have produced a confidently wrong
+answer: (i) tags must be matched in **both orientations**, since a b/y
+spectrum spells the peptide N→C *and* C→N; (ii) the randomization must be on
+the **tag**, not the substrate — a reversed-sequence decoy scores exactly
+1.00× against a *known* casein peptide, and shuffling collagen inflates the
+decoy vocabulary 20% because Gly-X-Y repeats carry only 0.43 distinct 3-mers
+per residue; (iii) tags must be **5 residues**, since 3-mers cover 21.4% of
+k-mer space and duly score 0.98–1.00× at every peak depth.
+
+One directional hint survives: all four nominally-significant spectra are
+**Bsal, none Bd** — and only Bsal's medium contains gelatin. The strongest,
+feature 943, is named `H-Pro-Leu-Glu-Pro-Ser-Gly-Gly-`, Pro/Gly-rich and
+collagen-like. Same direction as the Hyp contrast above, but 4 of 46 against
+2.3 expected is not significant on its own.
 
 #### Where that leaves H1 vs H2
 
@@ -356,7 +386,8 @@ Undecided, and the honest summary is:
 - the annotatable fraction of the shortlist is overwhelmingly peptide-class;
 - a medium-digest origin is plausible and genomically predicted (Bsal's M36
   fungalysin expansion), and the Hyp contrast supports it **for Bsal**;
-- sequence-level matching does not support it;
+- sequence-level matching does not support it, now confirmed on the spectra
+  themselves with a validated positive control (F-006);
 - these features are being actively *produced* during growth rather than
   sitting in the medium — for shortlist features the median log2(fungal/blank)
   rises Zoospore 0.64 → Sporangium 1.01 → Mature 2.08 (Bd) and 0.48 → 2.99 →
@@ -613,5 +644,7 @@ cannot answer.
 | `analysis/differential_features_primary/peptide_origin/` | Pro-composition test |
 | `analysis/molecular_network/{components.tsv,delta_mz_ladders.tsv,component_summary.md,component_sizes.png}` | molecular-family tier (GOALS 1 & 4), validated against GNPS2 `ComponentIndex` |
 | `analysis/differential_features_primary/media_consumption/` | depleted-vs-released medium components + peptide-class enrichment |
+| `analysis/peptide_provenance/` | de novo fragment-tag matching vs medium substrates (F-006) |
+| `reference_material/substrate_proteins/` | the six UniProt medium-substrate sequences |
 | `analysis/differential_features_primary/liq_enriched_curation/` | shortlist + live USI grid |
 | `analysis/differential_features_primary/all_significant_features_summary_<species>.html` | interactive rollups (4.4 / 5.0 MB) |
